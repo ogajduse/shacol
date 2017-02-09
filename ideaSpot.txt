@@ -1,28 +1,21 @@
-Honza
-=============================================================
+# Honza
 - jazyk - Python / Java / C++ / ???
 - př. spouštění programu $python shacol.py -sha256 -b 64 -i vstup.txt
 - vícevláknový program se závislostí na bitovém rozdělení hlavního hashe
 - existence univerzální třídy se vstupními parametry pro volání
-- existence funkce pro rozdělení hashe mezi vlákna v závislosti na stupním parametru
+- existence funkce pro rozdělení hashe mezi vlákna v závislosti na vstupním parametru
 - použití bloom filtru? viz. odkaz v chatu
 - funkce - v cyklu se po každém novém hashi hledá schoda v poli s předchozími hashi
-	hashPartArray[]
-	newHashPart
-	while(newHashPart not in hashPartArray) 
-		newHashPart append...
+	- hashPartArray[]
+	- newHashPart
+	- while(newHashPart not in hashPartArray)
+	-	newHashPart append...
+- současně bude obsahovat timer, počet proběhlých cyklů na každém vlákně apod. monitorování
 
-- současně bude obsahovat timer, počet proběhlých cyklů na každém vlákně apod. monitorování		
-	
-Pozn. pokud bychom zvolili python, mám již nějaké funkční skripty na vstupní parametry a vícevláknové operace, výpis okolo procesu.
-=============================================================
+> Pozn. pokud bychom zvolili python, mám již nějaké funkční skripty na vstupní parametry a vícevláknové operace, výpis okolo procesu.
 
-Ondra
-=============================================================
 
-=============================================================
+# Ondra
 
-Sarka
-=============================================================
 
-=============================================================
+# Šárka
