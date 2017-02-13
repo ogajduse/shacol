@@ -67,6 +67,7 @@ shacol = Shacol() #Instance of the class Shacol
 
 startTime = time.time()
 print shacol.findCollision(hashPart[0])
+#print shacol.findCollision('4c07a78baec4') #48 bit
 totalTime = round(time.time() - startTime, 6)
 print("Collision found after %s seconds" % (totalTime))
 
