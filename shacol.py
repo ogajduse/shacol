@@ -12,12 +12,8 @@ parser.add_argument('-i','--input', action='store', dest='inputFile', help='-i i
 args = parser.parse_args()
 #add option to generate random hash?
 
-"""
-Use only power of two for binary choice!!!
-"""
-
 hashPartLength = int(args.bits)/4
-h = hashlib.new('sha256')
+#h = hashlib.new('sha256')
 
 try:
     with open(args.inputFile, 'r') as hashInFile:
@@ -35,20 +31,44 @@ try:
 except Exception,e:
     print str(e)
 
-#Printing the seperated hashes
+#Printing the seperated hashes (just for testing)
+print "\nHashes to be break down in threads: "
 for x in hashPart:
     print x
 
-raw_input("\nPress Enter to continue...")
+raw_input('\nPress Enter to continue...')
 
-"""
-Existence of a class/function(object) which works with a specific part of hash (hashPart[0])
-The input of main class would be hash from hashPart.
-Finally should be compatible with threading
-"""
+class Shacol:
+    def findCollision(self, hashPart=None):
+        """
+        Function to be thread by individually calling - looking for the collision hashPart
+        """
+        hashF = hashlib.new('sha256')
 
-#main array to save all hashes to compare, must be implemented inside the object!
-hashPartArray = []
+        hashPartLength = len(hashPart)
+        hashPartArray = [] #Why not set/array? Then we have no idea about index -> not faster
+
+        newHashPart = hashPart #New part of hashed hash, cut off
+        count = 0
+
+        while newHashPart not in hashPartArray:
+            hashPartArray.append(newHashPart)
+            newHash = hashlib.sha256(newHashPart).hexdigest()
+            newHashPart = newHash[0:hashPartLength] #Special ID as input parameter for threading
+            count += 1
+            #In case of threding is needed the solution for number of position every thread!!!
+
+        print 'Count of the cycles:', count
+        print 'Index of collision part:', hashPartArray.index(newHashPart)
+        return newHashPart
+
+
+shacol = Shacol() #Instance of the class Shacol
+
+startTime = time.time()
+print shacol.findCollision(hashPart[0])
+totalTime = round(time.time() - startTime, 6)
+print("Collision found after %s seconds" % (totalTime))
 
 
 """
