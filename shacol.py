@@ -25,7 +25,7 @@ try:
         if (args.text):
             text = dataFromFile.read()
             sha256 = hashlib.sha256(text).hexdigest()
-        else (args.hash):
+        else:
             if (args.sha256):
                 sha256 = dataFromFile.read(64) #Block of hash
 
