@@ -22,12 +22,12 @@ args = parser.parse_args()
 
 try:
     with open(args.inputFile, 'r') as dataFromFile:
-        if (args.hash):
-            if (args.sha256):
-                sha256 = dataFromFile.read(64) #Block of hash
-        elif (args.text):
+        if (args.text):
             text = dataFromFile.read()
             sha256 = hashlib.sha256(text).hexdigest()
+        else (args.hash):
+            if (args.sha256):
+                sha256 = dataFromFile.read(64) #Block of hash
 
         if len(sha256) == 0: #If it got in the end
             print "File is empty! "
