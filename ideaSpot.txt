@@ -17,5 +17,6 @@
 
 # Ondra
 * řešit rekurzivně?
+https://llimllib.github.io/bloomfilter-tutorial/
 
 # Šárka
