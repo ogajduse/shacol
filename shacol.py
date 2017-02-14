@@ -7,11 +7,12 @@ import argparse
 #import threading
 #import linecache
 from sets import Set
+from collections import deque
 from StringIO import StringIO
-#import re, sys, getopt
+import re, sys, getopt
 
 #Input parameters
-parser = argparse.ArgumentParser(usage='$prog [options] -sha2 -b 32 -i hash.txt -h',description='SHA collision finder', add_help=True, epilog='SHA collision finder. Made by Jan Stangler, Ondrej Gajdusek, Sarka Chwastova, VUT FEKT, ICT1 project, 2017')
+parser = argparse.ArgumentParser(usage='$prog [options] -sha2 -b 32 -i hash.txt',description='SHA collision finder', add_help=True, epilog='SHA collision finder. Made by Jan Stangler, Ondrej Gajdusek, Sarka Chwastova, VUT FEKT, ICT1 project, 2017')
 parser.add_argument('-sha2','--sha256', action='store_true', dest='sha256', help='-sha2 (hash algorithm)', required=True)
 parser.add_argument('-b','--bits', action='store', dest='bits', help='-b 32 (Number of hash bits to find collision)', required=True)
 parser.add_argument('-i','--input', action='store', dest='inputFile', help='-i input.txt The input file with hashes', required=True)
@@ -46,7 +47,7 @@ except Exception,e:
     print str(e)
 
 #Printing the seperated hashes (just for testing)
-print '\nHash to be break down:', hashPart
+print '\nInput hash:', hashPart
 
 raw_input('\nPress Enter to continue...')
 
@@ -57,12 +58,22 @@ class Shacol:
         """
 
         hashPartSet = Set([])
+        #hashPartDeque = deque()
         hashPartLength = len(hashPart)
         newHashPart = hashPart
 
+        #hashPartSet.__sizeof__
+
+        #count = 0
+        #print newHashPart
+
         startTime = time.time()
         while newHashPart not in hashPartSet:
+            #hashPartDeque.append(newHashPart)
             hashPartSet.add(newHashPart)
+
+            #print count,' : ',newHashPart
+            #count += 1
             newHash = hashlib.sha256(newHashPart).hexdigest()
             newHashPart = newHash[0:hashPartLength] #Special ID as input parameter for threading
             #In case of threding is needed the solution for number of position every thread!!!
@@ -107,7 +118,7 @@ shacol = Shacol() #Instance of the class Shacol
 if (args.first):
     shacol.findCollisionFirst(hashPart)
 else:
-    shacol.findCollision(hashPart)
+    print shacol.findCollision(hashPart)
 #There will be difference and dependence between threads in the index hashPart[0]...
 
 #myData = threading.local()
