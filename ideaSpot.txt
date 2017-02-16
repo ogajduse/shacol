@@ -17,6 +17,7 @@
 
 # Ondra
 * řešit rekurzivně?
-https://llimllib.github.io/bloomfilter-tutorial/
+* https://llimllib.github.io/bloomfilter-tutorial/
+[Key-value database](https://en.wikipedia.org/wiki/Key-value_database)
 
 # Šárka
