@@ -147,7 +147,7 @@ class Shacol:
                 newHashPart = newHash[0:hashPartLength] #Special ID as input parameter for threading
             #In case of threding is needed the solution for number of position every thread!!!
             totalTime = round(time.time() - startTime, 12)
-            print('\nSET - Collision found process succeeded!\n')
+            print('\nPrevious Server method - Collision found process succeeded!\n')
             print("Collision found after %s seconds" % (totalTime))
             #print 'GetSizeOf:', sys.getsizeof(hashPartSet)
             print 'Count of the cycles:',count
@@ -168,28 +168,35 @@ class Shacol:
         try:
             setIter = 0
             count = 0
-            setCount = 5 #50-85 milions per set
-            setArray = [Set() for _ in xrange(setCount)]
+            setCount = 80000000 #50-85 milions per set
+            setNumber = 30 #number of sets
+
+            setArray = [Set() for _ in xrange(setNumber)]
 
             hashPartLength = len(hashPart)
             newHashPart = hashPart
             startTime = time.time()
 
-            while newHashPart not in setArray[Set() in xrange(setCount)]: #Zkuste najit chybu, proc to hleda jine kolize :(
+            while newHashPart not in setArray[Set() in xrange(setNumber)]: #Zkuste najit chybu, proc to hleda jine kolize :(
                 setArray[setIter].add(newHashPart)
-                setIter += 1
                 count += 1
-                if setIter == setCount : setIter = 0
-                #if count % 1000000 == 0 : print count
+                if count == setCount : setIter += 1
+                if count % 10000000 == 0 : print count
                 newHash = hashlib.sha256(newHashPart).hexdigest()
                 newHashPart = newHash[0:hashPartLength] #Special ID as input parameter for threading
 
             totalTime = round(time.time() - startTime, 12)
-            print('\nSET - Collision found process succeeded!\n')
+            print('\nSetArray method - Collision found process succeeded!\n')
             print("Collision found after %s seconds" % (totalTime))
             #print 'GetSizeOf:', sys.getsizeof(hashPartSet)
-            print 'Count of the cycles:', len(setArray[Set() in xrange(setCount)])
+
+            print 'Count of the cycles:', len(setArray[Set() in xrange(setNumber)])
             print 'Collision hash:', newHashPart
+            testList = []
+            for x in setArray:
+                testList += list(x)
+            print 'Index of collision hash:', testList.index(newHashPart)
+
             return newHashPart
 
         except Exception,e:
@@ -260,7 +267,7 @@ class Shacol:
 
 shacol = Shacol() #Instance of the class Shacol
 
-#shacol.findCollisionSet1(hashPart)
+shacol.findCollisionServer(hashPart)
 shacol.findCollisionSetArray(hashPart)
 
 #shacol.findCollisionArraySet(hashPart)
