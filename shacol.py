@@ -57,7 +57,7 @@ class Shacol:
         Function to be thread by individually calling - looking for a collision hashPart
         """
         try:
-            hashPartSet = Set([])
+            hashPartSet1 = Set([])
             hashPartSet2 = Set([])
             hashPartSet3 = Set([])
             hashPartSet4 = Set([])
@@ -85,61 +85,17 @@ class Shacol:
 
             hashPartLength = len(hashPart)
             newHashPart = hashPart
-
+            hashesInSet = 85000000
             count = 0
 
             startTime = time.time()
-            while newHashPart not in (hashPartSet or hashPartSet2 or hashPartSet3 or hashPartSet4 or hashPartSet5 or hashPartSet6 or hashPartSet7 or hashPartSet8 or hashPartSet9 or hashPartSet10 or hashPartSet11 or hashPartSet12 or hashPartSet13 or hashPartSet14 or hashPartSet15 or hashPartSet16 or hashPartSet17 or hashPartSet18 or hashPartSet19 or hashPartSet20 or hashPartSet21 or hashPartSet22 or hashPartSet23 or hashPartSet24 or hashPartSet25):
-                if count <= 85000000:
-                    hashPartSet.add(newHashPart)
-                elif count <= 170000000:
-                    hashPartSet2.add(newHashPart)
-                elif count <= 255000000:
-                    hashPartSet3.add(newHashPart)
-                elif count <= 340000000:
-                    hashPartSet4.add(newHashPart)
-                elif count <= 425000000:
-                    hashPartSet5.add(newHashPart)
-                elif count <= 505000000:
-                    hashPartSet6.add(newHashPart)
-                elif count <= 590000000:
-                    hashPartSet7.add(newHashPart)
-                elif count <= 675000000:
-                    hashPartSet8.add(newHashPart)
-                elif count <= 760000000:
-                    hashPartSet9.add(newHashPart)
-                elif count <= 845000000:
-                    hashPartSet10.add(newHashPart)
-                elif count <= 930000000:
-                    hashPartSet11.add(newHashPart)
-                elif count <= 1010000000:
-                    hashPartSet12.add(newHashPart)
-                elif count <= 1090000000:
-                    hashPartSet13.add(newHashPart)
-                elif count <= 1170000000:
-                    hashPartSet14.add(newHashPart)
-                elif count <= 1250000000:
-                    hashPartSet15.add(newHashPart)
-                elif count <= 1330000000:
-                    hashPartSet16.add(newHashPart)
-                elif count <= 1410000000:
-                    hashPartSet17.add(newHashPart)
-                elif count <= 1490000000:
-                    hashPartSet18.add(newHashPart)
-                elif count <= 1570000000:
-                    hashPartSet19.add(newHashPart)
-                elif count <= 1650000000:
-                    hashPartSet20.add(newHashPart)
-                elif count <= 1730000000:
-                    hashPartSet21.add(newHashPart)
-                elif count <= 1810000000:
-                    hashPartSet22.add(newHashPart)
-                elif count <= 1890000000:
-                    hashPartSet23.add(newHashPart)
-                elif count <= 1970000000:
-                    hashPartSet24.add(newHashPart)
-                elif count <= 2050000000:
-                    hashPartSet25.add(newHashPart)
+            actualSetNumber = 0
+            while newHashPart not in (hashPartSet1 or hashPartSet2 or hashPartSet3 or hashPartSet4 or hashPartSet5 or hashPartSet6 or hashPartSet7 or hashPartSet8 or hashPartSet9 or hashPartSet10 or hashPartSet11 or hashPartSet12 or hashPartSet13 or hashPartSet14 or hashPartSet15 or hashPartSet16 or hashPartSet17 or hashPartSet18 or hashPartSet19 or hashPartSet20 or hashPartSet21 or hashPartSet22 or hashPartSet23 or hashPartSet24 or hashPartSet25):
+                if not count % hashesInSet == 0:
+                    locals()['hashPartSet%s' % actualSetNumber].add(newHashPart)
+                else:
+                    actualSetNumber+=1
+                    locals()['hashPartSet%s' % actualSetNumber].add(newHashPart)
 
                 count += 1
                 if count % 10000000 == 0 : print count
