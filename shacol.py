@@ -192,10 +192,17 @@ class Shacol:
 
             print 'Count of the cycles:', len(setArray[Set() in xrange(setNumber)])
             print 'Collision hash:', newHashPart
-            testList = []
-            for x in setArray:
-                testList += list(x)
-            print 'Index of collision hash:', testList.index(newHashPart)
+
+            indexofcollision = int()
+            iterace=0
+            for i in setArray:
+                indexofcollision = list(i).index(newHashPart)
+                if indexofcollision:
+                    indexofcollision += iterace*setCount
+                    break
+                iterace += 1
+
+            print 'Index of collision hash:', indexofcollision
 
             return newHashPart
 
