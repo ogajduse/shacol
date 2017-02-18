@@ -52,7 +52,7 @@ except Exception,e:
 raw_input('\nPress Enter to continue...')
 
 class Shacol:
-    def findCollisionSet(self, hashPart=None):
+    def findCollisionServer(self, hashPart=None): #Hnusna metoda, ktera je rychla a bezi na serveru
         """
         Function to be thread by individually calling - looking for a collision hashPart
         """
@@ -67,6 +67,21 @@ class Shacol:
             hashPartSet8 = Set([])
             hashPartSet9 = Set([])
             hashPartSet10 = Set([])
+            hashPartSet11 = Set([])
+            hashPartSet12 = Set([])
+            hashPartSet13 = Set([])
+            hashPartSet14 = Set([])
+            hashPartSet15 = Set([])
+            hashPartSet16 = Set([])
+            hashPartSet17 = Set([])
+            hashPartSet18 = Set([])
+            hashPartSet19 = Set([])
+            hashPartSet20 = Set([])
+            hashPartSet21 = Set([])
+            hashPartSet22 = Set([])
+            hashPartSet23 = Set([])
+            hashPartSet24 = Set([])
+            hashPartSet25 = Set([])
 
             hashPartLength = len(hashPart)
             newHashPart = hashPart
@@ -74,7 +89,7 @@ class Shacol:
             count = 0
 
             startTime = time.time()
-            while newHashPart not in (hashPartSet or hashPartSet2 or hashPartSet3 or hashPartSet4 or hashPartSet5 or hashPartSet6 or hashPartSet7 or hashPartSet8 or hashPartSet9 or hashPartSet10):
+            while newHashPart not in (hashPartSet or hashPartSet2 or hashPartSet3 or hashPartSet4 or hashPartSet5 or hashPartSet6 or hashPartSet7 or hashPartSet8 or hashPartSet9 or hashPartSet10 or hashPartSet11 or hashPartSet12 or hashPartSet13 or hashPartSet14 or hashPartSet15 or hashPartSet16 or hashPartSet17 or hashPartSet18 or hashPartSet19 or hashPartSet20 or hashPartSet21 or hashPartSet22 or hashPartSet23 or hashPartSet24 or hashPartSet25):
                 if count <= 85000000:
                     hashPartSet.add(newHashPart)
                 elif count <= 170000000:
@@ -93,25 +108,41 @@ class Shacol:
                     hashPartSet8.add(newHashPart)
                 elif count <= 760000000:
                     hashPartSet9.add(newHashPart)
-                elif count < 1000000000:
+                elif count <= 845000000:
                     hashPartSet10.add(newHashPart)
-                else:
-                    break;
+                elif count <= 930000000:
+                    hashPartSet11.add(newHashPart)
+                elif count <= 1010000000:
+                    hashPartSet12.add(newHashPart)
+                elif count <= 1090000000:
+                    hashPartSet13.add(newHashPart)
+                elif count <= 1170000000:
+                    hashPartSet14.add(newHashPart)
+                elif count <= 1250000000:
+                    hashPartSet15.add(newHashPart)
+                elif count <= 1330000000:
+                    hashPartSet16.add(newHashPart)
+                elif count <= 1410000000:
+                    hashPartSet17.add(newHashPart)
+                elif count <= 1490000000:
+                    hashPartSet18.add(newHashPart)
+                elif count <= 1570000000:
+                    hashPartSet19.add(newHashPart)
+                elif count <= 1650000000:
+                    hashPartSet20.add(newHashPart)
+                elif count <= 1730000000:
+                    hashPartSet21.add(newHashPart)
+                elif count <= 1810000000:
+                    hashPartSet22.add(newHashPart)
+                elif count <= 1890000000:
+                    hashPartSet23.add(newHashPart)
+                elif count <= 1970000000:
+                    hashPartSet24.add(newHashPart)
+                elif count <= 2050000000:
+                    hashPartSet25.add(newHashPart)
 
                 count += 1
-                if count % 1000000 == 0 : print count
-                if count == 85000000 : print 'First set capacity reached!'
-                if count == 170000000 : print 'Second set capacity reached!'
-                if count == 255000000 : print 'Third set capacity reached!'
-                if count == 340000000 : print 'Fourth set capacity reached!'
-                if count == 425000000 : print 'Fifth set capacity reached! You are going to the hell bro!'
-                if count == 430000000 : print 'You are lucky man!'
-                if count == 500000000 : print 'It is not real! I am kidding you all the time... '
-                if count == 800000000 : print 'Take it easy like Mr. Easy... '
-                if count == 850000000 : print 'Real limit of the algorithm reached!'
-                if count == 1000000000 : print 'Process was stopped!'
-
-                #print count,' : ',newHashPart
+                if count % 10000000 == 0 : print count
                 newHash = hashlib.sha256(newHashPart).hexdigest()
                 newHashPart = newHash[0:hashPartLength] #Special ID as input parameter for threading
             #In case of threding is needed the solution for number of position every thread!!!
@@ -120,11 +151,6 @@ class Shacol:
             print("Collision found after %s seconds" % (totalTime))
             #print 'GetSizeOf:', sys.getsizeof(hashPartSet)
             print 'Count of the cycles:',count
-            #print 'Count of the hashPartSet',len(hashPartSet)
-            #print 'Count of the hashPartSet2',len(hashPartSet2)
-            #print 'Count of the hashPartSet3',len(hashPartSet3)
-            #print 'Count of the hashPartSet4',len(hashPartSet4)
-            #print 'Count of the hashPartSet5',len(hashPartSet5)
             print 'Collision hash:', newHashPart
 
             #hashPartList = list(hashPartSet)
@@ -134,64 +160,38 @@ class Shacol:
         except Exception,e:
             print str(e)
 
-    def findCollisionList(self, hashPart=None):
+    def findCollisionSetArray(self, hashPart=None): #Tady je ten zadrhel....
         """
         Function to be thread by individually calling - looking for a collision hashPart
         """
-
+        #Promyslet tvorbu vlakna, ktere bude prubezne hlidat zaplneni setu
         try:
-            hashPartList = [] #List
+            setIter = 0
+            count = 0
+            setCount = 5 #50-85 milions per set
+            setArray = [Set() for _ in xrange(setCount)]
+
             hashPartLength = len(hashPart)
             newHashPart = hashPart
             startTime = time.time()
-            while newHashPart not in hashPartList:
-                hashPartList.append(newHashPart)
-                #print count,' : ',newHashPart
-                #count += 1
+
+            while newHashPart not in setArray[Set() in xrange(setCount)]: #Zkuste najit chybu, proc to hleda jine kolize :(
+                setArray[setIter].add(newHashPart)
+                setIter += 1
+                count += 1
+                if setIter == setCount : setIter = 0
+                #if count % 1000000 == 0 : print count
                 newHash = hashlib.sha256(newHashPart).hexdigest()
                 newHashPart = newHash[0:hashPartLength] #Special ID as input parameter for threading
-                #In case of threding is needed the solution for number of position every thread!!!
+
             totalTime = round(time.time() - startTime, 12)
-            print('\nLIST - Collision found process succeeded!\n')
+            print('\nSET - Collision found process succeeded!\n')
             print("Collision found after %s seconds" % (totalTime))
-            print 'GetSizeOf:', sys.getsizeof(hashPartList)
-            print 'Count of the cycles:', len(hashPartList)
+            #print 'GetSizeOf:', sys.getsizeof(hashPartSet)
+            print 'Count of the cycles:', len(setArray[Set() in xrange(setCount)])
             print 'Collision hash:', newHashPart
-            #print 'Index of collision part:', hashPartList.index(newHashPart)
-            #.clear()
             return newHashPart
-        except Exception,e:
-            print str(e)
 
-
-    def findCollisionDeque(self, hashPart=None):
-        """
-        Function to be thread by individually calling - looking for a collision hashPart
-        """
-
-        try:
-            hashPartDeque = deque()
-            hashPartLength = len(hashPart)
-            newHashPart = hashPart
-
-            startTime = time.time()
-            while newHashPart not in hashPartDeque:
-                hashPartDeque.append(newHashPart)
-                #print count,' : ',newHashPart
-                #count += 1
-                newHash = hashlib.sha256(newHashPart).hexdigest()
-                newHashPart = newHash[0:hashPartLength] #Special ID as input parameter for threading
-                #In case of threding is needed the solution for number of position every thread!!!
-            totalTime = round(time.time() - startTime, 12)
-            print('\nDEQUE - Collision found process succeeded!\n')
-            print("Collision found after %s seconds" % (totalTime))
-            print 'GetSizeOf:', sys.getsizeof(hashPartDeque)
-            print 'Count of the cycles:', hashPartDeque.count(newHashPart)
-            print 'Collision hash:', newHashPart
-            #hashPartList = list(hashPartDeque)
-            #print 'Index of collision part:', hashPartList.index(newHashPart)
-            #.clear()
-            return newHashPart
         except Exception,e:
             print str(e)
 
@@ -260,20 +260,17 @@ class Shacol:
 
 shacol = Shacol() #Instance of the class Shacol
 
-shacol.findCollisionSet(hashPart)
-#shacol.findCollisionList(hashPart)
-#shacol.findCollisionDeque(hashPart)
+#shacol.findCollisionSet1(hashPart)
+shacol.findCollisionSetArray(hashPart)
+
+#shacol.findCollisionArraySet(hashPart)
 #shacol.findCollisionString(hashPart)
+#shacol.findCollisionSet(hashPart)
 #shacol.findCollisionDigest(hashDigest)
 
 
-
-#print shacol.findCollisionInt(hashPart)
 #There will be difference and dependence between threads in the index hashPart[0]...
-
 #myData = threading.local()
-
-#Function monitoring the status of threads? Simple animation? Finally threading
 
 
 """
@@ -282,70 +279,8 @@ shacol.findCollision('4c07a78baec4b63') #60 bit
 shacol.findCollision('4c07a78baec4b6309ab6') #80 bit
 shacol.findCollision('4c07a78baec4b6309ab60f2a1') #100 bit
 """
+
 #main function???
-
-
-"""
-argsdict???
-newJob = argsdict['new']
-inFile = argsdict['input'] #shortcut for input directory
-podle vseho se newJob vytvari vzdy pri argumentu "new"
-taktez nacitani vsecho co se nachazi za argumentem se ulozi do dane promenne
-
-
-readLine = linecache.getline(inFile, lineNum).rstrip()
-
-while readLine is not "": #File reading
-	lineNum = lineNum + 1 #Calculate number of lines in url file
-	mainApps.append(readLine) #Include URLs from file into list
-	diter = parseToDomain(readLine)
-	if isURL(readLine):
-		jobTrack[diter] = "Not Tested"
-	else:
-		jobTrack[diter] = "Invalid"
-		print readLine + " is invalid"
-	readLine = linecache.getline(inFile, lineNum).rstrip()
-
-totalLines = lineNum - 1
-print "\nThere is/are %d hashes in the file." % (totalLines)
-
-raw_input("\nPress Enter to start...")
-#startTime = time.time()
-
-#Queuing and threading
-q = Queue.LifoQueue()
-#put items to queue
-for key in jobTrack:
-	if jobTrack[key] != "Invalid":
-		q.put(str(key))
-	else:
-		print str(key) + " is not added to queue as its invalid"
-
-for i in range(100):
-	t1 = threading.Thread(target=runScan,args=(q,))
-	t1.daemon = True
-	t1.start() # Start the thread
-
-q.join()
-
-print "\nFinally"
-print jobTrack
-
-#nutno zajistit aby po dokonceni alespon jednoho vlakna  doslo k preruseni vsech ostatnich vlaken
-
-with open(outFilename, 'w') as outFile:
-    while True:
-        chunk = inFile.read(chunksize)
-        if len(chunk) == 0:
-            break
-        outFile.write(decryptor.decrypt(chunk))
-
-totalTime = round(time.time() - startTime, 6)
-print("Collision found after %s seconds" % (totalTime))
-#vypis koliznich hashu
-
-#using option parser
-"""
 """
 if __name__ == '__main__':
         try:
