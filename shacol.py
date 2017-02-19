@@ -12,29 +12,28 @@ from StringIO import StringIO
 import re, sys, getopt
 import redis
 
-#Input parameters
-parser = argparse.ArgumentParser(usage='$prog [options] -sha2 -b 32 -i hash.txt',description='SHA collision finder', add_help=True, epilog='SHA collision finder. Made by Jan Stangler, Ondrej Gajdusek, Sarka Chwastova, VUT FEKT, ICT1 project, 2017')
-parser.add_argument('-sha2','--sha256', action='store_true', dest='sha256', help='-sha2 (hash algorithm)', required=True)
-parser.add_argument('-b','--bits', action='store', dest='bits', help='-b 32 (Number of hash bits to find collision)', required=True)
-parser.add_argument('-i','--input', action='store', dest='inputFile', help='-i input.txt The input file with hashes', required=True)
-parser.add_argument('-hg','--hashgroup', action='store_true', dest='hash', help='-h The input file has hashes per line', required=False)
-parser.add_argument('-t','--text', action='store_true', dest='text', help='-t The input file has text inside', required=False)
-parser.add_argument('-f','--first', action='store_true', dest='first', help='-f Collision with the first one hash', required=False)
-args = parser.parse_args()
+class Shacol:
+    def __init__(self, sha256, bits, inputFile, hashGroup=False, text=False, first=False):
+        self.sha256 = sha256
+        self.bits = bits
+        self.inputFile = inputFile
+        self.hashGroup = hashGroup
+        self.text = text
+        self.first = first
 
-try:
-    shaList = []
-    hashPartLength = int(args.bits)/4
-    with open(args.inputFile, 'r') as dataFromFile:
-        if (args.text):
-            text = dataFromFile.read()
-            shaList += hashlib.sha256(text).hexdigest()
-        else:
-            if (args.sha256):
-                #print dataFromFile.readline()
-                for sha256 in dataFromFile:
-                    shaList.append(sha256[0:hashPartLength])
-    dataFromFile.close()
+        self.hashPartLength = int(self.bits)/4
+        self.shaList = []
+
+        with open(self.inputFile, 'r') as dataFromFile:
+            if (self.text):
+                text = dataFromFile.read()
+                self.shaList += hashlib.sha256(text).hexdigest()
+            else:
+                if (self.sha256):
+                    #print dataFromFile.readline()
+                    for hash in dataFromFile:
+                        self.shaList.append(hash[0:self.hashPartLength])
+        dataFromFile.close()
 
     """ Ready for threading - not be real with set (just with slower database)
     if (len(sha256) % hashPartLength == 0): #seperation of hash to n-bits blocks
@@ -42,12 +41,7 @@ try:
     else:
         print 'Badly aliquot bit value! Use only the power of two... '
     """
-except Exception,e:
-    print str(e)
 
-raw_input('\nPress Enter to continue...')
-
-class Shacol:
     def findCollisionFast(self, hashPart=None):
         """
         Best performance function - high RAM load
@@ -374,18 +368,33 @@ class Shacol:
         except Exception,e:
             print str(e)
 
-shacol = Shacol() #Instance of the class Shacol
+def main():
+    #Input parameters
+    parser = argparse.ArgumentParser(usage='$prog [options] -sha2 -b 32 -i hash.txt',description='SHA collision finder', add_help=True, epilog='SHA collision finder. Made by Jan Stangler, Ondrej Gajdusek, Sarka Chwastova, VUT FEKT, ICT1 project, 2017')
+    parser.add_argument('-sha2','--sha256', action='store_true', dest='sha256', help='-sha2 (hash algorithm)', required=True)
+    parser.add_argument('-b','--bits', action='store', dest='bits', help='-b 32 (Number of hash bits to find collision)', required=True)
+    parser.add_argument('-i','--input', action='store', dest='inputFile', help='-i input.txt The input file with hashes', required=True)
+    parser.add_argument('-hg','--hashgroup', action='store_true', dest='hashGroup', help='-h The input file has hashes per line', required=False)
+    parser.add_argument('-t','--text', action='store_true', dest='text', help='-t The input file has text inside', required=False)
+    parser.add_argument('-f','--first', action='store_true', dest='first', help='-f Collision with the first one hash', required=False)
+    args = parser.parse_args()
 
-for hashes in shaList:
-    shacol.findCollisionFast(hashes)
+    #raw_input('\nPress Enter to continue...')
 
-#shacol.findCollisionSetArray(hashPart)
-#shacol.findCollisionSets(hashPart)
+    shacol = Shacol(args.sha256, args.bits, args.inputFile, args.hashGroup, args.text, args.first) #Instance of the class Shacol
+
+    for hashes in shacol.shaList:
+        shacol.findCollisionFast(hashes)
+
+    #shacol.findCollisionSetArray()
+    #shacol.findCollisionSets()
+
+if __name__ == "__main__":
+    main()
 
 #There will be difference and dependence between threads in the index hashPart[0]...
 #myData = threading.local()
 
-#main function???
 """
 if __name__ == '__main__':
         try:
