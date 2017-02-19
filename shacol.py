@@ -10,6 +10,7 @@ from sets import Set
 from collections import deque
 from StringIO import StringIO
 import re, sys, getopt
+import redis
 
 #Input parameters
 parser = argparse.ArgumentParser(usage='$prog [options] -sha2 -b 32 -i hash.txt',description='SHA collision finder', add_help=True, epilog='SHA collision finder. Made by Jan Stangler, Ondrej Gajdusek, Sarka Chwastova, VUT FEKT, ICT1 project, 2017')
@@ -343,6 +344,32 @@ class Shacol:
             print 'Index of collision hash:', indexofcollision
 
             return newHashPart
+
+        except Exception,e:
+            print str(e)
+
+    def findCollisionWithDBSet(self, hashPart=None):
+        try:
+            pool = redis.ConnectionPool(host='localhost', port=6379, db=0)
+            r = redis.Redis(connection_pool=pool)
+            r.flushdb()
+
+            count = 0
+            hashPartLength = len(hashPart)
+            startTime = time.time()
+            while not r.sismember('hset', hashPart):
+                r.sadd('hset', hashPart)
+                count += 1
+                if count % 10000000 == 0 : print count
+                hashPart = hashlib.sha256(hashPart).hexdigest()[0:hashPartLength]
+
+            totalTime = round(time.time() - startTime, 12)
+            print('\nDBSet method - Collision found process succeeded!\n')
+            print("Collision found after %s seconds" % (totalTime))
+            #print 'GetSizeOf:', sys.getsizeof(hashPartSet)
+
+            print 'Count of the cycles:', r.scard('hset')
+            print 'Collision hash:', hashPart
 
         except Exception,e:
             print str(e)
