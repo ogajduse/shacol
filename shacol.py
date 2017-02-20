@@ -23,6 +23,7 @@ class Shacol:
 
         self.hashPartLength = int(self.bits)/4
         self.shaList = []
+        self.hashPart = str()
 
         with open(self.inputFile, 'r') as dataFromFile:
             if (self.text):
@@ -59,6 +60,8 @@ class Shacol:
         Best performance function - high RAM load
         """
         try:
+            if not hashPart:
+                hashPart = self.hashPart
             print '\nInput hashPart:', hashPart
             hashPartSet = Set()
             hashPartSet2 = Set()
@@ -362,6 +365,9 @@ class Shacol:
             pool = redis.ConnectionPool(host='localhost', port=6379, db=0)
             r = redis.Redis(connection_pool=pool)
             r.flushdb()
+
+            if not hashPart:
+                hashPart = r
 
             count = 0
             hashPartLength = len(hashPart)
