@@ -412,7 +412,11 @@ def main():
     #shacol.findCollisionSets()
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print('\nInterrupted... Terminating')
+        sys.exit()
 
 #There will be difference and dependence between threads in the index hashPart[0]...
 #myData = threading.local()
