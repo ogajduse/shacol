@@ -26,17 +26,18 @@ class Shacol:
         self.hashPart = str()
 
         with open(self.inputFile, 'r') as dataFromFile:
-            if (self.text):
+            if self.text:
                 text = dataFromFile.read()
                 self.shaList += hashlib.sha256(text).hexdigest()
             else:
-                if (self.sha256):
+                if self.sha256:
                     #print dataFromFile.readline()
-                    for hash in dataFromFile:
-                        self.shaList.append(hash[0:self.hashPartLength])
+                    for hashinfile in dataFromFile:
+                        self.shaList.append(hashinfile[0:self.hashPartLength])
         dataFromFile.close()
 
-    """ Ready for threading - not be real with set (just with slower database with low RAM consumption)
+    """ Ready for threading - not be real with set (just with slower database with
+        low RAM consumption)
     if (len(sha256) % hashPartLength == 0): #seperation of hash to n-bits blocks
         hashPart = [sha256[i:i+hashPartLength] for i in range(0, len(sha256), hashPartLength)]
     else:
@@ -47,13 +48,16 @@ class Shacol:
         printHashes = str()
         for i in self.shaList:
             printHashes += i +'\t'
+        #print absolute path to input file
+        print('\nYou are trying to find a collision with %s hash for %db with SHA-2.\n' %
+              ('first' if self.first else 'arbitary', self.bits) +
+              'Using %s as input file with %s.' %
+              (self.inputFile,
+               'one hash inside' if not self.hashGroup else 'with one hash per line inside.') +
+              '\nInput %s %s' % ('hash is  '
+                                 if not self.hashGroup else 'hashes are ',
+                                 self.hashPart if not self.hashGroup else printHashes))
 
-        print('\nYou are trying to find a collision with %s hash for %db with SHA-2.\n' % ('first' if self.first else
-                                                                                           'arbitary', self.bits) +
-              'Using %s as input file with %s.' % (self.inputFile,
-                                                   'one hash inside' if not self.hashGroup else
-                                                   'with one hash per line inside.') +
-              '\nInput %s %s' % ('hash is  ' if not self.hashGroup else 'hashes are ', self.hashPart if not self.hashGroup else printHashes))
 
     def findCollisionFast(self, hashPart=None):
         """
@@ -108,7 +112,19 @@ class Shacol:
             count = 0
 
             startTime = time.time()
-            while newHashPart not in (hashPartSet or hashPartSet2 or hashPartSet3 or hashPartSet4 or hashPartSet5 or hashPartSet6 or hashPartSet7 or hashPartSet8 or hashPartSet9 or hashPartSet10 or hashPartSet11 or hashPartSet12 or hashPartSet13 or hashPartSet14 or hashPartSet15 or hashPartSet16 or hashPartSet17 or hashPartSet18 or hashPartSet19 or hashPartSet20 or hashPartSet21 or hashPartSet22 or hashPartSet23 or hashPartSet24 or hashPartSet25 or hashPartSet26 or hashPartSet27 or hashPartSet28 or hashPartSet29 or hashPartSet30 or hashPartSet31 or hashPartSet32 or hashPartSet33 or hashPartSet34 or hashPartSet35 or hashPartSet36 or hashPartSet37 or hashPartSet38 or hashPartSet39):
+            while newHashPart not in (hashPartSet or hashPartSet2 or hashPartSet3 or hashPartSet4
+                                      or hashPartSet5 or hashPartSet6 or hashPartSet7
+                                      or hashPartSet8 or hashPartSet9 or hashPartSet10
+                                      or hashPartSet11 or hashPartSet12 or hashPartSet13
+                                      or hashPartSet14 or hashPartSet15 or hashPartSet16
+                                      or hashPartSet17 or hashPartSet18 or hashPartSet19
+                                      or hashPartSet20 or hashPartSet21 or hashPartSet22
+                                      or hashPartSet23 or hashPartSet24 or hashPartSet25
+                                      or hashPartSet26 or hashPartSet27 or hashPartSet28
+                                      or hashPartSet29 or hashPartSet30 or hashPartSet31
+                                      or hashPartSet32 or hashPartSet33 or hashPartSet34
+                                      or hashPartSet35 or hashPartSet36 or hashPartSet37
+                                      or hashPartSet38 or hashPartSet39):
                 if count <= 85000000:
                     hashPartSet.add(newHashPart)
                 elif count <= 170000000:
@@ -189,14 +205,16 @@ class Shacol:
                     hashPartSet39.add(newHashPart)
 
                 count += 1
-                if count % 10000000 == 0 : print count
+                if count % 10000000 == 0:
+                    print count
                 newHash = hashlib.sha256(newHashPart).hexdigest()
                 newHashPart = newHash[0:hashPartLength]
 
             totalTime = round(time.time() - startTime, 12)
             print('\n##### Fast method - Collision found process succeeded! #####')
             print("Collision found after %s seconds" % (totalTime))
-            print 'Count of the cycles:',count
+            #print 'GetSizeOf:', sys.getsizeof(hashPartSet)
+            print 'Count of the cycles:', count
             print 'Collision hash:', newHashPart
 
             hashPartSet.clear()
@@ -238,7 +256,7 @@ class Shacol:
             hashPartSet37.clear()
             hashPartSet38.clear()
             hashPartSet39.clear()
-        except Exception,e:
+        except Exception, e:
             print str(e)
 
     def findCollisionSetArray(self, hashPart=None): #Working fine but a bit time consuming
@@ -267,8 +285,10 @@ class Shacol:
                     locals()['hashPartSet%s' % actualSetNumber].add(newHashPart)
                 """
                 count += 1
-                if count == setCount : setIter += 1
-                if count % 10000000 == 0 : print count
+                if count == setCount:
+                    setIter += 1
+                if count % 10000000 == 0:
+                    print count
                 newHash = hashlib.sha256(newHashPart).hexdigest()
                 newHashPart = newHash[0:hashPartLength]
 
@@ -289,7 +309,7 @@ class Shacol:
             print 'Index of collision hash:', indexOfCollision
             return newHashPart
 
-        except Exception,e:
+        except Exception, e:
             print str(e)
 
     def findCollisionWithDBSet(self, hashPart=None):
@@ -310,7 +330,8 @@ class Shacol:
             while not r.sismember('hset', hashPart):
                 r.sadd('hset', hashPart)
                 count += 1
-                if count % 10000000 == 0 : print count
+                if count % 10000000 == 0:
+                    print count
                 hashPart = hashlib.sha256(hashPart).hexdigest()[0:hashPartLength]
 
             totalTime = round(time.time() - startTime, 12)
@@ -320,22 +341,34 @@ class Shacol:
             print 'Collision hash:', hashPart
             #print 'Index of collision hash:'
 
-        except Exception,e:
+        except Exception, e:
             print str(e)
 
 def main():
     #Input parameters
-    parser = argparse.ArgumentParser(usage='$prog [options] -sha2 -b 32 -i hash.txt',description='SHA collision finder', add_help=True, epilog='SHA collision finder. Written by Jan Stangler, Ondrej Gajdusek, Sarka Chwastova, VUT FEKT, ICT1 project, 2017')
-    parser.add_argument('-sha2','--sha256', action='store_true', dest='sha256', help='-sha2 (hash algorithm)', required=True)
-    parser.add_argument('-b','--bits', action='store', dest='bits', help='-b 32 (Number of hash bits to find collision)', required=True)
-    parser.add_argument('-i','--input', action='store', dest='inputFile', help='-i input.txt The input file with hashes', required=True)
-    parser.add_argument('-hg','--hashgroup', action='store_true', dest='hashGroup', help='-h The input file has hashes per line', required=False)
-    parser.add_argument('-t','--text', action='store_true', dest='text', help='-t The input file of random text', required=False)
-    parser.add_argument('-f','--first', action='store_true', dest='first', help='-f Collision with the first one hash', required=False)
+
+    parser = argparse.ArgumentParser(usage='$prog [options] -sha2 -b 32 -i hash.txt',
+                                     description='SHA collision finder', add_help=True,
+                                     epilog='SHA collision finder. Written by Jan Stangler, Ondrej\
+                                      Gajdusek, Sarka Chwastova, VUT FEKT, ICT1 project, 2017')
+    parser.add_argument('-sha2', '--sha256', action='store_true', dest='sha256',
+                        help='-sha2 (hash algorithm)', required=True)
+    parser.add_argument('-b', '--bits', action='store', dest='bits',
+                        help='-b 32 (Number of hash bits to find collision)', required=True)
+    parser.add_argument('-i', '--input', action='store', dest='inputFile',
+                        help='-i input.txt The input file with hashes', required=True)
+    parser.add_argument('-hg', '--hashgroup', action='store_true', dest='hashGroup',
+                        help='-h The input file has hashes per line', required=False)
+    parser.add_argument('-t', '--text', action='store_true', dest='text',
+                        help='-t The input file of random text', required=False)
+    parser.add_argument('-f', '--first', action='store_true', dest='first',
+                        help='-f Collision with the first one hash', required=False)
     args = parser.parse_args()
 
-    shacol = Shacol(args.sha256, args.bits, args.inputFile, args.hashGroup, args.text, args.first) #Instance of the class Shacol
-    shacol.getInfo()
+    #Instance of the class Shacol
+    shacol = Shacol(args.sha256, args.bits, args.inputFile, args.hashGroup, args.text, args.first)
+    shacol.getinfo()
+
     print("Do you want to proceed?")
     raw_input('\nPress Enter to continue...')
 
@@ -352,6 +385,8 @@ if __name__ == "__main__":
         print('\nInterrupted... Terminating')
         sys.exit()
 
-#There will be difference and dependence between threads in the index hashPart[0],hashPart[1] for second thread, etc. (not real yet)
+
+#There will be difference and dependence between threads in the index hashPart[0],hashPart[1] for
+# second thread, etc. (not real yet)
 #Implementation of the monitoring algorithm using thread
 #myData = threading.local()
