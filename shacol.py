@@ -406,23 +406,3 @@ if __name__ == "__main__":
 
 #There will be difference and dependence between threads in the index hashPart[0]...
 #myData = threading.local()
-
-"""
-if __name__ == '__main__':
-        try:
-    	    account = sys.argv[1]
-            n = int(sys.argv[2])
-            m = int(sys.argv[3])
-            url = sys.argv[4]
-
-        except Exception, e:
-    	print e
-    	print 'Error... program is going to be exit...'
-    	sys.exit()
-
-        try:
-            form = sys.argv[5]
-
-        except Exception, e:
-            form = 'account'
-    """
