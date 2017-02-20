@@ -286,7 +286,7 @@ class Shacol:
                 if count % 10000000 == 0 : print count
                 newHash = hashlib.sha256(newHashPart).hexdigest()
                 newHashPart = newHash[0:hashPartLength] #Special ID as input parameter for threading
-            #In case of threding is needed the solution for number of position every thread!!!
+            #In case of threading is needed the solution for number of position every thread!!!
             totalTime = round(time.time() - startTime, 12)
             print('\nPrevious Server method - Collision found process succeeded!\n')
             print("Collision found after %s seconds" % (totalTime))
@@ -318,7 +318,7 @@ class Shacol:
             newHashPart = hashPart
             startTime = time.time()
 
-            while newHashPart not in setArray[Set() in xrange(setNumber)]: #Zkuste najit chybu, proc to hleda jine kolize :(
+            while newHashPart not in setArray[Set() in xrange(setNumber)]:
                 setArray[setIter].add(newHashPart)
                 count += 1
                 if count == setCount : setIter += 1
@@ -351,6 +351,9 @@ class Shacol:
             print str(e)
 
     def findCollisionWithDBSet(self, hashPart=None):
+        """
+        Function is looking for a collision with hashPart
+        """
         try:
             pool = redis.ConnectionPool(host='localhost', port=6379, db=0)
             r = redis.Redis(connection_pool=pool)
@@ -378,7 +381,7 @@ class Shacol:
 
 def main():
     #Input parameters
-    parser = argparse.ArgumentParser(usage='$prog [options] -sha2 -b 32 -i hash.txt',description='SHA collision finder', add_help=True, epilog='SHA collision finder. Made by Jan Stangler, Ondrej Gajdusek, Sarka Chwastova, VUT FEKT, ICT1 project, 2017')
+    parser = argparse.ArgumentParser(usage='$prog [options] -sha2 -b 32 -i hash.txt',description='SHA collision finder', add_help=True, epilog='SHA collision finder. Written by Jan Stangler, Ondrej Gajdusek, Sarka Chwastova, VUT FEKT, ICT1 project, 2017')
     parser.add_argument('-sha2','--sha256', action='store_true', dest='sha256', help='-sha2 (hash algorithm)', required=True)
     parser.add_argument('-b','--bits', action='store', dest='bits', help='-b 32 (Number of hash bits to find collision)', required=True)
     parser.add_argument('-i','--input', action='store', dest='inputFile', help='-i input.txt The input file with hashes', required=True)
