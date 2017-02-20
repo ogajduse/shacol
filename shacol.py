@@ -15,7 +15,7 @@ import redis
 class Shacol:
     def __init__(self, sha256, bits, inputFile, hashGroup=False, text=False, first=False):
         self.sha256 = sha256
-        self.bits = bits
+        self.bits = int(bits)
         self.inputFile = inputFile
         self.hashGroup = hashGroup
         self.text = text
@@ -41,6 +41,14 @@ class Shacol:
     else:
         print 'Badly aliquot bit value! Use only the power of two... '
     """
+
+    def getinfo(self):
+        print('\nYou are trying to find a collision with %s hash for %db with SHA-2.\n' % ('first' if self.first else
+                                                                                           'arbitary', self.bits) +
+              'Using %s as input file with %s.' % (self.inputFile,
+                                                   'one hash inside' if not self.hashGroup else
+                                                   'with one hash per line inside.') +
+              '')
 
     def findCollisionFast(self, hashPart=None):
         """
@@ -379,9 +387,10 @@ def main():
     parser.add_argument('-f','--first', action='store_true', dest='first', help='-f Collision with the first one hash', required=False)
     args = parser.parse_args()
 
-    #raw_input('\nPress Enter to continue...')
-
     shacol = Shacol(args.sha256, args.bits, args.inputFile, args.hashGroup, args.text, args.first) #Instance of the class Shacol
+    shacol.getinfo()
+    print("Do you want to proceed?")
+    raw_input('\nPress Enter to continue...')
 
     for hashes in shacol.shaList:
         shacol.findCollisionFast(hashes)
