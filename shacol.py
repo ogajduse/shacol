@@ -1,5 +1,7 @@
 #!/usr/bin/env python
+
 import os
+import sys
 import time
 #import Queue
 import hashlib
@@ -7,9 +9,7 @@ import argparse
 #import threading
 #import linecache
 from sets import Set
-from collections import deque
 from StringIO import StringIO
-import re, sys, getopt
 import redis
 
 class Shacol:
@@ -36,24 +36,24 @@ class Shacol:
                         self.shaList.append(hash[0:self.hashPartLength])
         dataFromFile.close()
 
-    """ Ready for threading - not be real with set (just with slower database)
+    """ Ready for threading - not be real with set (just with slower database with low RAM consumption)
     if (len(sha256) % hashPartLength == 0): #seperation of hash to n-bits blocks
         hashPart = [sha256[i:i+hashPartLength] for i in range(0, len(sha256), hashPartLength)]
     else:
         print 'Badly aliquot bit value! Use only the power of two... '
     """
 
-    def getinfo(self):
-        printhashes = str()
+    def getInfo(self):
+        printHashes = str()
         for i in self.shaList:
-            printhashes += i +'\t'
+            printHashes += i +'\t'
 
         print('\nYou are trying to find a collision with %s hash for %db with SHA-2.\n' % ('first' if self.first else
                                                                                            'arbitary', self.bits) +
               'Using %s as input file with %s.' % (self.inputFile,
                                                    'one hash inside' if not self.hashGroup else
                                                    'with one hash per line inside.') +
-              '\nInput %s %s' % ('hash is  ' if not self.hashGroup else 'hashes are ', self.hashPart if not self.hashGroup else printhashes))
+              '\nInput %s %s' % ('hash is  ' if not self.hashGroup else 'hashes are ', self.hashPart if not self.hashGroup else printHashes))
 
     def findCollisionFast(self, hashPart=None):
         """
@@ -191,15 +191,13 @@ class Shacol:
                 count += 1
                 if count % 10000000 == 0 : print count
                 newHash = hashlib.sha256(newHashPart).hexdigest()
-                newHashPart = newHash[0:hashPartLength] #Special ID as input parameter for threading
-            #In case of threding is needed the solution for number of position every thread!!!
+                newHashPart = newHash[0:hashPartLength]
+
             totalTime = round(time.time() - startTime, 12)
-            print('Fast Method - Collision found process succeeded!\n')
+            print('\n##### Fast method - Collision found process succeeded! #####')
             print("Collision found after %s seconds" % (totalTime))
-            #print 'GetSizeOf:', sys.getsizeof(hashPartSet)
             print 'Count of the cycles:',count
             print 'Collision hash:', newHashPart
-
 
             hashPartSet.clear()
             hashPartSet2.clear()
@@ -243,115 +241,52 @@ class Shacol:
         except Exception,e:
             print str(e)
 
-    def findCollisionSets(self, hashPart=None): #Hnusna metoda, ktera je rychla a bezi na serveru
+    def findCollisionSetArray(self, hashPart=None): #Working fine but a bit time consuming
         """
         Function to be thread by individually calling - looking for a collision hashPart
         """
         try:
-            print 'Input hashPart:', hashPart
-            hashPartSet1 = Set([])
-            hashPartSet2 = Set([])
-            hashPartSet3 = Set([])
-            hashPartSet4 = Set([])
-            hashPartSet5 = Set([])
-            hashPartSet6 = Set([])
-            hashPartSet7 = Set([])
-            hashPartSet8 = Set([])
-            hashPartSet9 = Set([])
-            hashPartSet10 = Set([])
-            hashPartSet11 = Set([])
-            hashPartSet12 = Set([])
-            hashPartSet13 = Set([])
-            hashPartSet14 = Set([])
-            hashPartSet15 = Set([])
-            hashPartSet16 = Set([])
-            hashPartSet17 = Set([])
-            hashPartSet18 = Set([])
-            hashPartSet19 = Set([])
-            hashPartSet20 = Set([])
-            hashPartSet21 = Set([])
-            hashPartSet22 = Set([])
-            hashPartSet23 = Set([])
-            hashPartSet24 = Set([])
-            hashPartSet25 = Set([])
+            setIter = 0
+            count = 0
+            setCount = 80000000 #50-85 milions per set dependly on bit length
+            setNumber = 30 #number of sets
+            #actualSetNumber = 0
+            setArray = [Set() for _ in xrange(setNumber)]
 
             hashPartLength = len(hashPart)
             newHashPart = hashPart
-            hashesInSet = 85000000
-            count = 0
 
-            actualSetNumber = 0
             startTime = time.time()
-            while newHashPart not in (hashPartSet1 or hashPartSet2 or hashPartSet3 or hashPartSet4 or hashPartSet5 or hashPartSet6 or hashPartSet7 or hashPartSet8 or hashPartSet9 or hashPartSet10 or hashPartSet11 or hashPartSet12 or hashPartSet13 or hashPartSet14 or hashPartSet15 or hashPartSet16 or hashPartSet17 or hashPartSet18 or hashPartSet19 or hashPartSet20 or hashPartSet21 or hashPartSet22 or hashPartSet23 or hashPartSet24 or hashPartSet25):
+            while newHashPart not in setArray[Set() in xrange(setNumber)]:
+                setArray[setIter].add(newHashPart)
+                """
                 if not count % hashesInSet == 0:
                     locals()['hashPartSet%s' % actualSetNumber].add(newHashPart)
                 else:
                     actualSetNumber+=1
                     locals()['hashPartSet%s' % actualSetNumber].add(newHashPart)
-
-                count += 1
-                if count % 10000000 == 0 : print count
-                newHash = hashlib.sha256(newHashPart).hexdigest()
-                newHashPart = newHash[0:hashPartLength] #Special ID as input parameter for threading
-            #In case of threading is needed the solution for number of position every thread!!!
-            totalTime = round(time.time() - startTime, 12)
-            print('\nPrevious Server method - Collision found process succeeded!\n')
-            print("Collision found after %s seconds" % (totalTime))
-            #print 'GetSizeOf:', sys.getsizeof(hashPartSet)
-            print 'Count of the cycles:',count
-            print 'Collision hash:', newHashPart
-
-            #hashPartList = list(hashPartSet)
-            #print 'Index of collision part:', hashPartList.index(newHashPart)
-            #.clear()
-            return newHashPart
-        except Exception,e:
-            print str(e)
-
-    def findCollisionSetArray(self, hashPart=None): #Tady je ten zadrhel....
-        """
-        Function to be thread by individually calling - looking for a collision hashPart
-        """
-        #Promyslet tvorbu vlakna, ktere bude prubezne hlidat zaplneni setu
-        try:
-            setIter = 0
-            count = 0
-            setCount = 80000000 #50-85 milions per set
-            setNumber = 30 #number of sets
-
-            setArray = [Set() for _ in xrange(setNumber)]
-
-            hashPartLength = len(hashPart)
-            newHashPart = hashPart
-            startTime = time.time()
-
-            while newHashPart not in setArray[Set() in xrange(setNumber)]:
-                setArray[setIter].add(newHashPart)
+                """
                 count += 1
                 if count == setCount : setIter += 1
                 if count % 10000000 == 0 : print count
                 newHash = hashlib.sha256(newHashPart).hexdigest()
-                newHashPart = newHash[0:hashPartLength] #Special ID as input parameter for threading
+                newHashPart = newHash[0:hashPartLength]
 
             totalTime = round(time.time() - startTime, 12)
-            print('\nSetArray method - Collision found process succeeded!\n')
+            print('\n##### SetArray method - Collision found process succeeded! #####')
             print("Collision found after %s seconds" % (totalTime))
-            #print 'GetSizeOf:', sys.getsizeof(hashPartSet)
-
             print 'Count of the cycles:', len(setArray[Set() in xrange(setNumber)])
             print 'Collision hash:', newHashPart
 
-            indexofcollision = int()
-            iterace=0
+            indexOfCollision = int()
+            iterace = 0
             for i in setArray:
-                indexofcollision = list(i).index(newHashPart)
-                if indexofcollision:
-                    indexofcollision += iterace*setCount
+                indexOfCollision = list(i).index(newHashPart)
+                if indexOfCollision:
+                    indexOfCollision += iterace*setCount
                     break
                 iterace += 1
-
-            print 'Index of collision hash:', indexofcollision
-
+            print 'Index of collision hash:', indexOfCollision
             return newHashPart
 
         except Exception,e:
@@ -379,12 +314,11 @@ class Shacol:
                 hashPart = hashlib.sha256(hashPart).hexdigest()[0:hashPartLength]
 
             totalTime = round(time.time() - startTime, 12)
-            print('\nDBSet method - Collision found process succeeded!\n')
+            print('\n##### DBSet method - Collision found process succeeded! #####')
             print("Collision found after %s seconds" % (totalTime))
-            #print 'GetSizeOf:', sys.getsizeof(hashPartSet)
-
             print 'Count of the cycles:', r.scard('hset')
             print 'Collision hash:', hashPart
+            #print 'Index of collision hash:'
 
         except Exception,e:
             print str(e)
@@ -396,12 +330,12 @@ def main():
     parser.add_argument('-b','--bits', action='store', dest='bits', help='-b 32 (Number of hash bits to find collision)', required=True)
     parser.add_argument('-i','--input', action='store', dest='inputFile', help='-i input.txt The input file with hashes', required=True)
     parser.add_argument('-hg','--hashgroup', action='store_true', dest='hashGroup', help='-h The input file has hashes per line', required=False)
-    parser.add_argument('-t','--text', action='store_true', dest='text', help='-t The input file has text inside', required=False)
+    parser.add_argument('-t','--text', action='store_true', dest='text', help='-t The input file of random text', required=False)
     parser.add_argument('-f','--first', action='store_true', dest='first', help='-f Collision with the first one hash', required=False)
     args = parser.parse_args()
 
     shacol = Shacol(args.sha256, args.bits, args.inputFile, args.hashGroup, args.text, args.first) #Instance of the class Shacol
-    shacol.getinfo()
+    shacol.getInfo()
     print("Do you want to proceed?")
     raw_input('\nPress Enter to continue...')
 
@@ -409,7 +343,7 @@ def main():
         shacol.findCollisionFast(hashes)
 
     #shacol.findCollisionSetArray()
-    #shacol.findCollisionSets()
+    #shacol.findCollisionWithDBSet()
 
 if __name__ == "__main__":
     try:
@@ -418,5 +352,6 @@ if __name__ == "__main__":
         print('\nInterrupted... Terminating')
         sys.exit()
 
-#There will be difference and dependence between threads in the index hashPart[0]...
+#There will be difference and dependence between threads in the index hashPart[0],hashPart[1] for second thread, etc. (not real yet)
+#Implementation of the monitoring algorithm using thread
 #myData = threading.local()
