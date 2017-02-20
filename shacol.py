@@ -43,12 +43,16 @@ class Shacol:
     """
 
     def getinfo(self):
+        printhashes = str()
+        for i in self.shaList:
+            printhashes += i +'\t'
+
         print('\nYou are trying to find a collision with %s hash for %db with SHA-2.\n' % ('first' if self.first else
                                                                                            'arbitary', self.bits) +
               'Using %s as input file with %s.' % (self.inputFile,
                                                    'one hash inside' if not self.hashGroup else
                                                    'with one hash per line inside.') +
-              '')
+              '\nInput %s %s' % ('hash is  ' if not self.hashGroup else 'hashes are ', self.hashPart if not self.hashGroup else printhashes))
 
     def findCollisionFast(self, hashPart=None):
         """
