@@ -367,7 +367,7 @@ def main():
 
     #Instance of the class Shacol
     shacol = Shacol(args.sha256, args.bits, args.inputFile, args.hashGroup, args.text, args.first)
-    shacol.getinfo()
+    shacol.getInfo()
 
     print("Do you want to proceed?")
     raw_input('\nPress Enter to continue...')
