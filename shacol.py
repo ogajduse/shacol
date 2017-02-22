@@ -1,14 +1,17 @@
-#!/usr/bin/env python
+ #!/usr/bin/env python
+#requirments - guppy, redis
 
 import os
 import sys
 import time
-#import Queue
+import timeit
+import Queue
 import hashlib
 import argparse
-#import threading
-#import linecache
+import threading
+import linecache
 from sets import Set
+from guppy import hpy
 from StringIO import StringIO
 import redis
 
@@ -31,12 +34,11 @@ class Shacol:
                 self.shaList += hashlib.sha256(text).hexdigest()
             else:
                 if self.sha256:
-                    #print dataFromFile.readline()
-                    for hashinfile in dataFromFile:
-                        self.shaList.append(hashinfile[0:self.hashPartLength])
+                    for hashInFile in dataFromFile:
+                        self.shaList.append(hashInFile[0:self.hashPartLength])
         dataFromFile.close()
 
-    """ Ready for threading - not be real with set (just with slower database with
+    """ Ready for threading - not be real with set (just with a slower database using
         low RAM consumption)
     if (len(sha256) % hashPartLength == 0): #seperation of hash to n-bits blocks
         hashPart = [sha256[i:i+hashPartLength] for i in range(0, len(sha256), hashPartLength)]
@@ -106,6 +108,7 @@ class Shacol:
             hashPartSet37 = Set()
             hashPartSet38 = Set()
             hashPartSet39 = Set()
+            hashPartSet40 = Set()
 
             hashPartLength = len(hashPart)
             newHashPart = hashPart
@@ -124,7 +127,7 @@ class Shacol:
                                       or hashPartSet29 or hashPartSet30 or hashPartSet31
                                       or hashPartSet32 or hashPartSet33 or hashPartSet34
                                       or hashPartSet35 or hashPartSet36 or hashPartSet37
-                                      or hashPartSet38 or hashPartSet39):
+                                      or hashPartSet38 or hashPartSet39 or hashPartSet40):
                 if count <= 85000000:
                     hashPartSet.add(newHashPart)
                 elif count <= 170000000:
@@ -201,8 +204,10 @@ class Shacol:
                     hashPartSet37.add(newHashPart)
                 elif count <= 2930000000:
                     hashPartSet38.add(newHashPart)
-                else:
+                elif count <= 3010000000:
                     hashPartSet39.add(newHashPart)
+                else:
+                    hashPartSet40.add(newHashPart)
 
                 count += 1
                 if count % 10000000 == 0:
@@ -213,7 +218,6 @@ class Shacol:
             totalTime = round(time.time() - startTime, 12)
             print('\n##### Fast method - Collision found process succeeded! #####')
             print("Collision found after %s seconds" % (totalTime))
-            #print 'GetSizeOf:', sys.getsizeof(hashPartSet)
             print 'Count of the cycles:', count
             print 'Collision hash:', newHashPart
 
@@ -256,6 +260,7 @@ class Shacol:
             hashPartSet37.clear()
             hashPartSet38.clear()
             hashPartSet39.clear()
+            hashPartSet40.clear()
         except Exception, e:
             print str(e)
 
@@ -268,7 +273,6 @@ class Shacol:
             count = 0
             setCount = 80000000 #50-85 milions per set dependly on bit length
             setNumber = 30 #number of sets
-            #actualSetNumber = 0
             setArray = [Set() for _ in xrange(setNumber)]
 
             hashPartLength = len(hashPart)
@@ -277,13 +281,7 @@ class Shacol:
             startTime = time.time()
             while newHashPart not in setArray[Set() in xrange(setNumber)]:
                 setArray[setIter].add(newHashPart)
-                """
-                if not count % hashesInSet == 0:
-                    locals()['hashPartSet%s' % actualSetNumber].add(newHashPart)
-                else:
-                    actualSetNumber+=1
-                    locals()['hashPartSet%s' % actualSetNumber].add(newHashPart)
-                """
+
                 count += 1
                 if count == setCount:
                     setIter += 1
@@ -307,6 +305,32 @@ class Shacol:
                     break
                 iterace += 1
             print 'Index of collision hash:', indexOfCollision
+            return newHashPart
+
+        except Exception, e:
+            print str(e)
+
+    def findCollisionFirst(self, hashPart=None):
+        """
+        Function to be thread by individually calling - looking for a collision with first hashPart
+        """
+        try:
+            count = 0
+            newHashPart = ''
+            hashPartLength = len(hashPart)
+
+            startTime = time.time()
+            while hashPart != newHashPart:
+                newHash = hashlib.sha256(newHashPart).hexdigest()
+                newHashPart = newHash[0:hashPartLength]
+                count += 1
+                if count % 100000000 == 0 : print count
+            totalTime = round(time.time() - startTime, 12)
+            print('\n##### findCollisionFirst method - Collision found process succeeded! #####')
+            print("Collision found after %s seconds" % (totalTime))
+            print 'Count of the cycles:', count
+            print 'Collision hash:', newHashPart
+
             return newHashPart
 
         except Exception, e:
@@ -372,11 +396,40 @@ def main():
     print("Do you want to proceed?")
     raw_input('\nPress Enter to continue...')
 
+    start = timeit.default_timer() #Default run time monitoring
+
+    """
+    #Queuing and threading
+    q = Queue.LifoQueue()
+    #put items to queue
+    for key in jobTrack:
+    	if jobTrack[key] != "Invalid":
+    		q.put(str(key))
+    	else:
+    		print str(key) + " is not added to queue as its invalid"
+
+    #for i in range(100):
+    t1 = threading.Thread(target=findCollisionStatus) #,args=(q,))
+	t1.daemon = True
+    t1.start() #Start the thread
+
+    #q.join()
+    #print "\nFinally"
+    """
+
     for hashes in shacol.shaList:
         shacol.findCollisionFast(hashes)
 
+    if (args.first):
+        for hashes in shacol.shaList:
+            shacol.findCollisionFirst(hashes)
+
+    #shacol.findCollisionFirst(shacol.shaList[0])
     #shacol.findCollisionSetArray()
     #shacol.findCollisionWithDBSet()
+
+    stop = timeit.default_timer()
+
 
 if __name__ == "__main__":
     try:
@@ -385,8 +438,30 @@ if __name__ == "__main__":
         print('\nInterrupted... Terminating')
         sys.exit()
 
+def status(): #Count of cycles, array/database
+    countOfCycles = 0
+    runTime = ''
+    h = hpy()
 
-#There will be difference and dependence between threads in the index hashPart[0],hashPart[1] for
-# second thread, etc. (not real yet)
-#Implementation of the monitoring algorithm using thread
-#myData = threading.local()
+    print '\n' * 100
+    #shacol.findCollisionCheckSequence.count
+    print 'Runtime:', stop - start
+    print h.heap()
+
+def findCollisionStatus(q): #method working with threads, q means queqe
+    while not q.empty():
+        myCollision = threading.local()
+        myCollision.scanning = True
+        myCollision.dom = q.get
+        myCollision.pstart = pstart
+        myCollision.prepeat = prepeat
+        #str(myCollision.dom) --- now Processing
+        #str(threading.activeCount())
+
+        while (myCollision.scanning):
+            try:
+                status()
+            except Exception,e:
+                print str(e)
+                pass
+        myData.scanning = False
