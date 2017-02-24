@@ -2,9 +2,13 @@ import shacol
 
 sha256 = True
 BITS = 14
-inputFile = "../input.txt"
+inputFile = "../hash.txt"
 
 vysledky = dict()
 
 shacol = shacol.Shacol(sha256, BITS, inputFile)
-vysledky = shacol.findCollisionFast()
+
+for i in range(10, 21):
+    shacol.bits = i
+    vysledky = shacol.findCollisionFast()
+    print "pro pocet bitu ", i, vysledky
