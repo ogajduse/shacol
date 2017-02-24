@@ -261,6 +261,8 @@ class Shacol:
             hashPartSet38.clear()
             hashPartSet39.clear()
             hashPartSet40.clear()
+
+            return {"time":totalTime,"cycles":count, "collisionHash":newHashPart}
         except Exception, e:
             print str(e)
 
@@ -305,7 +307,7 @@ class Shacol:
                     break
                 iterace += 1
             print 'Index of collision hash:', indexOfCollision
-            return newHashPart
+            return {"time": totalTime, "cycles": count, "collisionHash": newHashPart, "indexOfCollisionHash": indexOfCollision}
 
         except Exception, e:
             print str(e)
@@ -331,7 +333,7 @@ class Shacol:
             print 'Count of the cycles:', count
             print 'Collision hash:', newHashPart
 
-            return newHashPart
+            return {"time": totalTime, "cycles": count, "collisionHash": newHashPart}
 
         except Exception, e:
             print str(e)
@@ -364,6 +366,7 @@ class Shacol:
             print 'Count of the cycles:', r.scard('hset')
             print 'Collision hash:', hashPart
             #print 'Index of collision hash:'
+            return {"time": totalTime, "cycles": count, "collisionHash": hashPart}
 
         except Exception, e:
             print str(e)
