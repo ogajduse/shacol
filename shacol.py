@@ -67,6 +67,9 @@ class Shacol:
                                  if not self.hashGroup else 'hashes are ',
                                  self.hashPart if not self.hashGroup else printHashes))
 
+    def changeBitLength(self, newBitLength):
+        self.bits = newBitLength
+        self.hashPartLength = self.bits/4
 
     def findCollisionFast(self, hashPart=None):
         """
