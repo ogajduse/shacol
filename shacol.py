@@ -29,13 +29,20 @@ class Shacol:
         self.hashPart = str()
 
         with open(self.inputFile, 'r') as dataFromFile:
-            if self.text:
-                text = dataFromFile.read()
-                self.shaList += hashlib.sha256(text).hexdigest()
-            else:
+            if self.hashGroup:
                 if self.sha256:
-                    for hashInFile in dataFromFile:
-                        self.shaList.append(hashInFile[0:self.hashPartLength])
+                    if self.text:
+                        for textInFile in dataFromFile:
+                            self.shaList.append(hashlib.sha256(textInFile).hexdigest()[0:self.hashPartLength])
+                    else:
+                        for hashInFile in dataFromFile:
+                            self.shaList.append(hashInFile[0:self.hashPartLength])
+            else:
+                if sha256:
+                    if self.text:
+                        self.hashPart = hashlib.sha256(dataFromFile.read()).hexdigest()[0:self.hashPartLength]
+                    else:
+                        self.hashPart = dataFromFile.readline()[0:self.hashPartLength]
         dataFromFile.close()
 
     """ Ready for threading - not be real with set (just with a slower database using
