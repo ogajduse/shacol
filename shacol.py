@@ -1,5 +1,5 @@
- #!/usr/bin/env python
-#requirments - guppy, redis
+# !/usr/bin/env python
+# requirments - guppy, redis
 
 import os
 import sys
@@ -15,6 +15,7 @@ from guppy import hpy
 from StringIO import StringIO
 import redis
 
+
 class Shacol:
     def __init__(self, sha256, bits, inputFile, hashGroup=False, text=False, first=False):
         self.sha256 = sha256
@@ -24,7 +25,7 @@ class Shacol:
         self.text = text
         self.first = first
 
-        self.hashPartLength = int(self.bits)/4
+        self.hashPartLength = int(self.bits) / 4
         self.shaList = []
         self.hashPart = str()
 
@@ -56,8 +57,8 @@ class Shacol:
     def getInfo(self):
         printHashes = str()
         for i in self.shaList:
-            printHashes += i +'\t'
-        #print absolute path to input file
+            printHashes += i + '\t'
+        # print absolute path to input file
         print('\nYou are trying to find a collision with %s hash for %db with SHA-2.\n' %
               ('first' if self.first else 'arbitary', self.bits) +
               'Using %s as input file with %s.' %
@@ -69,7 +70,7 @@ class Shacol:
 
     def changeBitLength(self, newBitLength):
         self.bits = newBitLength
-        self.hashPartLength = self.bits/4
+        self.hashPartLength = self.bits / 4
 
     def findCollisionFast(self, hashPart=None):
         """
@@ -272,19 +273,19 @@ class Shacol:
             hashPartSet39.clear()
             hashPartSet40.clear()
 
-            return {"time":totalTime,"cycles":count, "collisionHash":newHashPart}
+            return {"time": totalTime, "cycles": count, "collisionHash": newHashPart}
         except Exception, e:
             print str(e)
 
-    def findCollisionSetArray(self, hashPart=None): #Working fine but a bit time consuming
+    def findCollisionSetArray(self, hashPart=None):  # Working fine but a bit time consuming
         """
         Function to be thread by individually calling - looking for a collision hashPart
         """
         try:
             setIter = 0
             count = 0
-            setCount = 80000000 #50-85 milions per set dependly on bit length
-            setNumber = 30 #number of sets
+            setCount = 80000000  # 50-85 milions per set dependly on bit length
+            setNumber = 30  # number of sets
             setArray = [Set() for _ in xrange(setNumber)]
 
             hashPartLength = len(hashPart)
@@ -313,11 +314,12 @@ class Shacol:
             for i in setArray:
                 indexOfCollision = list(i).index(newHashPart)
                 if indexOfCollision:
-                    indexOfCollision += iterace*setCount
+                    indexOfCollision += iterace * setCount
                     break
                 iterace += 1
             print 'Index of collision hash:', indexOfCollision
-            return {"time": totalTime, "cycles": count, "collisionHash": newHashPart, "indexOfCollisionHash": indexOfCollision}
+            return {"time": totalTime, "cycles": count, "collisionHash": newHashPart,
+                    "indexOfCollisionHash": indexOfCollision}
 
         except Exception, e:
             print str(e)
@@ -336,7 +338,7 @@ class Shacol:
                 newHash = hashlib.sha256(newHashPart).hexdigest()
                 newHashPart = newHash[0:hashPartLength]
                 count += 1
-                if count % 100000000 == 0 : print count
+                if count % 100000000 == 0: print count
             totalTime = round(time.time() - startTime, 12)
             print('\n##### findCollisionFirst method - Collision found process succeeded! #####')
             print("Collision found after %s seconds" % (totalTime))
@@ -375,14 +377,15 @@ class Shacol:
             print("Collision found after %s seconds" % (totalTime))
             print 'Count of the cycles:', r.scard('hset')
             print 'Collision hash:', hashPart
-            #print 'Index of collision hash:'
+            # print 'Index of collision hash:'
             return {"time": totalTime, "cycles": count, "collisionHash": hashPart}
 
         except Exception, e:
             print str(e)
 
+
 def main():
-    #Input parameters
+    # Input parameters
 
     parser = argparse.ArgumentParser(usage='$prog [options] -sha2 -b 32 -i hash.txt',
                                      description='SHA collision finder', add_help=True,
@@ -402,14 +405,14 @@ def main():
                         help='-f Collision with the first one hash', required=False)
     args = parser.parse_args()
 
-    #Instance of the class Shacol
+    # Instance of the class Shacol
     shacol = Shacol(args.sha256, args.bits, args.inputFile, args.hashGroup, args.text, args.first)
     shacol.getInfo()
 
     print("Do you want to proceed?")
     raw_input('\nPress Enter to continue...')
 
-    start = timeit.default_timer() #Default run time monitoring
+    start = timeit.default_timer()  # Default run time monitoring
 
     """
     #Queuing and threading
@@ -437,9 +440,9 @@ def main():
         for hashes in shacol.shaList:
             shacol.findCollisionFirst(hashes)
 
-    #shacol.findCollisionFirst(shacol.shaList[0])
-    #shacol.findCollisionSetArray()
-    #shacol.findCollisionWithDBSet()
+    # shacol.findCollisionFirst(shacol.shaList[0])
+    # shacol.findCollisionSetArray()
+    # shacol.findCollisionWithDBSet()
 
     stop = timeit.default_timer()
 
@@ -451,30 +454,32 @@ if __name__ == "__main__":
         print('\nInterrupted... Terminating')
         sys.exit()
 
-def status(): #Count of cycles, array/database
+
+def status():  # Count of cycles, array/database
     countOfCycles = 0
     runTime = ''
     h = hpy()
 
     print '\n' * 100
-    #shacol.findCollisionCheckSequence.count
+    # shacol.findCollisionCheckSequence.count
     print 'Runtime:', stop - start
     print h.heap()
 
-def findCollisionStatus(q): #method working with threads, q means queqe
+
+def findCollisionStatus(q):  # method working with threads, q means queqe
     while not q.empty():
         myCollision = threading.local()
         myCollision.scanning = True
         myCollision.dom = q.get
         myCollision.pstart = pstart
         myCollision.prepeat = prepeat
-        #str(myCollision.dom) --- now Processing
-        #str(threading.activeCount())
+        # str(myCollision.dom) --- now Processing
+        # str(threading.activeCount())
 
         while (myCollision.scanning):
             try:
                 status()
-            except Exception,e:
+            except Exception, e:
                 print str(e)
                 pass
         myData.scanning = False
