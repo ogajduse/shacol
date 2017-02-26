@@ -448,7 +448,6 @@ class Shacol:
                 newHash = newHash[0:hashPartLength]
                 newHashPart = hashToBits(newHash)
 
-
             totalTime = round(time.time() - startTime, 12)
             print('\n##### Int method - Collision found process succeeded! #####')
             print("Collision found after %s seconds" % (totalTime))
