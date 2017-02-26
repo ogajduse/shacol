@@ -14,7 +14,7 @@ from sets import Set
 from guppy import hpy
 from StringIO import StringIO
 import redis
-
+import binascii
 
 class Shacol:
     def __init__(self, sha256, bits, inputFile, hashGroup=False, text=False, first=False):
@@ -78,7 +78,7 @@ class Shacol:
 
     def hashFromBits(self, bitHash):
         n = int(bitHash, 2)
-        return intToBytes(n).decode('utf-8', 'surrogatepass')
+        return self.intToBytes(n).decode('utf-8', 'surrogatepass')
 
     def intToBytes(self, i):
         hex_string = '%x' % i
@@ -340,7 +340,7 @@ class Shacol:
             hashPartSet40 = Set()
 
             hashPartLength = len(hashPart)
-            binHashPart = hashToBits(hashPart)
+            binHashPart = self.hashToBits(hashPart)
             newHashPart = binHashPart
             count = 0
 
@@ -443,10 +443,10 @@ class Shacol:
                 if count % 10000000 == 0:
                     print count
 
-                strHashPart = hashFromBits(newHashPart)
+                strHashPart = self.hashFromBits(newHashPart)
                 newHash = hashlib.sha256(strHashPart).hexdigest()
                 newHash = newHash[0:hashPartLength]
-                newHashPart = hashToBits(newHash)
+                newHashPart = self.hashToBits(newHash)
 
             totalTime = round(time.time() - startTime, 12)
             print('\n##### Int method - Collision found process succeeded! #####')
@@ -656,10 +656,9 @@ def main():
     #print "\nFinally"
     """
 
-    for hashes in shacol.shaList:
-        shacol.findCollisionFast(hashes)
-        shacol.findCollisionBin(hashes)
-        break
+    shacol.findCollisionFast()
+    shacol.findCollisionBin()
+
 
     if (args.first):
         for hashes in shacol.shaList:
