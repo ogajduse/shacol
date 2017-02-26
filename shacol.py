@@ -339,6 +339,9 @@ class Shacol:
             hashPartSet39 = Set()
             hashPartSet40 = Set()
 
+            if not hashPart:
+                hashPart = self.hashPart
+
             hashPartLength = len(hashPart)
             binHashPart = self.hashToBits(hashPart)
             newHashPart = binHashPart
