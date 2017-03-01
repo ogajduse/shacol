@@ -2,3 +2,5 @@
 *.swp
 *.rdb
 *.pyc
+*CMakeLists.txt
+*/cmake-build-debug/*
