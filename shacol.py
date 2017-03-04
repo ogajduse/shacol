@@ -500,6 +500,8 @@ class Shacol:
             hashPartSet38.clear()
             hashPartSet39.clear()
             hashPartSet40.clear()
+            
+            return {"inputHash": hashPart, "time": totalTime, "cycles": count, "collisionHash": newHashPart}
         except Exception, e:
             print str(e)
 
