@@ -16,6 +16,7 @@ from StringIO import StringIO
 import redis
 import binascii
 
+
 class Shacol:
     def __init__(self, sha256, bits, inputFile, hashGroup=False, text=False, first=False):
         self.sha256 = sha256
@@ -667,7 +668,6 @@ def main():
 
     shacol.findCollisionFast()
     shacol.findCollisionBin()
-
 
     if (args.first):
         for hashes in shacol.shaList:
