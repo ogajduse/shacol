@@ -544,13 +544,13 @@ class Shacol:
             print 'Collision hash:', newHashPart
 
             indexOfCollision = int()
-            iterace = 0
+            cycle_count = 0
             for i in setArray:
                 indexOfCollision = list(i).index(newHashPart)
                 if indexOfCollision:
-                    indexOfCollision += iterace * setCount
+                    indexOfCollision += cycle_count * setCount
                     break
-                iterace += 1
+                cycle_count += 1
             print 'Index of collision hash:', indexOfCollision
             return {"inputHash": hashPart, "time": totalTime, "cycles": count,
                     "collisionHash": newHashPart, "indexOfCollisionHash": indexOfCollision}
