@@ -92,6 +92,12 @@ class Shacol:
         try:
             if not hashPart:
                 hashPart = self.hashPart
+                hashPartLength = self.hashPartLength
+            else:
+                hashPartLength = len(hashPart)
+
+            newHashPart = hashPart
+            count = 0
             print '\nInput hashPart:', hashPart
             hashPartSet = Set()
             hashPartSet2 = Set()
@@ -133,10 +139,6 @@ class Shacol:
             hashPartSet38 = Set()
             hashPartSet39 = Set()
             hashPartSet40 = Set()
-
-            hashPartLength = len(hashPart)
-            newHashPart = hashPart
-            count = 0
 
             startTime = time.time()
             while newHashPart not in (hashPartSet or hashPartSet2 or hashPartSet3 or hashPartSet4
@@ -297,6 +299,10 @@ class Shacol:
         try:
             if not hashPart:
                 hashPart = self.hashPart
+                hashPartLength = self.hashPartLength
+            else:
+                hashPartLength = len(hashPart)
+
             print '\nInput hashPart:', hashPart
             hashPartSet = Set()
             hashPartSet2 = Set()
@@ -339,10 +345,6 @@ class Shacol:
             hashPartSet39 = Set()
             hashPartSet40 = Set()
 
-            if not hashPart:
-                hashPart = self.hashPart
-
-            hashPartLength = len(hashPart)
             binHashPart = self.hashToBits(hashPart)
             newHashPart = binHashPart
             count = 0
@@ -516,7 +518,12 @@ class Shacol:
             setNumber = 30  # number of sets
             setArray = [Set() for _ in xrange(setNumber)]
 
-            hashPartLength = len(hashPart)
+            if not hashPart:
+                hashPart = self.hashPart
+                hashPartLength = self.hashPartLength
+            else:
+                hashPartLength = len(hashPart)
+
             newHashPart = hashPart
 
             startTime = time.time()
