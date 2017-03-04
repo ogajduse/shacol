@@ -449,8 +449,7 @@ class Shacol:
                     print count
 
                 strHashPart = self.hashFromBits(newHashPart)
-                newHash = hashlib.sha256(strHashPart).hexdigest()
-                newHash = newHash[0:hashPartLength]
+                newHash = hashlib.sha256(strHashPart).hexdigest()[0:hashPartLength]
                 newHashPart = self.hashToBits(newHash)
 
             totalTime = round(time.time() - startTime, 12)
@@ -535,8 +534,7 @@ class Shacol:
                     setIter += 1
                 if count % 10000000 == 0:
                     print count
-                newHash = hashlib.sha256(newHashPart).hexdigest()
-                newHashPart = newHash[0:hashPartLength]
+                newHashPart = hashlib.sha256(newHashPart).hexdigest()[0:hashPartLength]
 
             totalTime = round(time.time() - startTime, 12)
             print('\n##### SetArray method - Collision found process succeeded! #####')
@@ -570,8 +568,7 @@ class Shacol:
 
             startTime = time.time()
             while hashPart != newHashPart:
-                newHash = hashlib.sha256(newHashPart).hexdigest()
-                newHashPart = newHash[0:hashPartLength]
+                newHashPart = hashlib.sha256(newHashPart).hexdigest()[0:hashPartLength]
                 count += 1
                 if count % 100000000 == 0: print count
             totalTime = round(time.time() - startTime, 12)
