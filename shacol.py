@@ -99,7 +99,7 @@ class Shacol:
 
             newHashPart = hashPart
             count = 0
-            print '\nInput hashPart:', hashPart
+            print ('\nInput hashPart:', hashPart)
             hashPartSet = Set()
             hashPartSet2 = Set()
             hashPartSet3 = Set()
@@ -238,15 +238,15 @@ class Shacol:
 
                 count += 1
                 if count % 10000000 == 0:
-                    print count
+                    print (count)
                 newHash = hashlib.sha256(newHashPart).hexdigest()
                 newHashPart = newHash[0:hashPartLength]
 
             totalTime = round(time.time() - startTime, 12)
             print('\n##### Fast method - Collision found process succeeded! #####')
             print("Collision found after %s seconds" % (totalTime))
-            print 'Count of the cycles:', count
-            print 'Collision hash:', newHashPart
+            print('Count of the cycles:', count)
+            print('Collision hash:', newHashPart)
 
             hashPartSet.clear()
             hashPartSet2.clear()
@@ -291,7 +291,7 @@ class Shacol:
 
             return {"inputHash": hashPart, "time": totalTime, "cycles": count, "collisionHash": newHashPart}
         except Exception, e:
-            print str(e)
+            print (str(e))
 
     def findCollisionBin(self, hashPart=None):
         """
@@ -304,7 +304,7 @@ class Shacol:
             else:
                 hashPartLength = len(hashPart)
 
-            print '\nInput hashPart:', hashPart
+            print('\nInput hashPart:', hashPart)
             hashPartSet = Set()
             hashPartSet2 = Set()
             hashPartSet3 = Set()
@@ -447,7 +447,7 @@ class Shacol:
 
                 count += 1
                 if count % 10000000 == 0:
-                    print count
+                    print(count)
 
                 strHashPart = self.hashFromBits(newHashPart)
                 newHash = hashlib.sha256(strHashPart).hexdigest()[0:hashPartLength]
@@ -456,11 +456,11 @@ class Shacol:
             totalTime = round(time.time() - startTime, 12)
             print('\n##### Int method - Collision found process succeeded! #####')
             print("Collision found after %s seconds" % (totalTime))
-            print 'Count of the cycles:', count
-            print 'Collision hash:', newHash
+            print('Count of the cycles:', count)
+            print('Collision hash:', newHash)
 
             h = hpy()
-            print h.heap()
+            print(h.heap())
 
             hashPartSet.clear()
             hashPartSet2.clear()
@@ -505,7 +505,7 @@ class Shacol:
 
             return {"inputHash": hashPart, "time": totalTime, "cycles": count, "collisionHash": newHashPart}
         except Exception, e:
-            print str(e)
+            print (str(e))
 
     def findCollisionSetArray(self, hashPart=None):  # Working fine but a bit time consuming
         """
@@ -534,14 +534,14 @@ class Shacol:
                 if count == setCount:
                     setIter += 1
                 if count % 10000000 == 0:
-                    print count
+                    print (count)
                 newHashPart = hashlib.sha256(newHashPart).hexdigest()[0:hashPartLength]
 
             totalTime = round(time.time() - startTime, 12)
             print('\n##### SetArray method - Collision found process succeeded! #####')
             print("Collision found after %s seconds" % (totalTime))
-            print 'Count of the cycles:', len(setArray[Set() in xrange(setNumber)])
-            print 'Collision hash:', newHashPart
+            print('Count of the cycles:', len(setArray[Set() in xrange(setNumber)]))
+            print('Collision hash:', newHashPart)
 
             indexOfCollision = int()
             cycle_count = 0
@@ -551,12 +551,12 @@ class Shacol:
                     indexOfCollision += cycle_count * setCount
                     break
                 cycle_count += 1
-            print 'Index of collision hash:', indexOfCollision
+            print ('Index of collision hash:', indexOfCollision)
             return {"inputHash": hashPart, "time": totalTime, "cycles": count,
                     "collisionHash": newHashPart, "indexOfCollisionHash": indexOfCollision}
 
         except Exception, e:
-            print str(e)
+            print (str(e))
 
     def findCollisionFirst(self, hashPart=None):
         """
@@ -571,17 +571,17 @@ class Shacol:
             while hashPart != newHashPart:
                 newHashPart = hashlib.sha256(newHashPart).hexdigest()[0:hashPartLength]
                 count += 1
-                if count % 100000000 == 0: print count
+                if count % 100000000 == 0: print (count)
             totalTime = round(time.time() - startTime, 12)
             print('\n##### findCollisionFirst method - Collision found process succeeded! #####')
             print("Collision found after %s seconds" % (totalTime))
-            print 'Count of the cycles:', count
-            print 'Collision hash:', newHashPart
+            print('Count of the cycles:', count)
+            print('Collision hash:', newHashPart)
 
             return {"inputHash": hashPart, "time": totalTime, "cycles": count, "collisionHash": newHashPart}
 
         except Exception, e:
-            print str(e)
+            print(str(e))
 
     def findCollisionWithDBSet(self, hashPart=None):
         """
@@ -605,19 +605,19 @@ class Shacol:
                 r.sadd('hset', hashPart)
                 count += 1
                 if count % 10000000 == 0:
-                    print count
+                    print(count)
                 hashPart = hashlib.sha256(hashPart).hexdigest()[0:hashPartLength]
 
             totalTime = round(time.time() - startTime, 12)
             print('\n##### DBSet method - Collision found process succeeded! #####')
             print("Collision found after %s seconds" % (totalTime))
-            print 'Count of the cycles:', r.scard('hset')
-            print 'Collision hash:', hashPart
+            print('Count of the cycles:', r.scard('hset'))
+            print('Collision hash:', hashPart)
             # print 'Index of collision hash:'
             return {"inputHash": hashPart, "time": totalTime, "cycles": count, "collisionHash": hashPart}
 
         except Exception, e:
-            print str(e)
+            print (str(e))
 
 
 def main():
@@ -658,7 +658,7 @@ def main():
     	if jobTrack[key] != "Invalid":
     		q.put(str(key))
     	else:
-    		print str(key) + " is not added to queue as its invalid"
+    		print (str(key) + " is not added to queue as its invalid")
 
     #for i in range(100):
     t1 = threading.Thread(target=findCollisionStatus) #,args=(q,))
@@ -666,7 +666,7 @@ def main():
     t1.start() #Start the thread
 
     #q.join()
-    #print "\nFinally"
+    #print ("\nFinally")
     """
 
     shacol.findCollisionFast()
@@ -696,10 +696,10 @@ def status():  # Count of cycles, array/database
     runTime = ''
     h = hpy()
 
-    print '\n' * 100
+    print ('\n' * 100)
     # shacol.findCollisionCheckSequence.count
-    print 'Runtime:', stop - start
-    print h.heap()
+    print ('Runtime:', stop - start)
+    print (h.heap())
 
 
 def findCollisionStatus(q):  # method working with threads, q means queqe
@@ -716,6 +716,6 @@ def findCollisionStatus(q):  # method working with threads, q means queqe
             try:
                 status()
             except Exception, e:
-                print str(e)
+                print (str(e))
                 pass
         myData.scanning = False
