@@ -593,10 +593,13 @@ class Shacol:
             r.flushdb()
 
             if not hashPart:
-                hashPart = r
+                hashPart = self.hashPart
+                hashPartLength = self.hashPartLength
+            else:
+                hashPartLength = len(hashPart)
 
             count = 0
-            hashPartLength = len(hashPart)
+
             startTime = time.time()
             while not r.sismember('hset', hashPart):
                 r.sadd('hset', hashPart)
