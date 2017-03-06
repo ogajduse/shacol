@@ -4,6 +4,7 @@ from __future__ import print_function
 # requirments - guppy, redis
 
 from future import standard_library
+
 standard_library.install_aliases()
 from builtins import input
 from builtins import str
@@ -14,12 +15,12 @@ import os
 import sys
 import time
 import timeit
-#import queue
+# import queue
 import hashlib
 import argparse
 import threading
 import linecache
-#from sets import Set
+# from sets import Set
 # from guppy import hpy
 from io import StringIO
 import redis
@@ -108,7 +109,7 @@ class Shacol(object):
 
             newHashPart = hashPart
             count = 0
-            print ('\nInput hashPart:', hashPart)
+            print('\nInput hashPart:', hashPart)
             hashPartSet = set()
             hashPartSet2 = set()
             hashPartSet3 = set()
@@ -247,7 +248,7 @@ class Shacol(object):
 
                 count += 1
                 if count % 10000000 == 0:
-                    print (count)
+                    print(count)
                 newHash = hashlib.sha256(newHashPart.encode('utf-8')).hexdigest()
                 newHashPart = newHash[0:hashPartLength]
 
@@ -300,7 +301,7 @@ class Shacol(object):
 
             return {"inputHash": hashPart, "time": totalTime, "cycles": count, "collisionHash": newHashPart}
         except Exception as e:
-            print (str(e))
+            print(str(e))
 
     def findCollisionBin(self, hashPart=None):
         """
@@ -514,7 +515,7 @@ class Shacol(object):
 
             return {"inputHash": hashPart, "time": totalTime, "cycles": count, "collisionHash": newHashPart}
         except Exception as e:
-            print (str(e))
+            print(str(e))
 
     def findCollisionSetArray(self, hashPart=None):  # Working fine but a bit time consuming
         """
@@ -525,7 +526,7 @@ class Shacol(object):
             count = 0
             setCount = 80000000  # 50-85 milions per set dependly on bit length
             setNumber = 30  # number of sets
-            setArray = [Set() for _ in range(setNumber)]
+            setArray = [set() for _ in range(setNumber)]
 
             if not hashPart:
                 hashPart = self.hashPart
@@ -536,20 +537,20 @@ class Shacol(object):
             newHashPart = hashPart
 
             startTime = time.time()
-            while newHashPart not in setArray[Set() in range(setNumber)]:
+            while newHashPart not in setArray[set() in range(setNumber)]:
                 setArray[setIter].add(newHashPart)
 
                 count += 1
                 if count == setCount:
                     setIter += 1
                 if count % 10000000 == 0:
-                    print (count)
+                    print(count)
                 newHashPart = hashlib.sha256(newHashPart.encode('utf-8')).hexdigest()[0:hashPartLength]
 
             totalTime = round(time.time() - startTime, 12)
             print('\n##### SetArray method - Collision found process succeeded! #####')
             print("Collision found after %s seconds" % (totalTime))
-            print(('Count of the cycles:', len(setArray[Set() in range(setNumber)])))
+            print(('Count of the cycles:', len(setArray[set() in range(setNumber)])))
             print(('Collision hash:', newHashPart))
 
             indexOfCollision = int()
@@ -565,7 +566,7 @@ class Shacol(object):
                     "collisionHash": newHashPart, "indexOfCollisionHash": indexOfCollision}
 
         except Exception as e:
-            print (str(e))
+            print(str(e))
 
     def findCollisionFirst(self, hashPart=None):
         """
@@ -580,7 +581,7 @@ class Shacol(object):
             while hashPart != newHashPart:
                 newHashPart = hashlib.sha256(newHashPart.encode('utf-8')).hexdigest()[0:hashPartLength]
                 count += 1
-                if count % 100000000 == 0: print (count)
+                if count % 100000000 == 0: print(count)
             totalTime = round(time.time() - startTime, 12)
             print('\n##### findCollisionFirst method - Collision found process succeeded! #####')
             print("Collision found after %s seconds" % (totalTime))
@@ -626,7 +627,7 @@ class Shacol(object):
             return {"inputHash": hashPart, "time": totalTime, "cycles": count, "collisionHash": hashPart}
 
         except Exception as e:
-            print (str(e))
+            print(str(e))
 
 
 def main():
@@ -687,7 +688,7 @@ def main():
 
     # shacol.findCollisionFirst(shacol.shaList[0])
     # shacol.findCollisionSetArray()
-    # shacol.findCollisionWithDBSet()
+    # shacol.findCollisionWithDBset()
 
     stop = timeit.default_timer()
 
@@ -705,7 +706,7 @@ def status():  # Count of cycles, array/database
     runTime = ''
     # h = hpy()
 
-    print ('\n' * 100)
+    print('\n' * 100)
     # shacol.findCollisionCheckSequence.count
     print(('Runtime:', stop - start))
     # print (h.heap())
@@ -725,6 +726,6 @@ def findCollisionStatus(q):  # method working with threads, q means queqe
             try:
                 status()
             except Exception as e:
-                print (str(e))
+                print(str(e))
                 pass
         myData.scanning = False
