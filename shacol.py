@@ -319,7 +319,7 @@ class Shacol(object):
             startTime = time.time()
             while newHashPart not in longHashSet:
                 longHashSet.add(newHashPart)
-                if len(longHashSet+1) % 10000000 == 0:print(count)
+                if len(longHashSet)+1 % 10000000 == 0 : print(len(longHashSet)+1)
                 strHashPart = binascii.unhexlify(str(newHashPart))
                 newHash = hashlib.sha256(strHashPart).hexdigest()
                 newHash = newHash[0:hashPartLength]
