@@ -310,7 +310,7 @@ class Shacol(object):
         try:
             if not hashPart:
                 hashPart = self.hashPart
-            print '\nInput hashPart:', hashPart
+            print('\nInput hashPart:', hashPart)
 
             hashPartLength = len(hashPart)
             longHashSet = {long()}
@@ -319,7 +319,7 @@ class Shacol(object):
             startTime = time.time()
             while newHashPart not in longHashSet:
                 longHashSet.add(newHashPart)
-                if len(longHashSet+1) % 10000000 == 0:print count
+                if len(longHashSet+1) % 10000000 == 0:print(count)
                 strHashPart = binascii.unhexlify(str(newHashPart))
                 newHash = hashlib.sha256(strHashPart).hexdigest()
                 newHash = newHash[0:hashPartLength]
@@ -328,8 +328,8 @@ class Shacol(object):
             totalTime = round(time.time() - startTime, 12)
             print('\n##### LONG method - Collision found process succeeded! #####')
             print("Collision found after %s seconds" % (totalTime))
-            print 'Count of the cycles:', len(longHashSet)+1
-            print 'Collision hash:', newHash
+            print('Count of the cycles:', len(longHashSet)+1)
+            print('Collision hash:', newHash)
 
             #h = hpy()
             #print h.heap()
@@ -349,8 +349,8 @@ class Shacol(object):
             """
             return {"inputHash": hashPart, "time": totalTime, "cycles": len(longHashSet)+1, "collisionHash": newHash}
 
-        except Exception, e:
-            print str(e)
+        except Exception as e:
+            print(str(e))
 
     def findCollisionFirst(self, hashPart=None):
         """
