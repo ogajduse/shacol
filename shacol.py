@@ -303,7 +303,7 @@ class Shacol(object):
         except Exception as e:
             print(str(e))
 
-    def findCollisionLong(self, hashPart=None):
+    def findCollisionInt(self, hashPart=None):
         """
         Best performance function + storing in LOG set
         """
@@ -313,22 +313,22 @@ class Shacol(object):
             print('\nInput hashPart:', hashPart)
 
             hashPartLength = len(hashPart)
-            longHashSet = {long()}
-            newHashPart = long(binascii.hexlify(hashPart))
+            intHashSet = {int()}
+            newHashPart = int(binascii.hexlify(bytes(hashPart,'utf-8')),16)
 
             startTime = time.time()
-            while newHashPart not in longHashSet:
-                longHashSet.add(newHashPart)
-                if len(longHashSet)+1 % 10000000 == 0 : print(len(longHashSet)+1)
-                strHashPart = binascii.unhexlify(str(newHashPart))
+            while newHashPart not in intHashSet:
+                intHashSet.add(newHashPart)
+                if len(intHashSet)+1 % 10000000 == 0 : print(len(intHashSet)+1)
+                strHashPart = binascii.unhexlify(bytes(newHashPart).decode('utf-8'))
                 newHash = hashlib.sha256(strHashPart).hexdigest()
-                newHash = newHash[0:hashPartLength]
-                newHashPart = long(binascii.hexlify(newHash))
+                newHash = bytes(newHash[0:hashPartLength],'utf-8')
+                newHashPart = int(binascii.hexlify(newHash),16)
 
             totalTime = round(time.time() - startTime, 12)
             print('\n##### LONG method - Collision found process succeeded! #####')
             print("Collision found after %s seconds" % (totalTime))
-            print('Count of the cycles:', len(longHashSet)+1)
+            print('Count of the cycles:', len(intHashSet)+1)
             print('Collision hash:', newHash)
 
             #h = hpy()
@@ -347,7 +347,7 @@ class Shacol(object):
             return {"inputHash": hashPart, "time": totalTime, "cycles": len(longHashSet)+1,
                     "collisionHash": newHash, "indexOfCollisionHash": indexOfCollision}
             """
-            return {"inputHash": hashPart, "time": totalTime, "cycles": len(longHashSet)+1, "collisionHash": newHash}
+            return {"inputHash": hashPart, "time": totalTime, "cycles": len(intHashSet)+1, "collisionHash": newHash}
 
         except Exception as e:
             print(str(e))
@@ -464,7 +464,7 @@ def main():
     """
 
     shacol.findCollisionFast()
-    shacol.findCollisionLong()
+    shacol.findCollisionInt()
 
     if (args.first):
         for hashes in shacol.shaList:
