@@ -14,7 +14,7 @@ import os
 import sys
 import time
 import timeit
-import queue
+#import queue
 import hashlib
 import argparse
 import threading
