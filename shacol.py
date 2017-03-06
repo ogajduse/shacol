@@ -39,7 +39,7 @@ class Shacol(object):
         self.shaList = []
         self.hashPart = str()
 
-        with open(self.inputFile, 'r') as dataFromFile:
+        with open(self.inputFile, 'r', encoding='utf-8') as dataFromFile:
             if self.hashGroup:
                 if self.sha256:
                     if self.text:
@@ -248,7 +248,7 @@ class Shacol(object):
                 count += 1
                 if count % 10000000 == 0:
                     print (count)
-                newHash = hashlib.sha256(newHashPart).hexdigest()
+                newHash = hashlib.sha256(newHashPart.encode('utf-8')).hexdigest()
                 newHashPart = newHash[0:hashPartLength]
 
             totalTime = round(time.time() - startTime, 12)
@@ -459,7 +459,7 @@ class Shacol(object):
                     print(count)
 
                 strHashPart = self.hashFromBits(newHashPart)
-                newHash = hashlib.sha256(strHashPart).hexdigest()[0:hashPartLength]
+                newHash = hashlib.sha256(strHashPart.encode('utf-8')).hexdigest()[0:hashPartLength]
                 newHashPart = self.hashToBits(newHash)
 
             totalTime = round(time.time() - startTime, 12)
@@ -544,7 +544,7 @@ class Shacol(object):
                     setIter += 1
                 if count % 10000000 == 0:
                     print (count)
-                newHashPart = hashlib.sha256(newHashPart).hexdigest()[0:hashPartLength]
+                newHashPart = hashlib.sha256(newHashPart.encode('utf-8')).hexdigest()[0:hashPartLength]
 
             totalTime = round(time.time() - startTime, 12)
             print('\n##### SetArray method - Collision found process succeeded! #####')
@@ -578,7 +578,7 @@ class Shacol(object):
 
             startTime = time.time()
             while hashPart != newHashPart:
-                newHashPart = hashlib.sha256(newHashPart).hexdigest()[0:hashPartLength]
+                newHashPart = hashlib.sha256(newHashPart.encode('utf-8')).hexdigest()[0:hashPartLength]
                 count += 1
                 if count % 100000000 == 0: print (count)
             totalTime = round(time.time() - startTime, 12)
@@ -615,7 +615,7 @@ class Shacol(object):
                 count += 1
                 if count % 10000000 == 0:
                     print(count)
-                hashPart = hashlib.sha256(hashPart).hexdigest()[0:hashPartLength]
+                hashPart = hashlib.sha256(hashPart.encode('utf-8')).hexdigest()[0:hashPartLength]
 
             totalTime = round(time.time() - startTime, 12)
             print('\n##### DBSet method - Collision found process succeeded! #####')
