@@ -19,8 +19,8 @@ import hashlib
 import argparse
 import threading
 import linecache
-from guppy import hpy
 #from sets import Set
+# from guppy import hpy
 from io import StringIO
 import redis
 import binascii
@@ -468,8 +468,8 @@ class Shacol(object):
             print(('Count of the cycles:', count))
             print(('Collision hash:', newHash))
 
-            h = hpy()
-            print(h.heap())
+            # h = hpy()
+            # print(h.heap())
 
             hashPartSet.clear()
             hashPartSet2.clear()
@@ -703,12 +703,12 @@ if __name__ == "__main__":
 def status():  # Count of cycles, array/database
     countOfCycles = 0
     runTime = ''
-    h = hpy()
+    # h = hpy()
 
     print ('\n' * 100)
     # shacol.findCollisionCheckSequence.count
     print(('Runtime:', stop - start))
-    print (h.heap())
+    # print (h.heap())
 
 
 def findCollisionStatus(q):  # method working with threads, q means queqe
