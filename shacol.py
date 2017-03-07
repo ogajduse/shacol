@@ -15,6 +15,7 @@ import os
 import sys
 import time
 import timeit
+import objgraph
 # import queue
 import hashlib
 import argparse
@@ -319,11 +320,13 @@ class Shacol(object):
             startTime = time.time()
             while newHashPart not in intHashSet:
                 intHashSet.add(newHashPart)
-                if len(intHashSet)+1 % 10000000 == 0 : print(len(intHashSet)+1)
-                strHashPart = binascii.unhexlify(bytes(newHashPart).decode('utf-8'))
+                if len(intHashSet) % 10000000 == 0 : print(len(intHashSet))
+                strHashPart = newHashPart.to_bytes((newHashPart.bit_length() + 7) // 8, 'big') #Think about useful process
+                #binascii.unhexlify((bytes(newHashPart,'utf-8'))) #Problem s kodovanim
+                #x.to_bytes((x.bit_length() + 7) // 8, 'big').decode("utf-8")
                 newHash = hashlib.sha256(strHashPart).hexdigest()
-                newHash = bytes(newHash[0:hashPartLength],'utf-8')
-                newHashPart = int(binascii.hexlify(newHash),16)
+                newHash = newHash[0:hashPartLength]
+                newHashPart = int(binascii.hexlify(bytes(newHash,'utf-8')),16)
 
             totalTime = round(time.time() - startTime, 12)
             print('\n##### LONG method - Collision found process succeeded! #####')
@@ -333,6 +336,10 @@ class Shacol(object):
 
             #h = hpy()
             #print h.heap()
+
+            objgraph.show_most_common_types()
+
+            objgraph.show_growth(limit=5)
 
             """
             indexOfCollision = int()
