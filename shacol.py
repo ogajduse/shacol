@@ -306,7 +306,7 @@ class Shacol(object):
 
     def findCollisionInt(self, hashPart=None):
         """
-        Best performance function + storing in LOG set
+        Best performance function + storing in INT set
         """
         try:
             if not hashPart:
@@ -320,26 +320,19 @@ class Shacol(object):
             startTime = time.time()
             while newHashPart not in intHashSet:
                 intHashSet.add(newHashPart)
-                if len(intHashSet) % 10000000 == 0 : print(len(intHashSet))
-                strHashPart = newHashPart.to_bytes((newHashPart.bit_length() + 7) // 8, 'big') #Think about useful process
-                #binascii.unhexlify((bytes(newHashPart,'utf-8'))) #Problem s kodovanim
-                #x.to_bytes((x.bit_length() + 7) // 8, 'big').decode("utf-8")
+                #if len(intHashSet) % 10000000 == 0 : print(len(intHashSet))
+                strHashPart = newHashPart.to_bytes((newHashPart.bit_length() + 7) // 8, 'big')
                 newHash = hashlib.sha256(strHashPart).hexdigest()
                 newHash = newHash[0:hashPartLength]
                 newHashPart = int(binascii.hexlify(bytes(newHash,'utf-8')),16)
 
             totalTime = round(time.time() - startTime, 12)
-            print('\n##### LONG method - Collision found process succeeded! #####')
+            print('\n##### INT1 method - Collision found process succeeded! #####')
             print("Collision found after %s seconds" % (totalTime))
             print('Count of the cycles:', len(intHashSet)+1)
             print('Collision hash:', newHash)
 
-            #h = hpy()
-            #print h.heap()
-
             objgraph.show_most_common_types()
-
-            objgraph.show_growth(limit=5)
 
             """
             indexOfCollision = int()
@@ -358,6 +351,57 @@ class Shacol(object):
 
         except Exception as e:
             print(str(e))
+
+    def findCollisionInt2(self, hashPart=None):
+        """
+        Best performance function + storing in LOG set
+        """
+        try:
+            if not hashPart:
+                hashPart = self.hashPart
+            print('\nInput hashPart:', hashPart)
+
+            hashPartLength = len(hashPart)
+            intHashSet = {int()}
+            newHashPart = int(binascii.hexlify(bytes(hashPart,'utf-8')),16)
+
+            startTime = time.time()
+            while newHashPart not in intHashSet:
+                intHashSet.add(newHashPart)
+                #if len(intHashSet) % 10000000 == 0 : print(len(intHashSet))
+                #strHashPart = newHashPart.to_bytes((newHashPart.bit_length() + 7) // 8, 'big')
+                strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
+                #strHashPart = intToBytes(newHashPart)
+                newHash = hashlib.sha256(strHashPart).hexdigest()
+                newHash = newHash[0:hashPartLength]
+                newHashPart = int(binascii.hexlify(bytes(newHash,'utf-8')),16)
+
+            totalTime = round(time.time() - startTime, 12)
+            print('\n##### INT2 method - Collision found process succeeded! #####')
+            print("Collision found after %s seconds" % (totalTime))
+            print('Count of the cycles:', len(intHashSet)+1)
+            print('Collision hash:', newHash)
+
+            objgraph.show_most_common_types()
+
+            """
+            indexOfCollision = int()
+            cycleCount = 0
+            for i in setArray:
+                indexOfCollision = list(i).index(newHashPart)
+                if indexOfCollision:
+                    indexOfCollision += cycle_count * setCount
+                    break
+                cycleCount += 1
+            print(('Index of collision hash:', indexOfCollision))
+            return {"inputHash": hashPart, "time": totalTime, "cycles": len(longHashSet)+1,
+                    "collisionHash": newHash, "indexOfCollisionHash": indexOfCollision}
+            """
+            return {"inputHash": hashPart, "time": totalTime, "cycles": len(intHashSet)+1, "collisionHash": newHash}
+
+        except Exception as e:
+            print(str(e))
+
 
     def findCollisionFirst(self, hashPart=None):
         """
@@ -472,6 +516,7 @@ def main():
 
     shacol.findCollisionFast()
     shacol.findCollisionInt()
+    shacol.findCollisionInt2()
 
     if (args.first):
         for hashes in shacol.shaList:
