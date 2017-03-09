@@ -97,9 +97,9 @@ class Shacol(object):
         n = len(hex_string)
         return binascii.unhexlify(hex_string.zfill(n + (n & 1)))
 
-    def findCollisionFast(self, hashPart=None):
+    def findCollisionStr(self, hashPart=None):
         """
-        Best performance function - high RAM load
+        Best performance function - storing STRING in SET
         """
         try:
             if not hashPart:
@@ -109,198 +109,28 @@ class Shacol(object):
                 hashPartLength = len(hashPart)
 
             newHashPart = hashPart
-            count = 0
-            print('\nInput hashPart:', hashPart)
-            hashPartSet = set()
-            hashPartSet2 = set()
-            hashPartSet3 = set()
-            hashPartSet4 = set()
-            hashPartSet5 = set()
-            hashPartSet6 = set()
-            hashPartSet7 = set()
-            hashPartSet8 = set()
-            hashPartSet9 = set()
-            hashPartSet10 = set()
-            hashPartSet11 = set()
-            hashPartSet12 = set()
-            hashPartSet13 = set()
-            hashPartSet14 = set()
-            hashPartSet15 = set()
-            hashPartSet16 = set()
-            hashPartSet17 = set()
-            hashPartSet18 = set()
-            hashPartSet19 = set()
-            hashPartSet20 = set()
-            hashPartSet21 = set()
-            hashPartSet22 = set()
-            hashPartSet23 = set()
-            hashPartSet24 = set()
-            hashPartSet25 = set()
-            hashPartSet26 = set()
-            hashPartSet27 = set()
-            hashPartSet28 = set()
-            hashPartSet29 = set()
-            hashPartSet30 = set()
-            hashPartSet31 = set()
-            hashPartSet32 = set()
-            hashPartSet33 = set()
-            hashPartSet34 = set()
-            hashPartSet35 = set()
-            hashPartSet36 = set()
-            hashPartSet37 = set()
-            hashPartSet38 = set()
-            hashPartSet39 = set()
-            hashPartSet40 = set()
+            strHashSet = {str()}
 
             startTime = time.time()
-            while newHashPart not in (hashPartSet or hashPartSet2 or hashPartSet3 or hashPartSet4
-                                      or hashPartSet5 or hashPartSet6 or hashPartSet7
-                                      or hashPartSet8 or hashPartSet9 or hashPartSet10
-                                      or hashPartSet11 or hashPartSet12 or hashPartSet13
-                                      or hashPartSet14 or hashPartSet15 or hashPartSet16
-                                      or hashPartSet17 or hashPartSet18 or hashPartSet19
-                                      or hashPartSet20 or hashPartSet21 or hashPartSet22
-                                      or hashPartSet23 or hashPartSet24 or hashPartSet25
-                                      or hashPartSet26 or hashPartSet27 or hashPartSet28
-                                      or hashPartSet29 or hashPartSet30 or hashPartSet31
-                                      or hashPartSet32 or hashPartSet33 or hashPartSet34
-                                      or hashPartSet35 or hashPartSet36 or hashPartSet37
-                                      or hashPartSet38 or hashPartSet39 or hashPartSet40):
-                if count <= 85000000:
-                    hashPartSet.add(newHashPart)
-                elif count <= 170000000:
-                    hashPartSet2.add(newHashPart)
-                elif count <= 255000000:
-                    hashPartSet3.add(newHashPart)
-                elif count <= 340000000:
-                    hashPartSet4.add(newHashPart)
-                elif count <= 425000000:
-                    hashPartSet5.add(newHashPart)
-                elif count <= 505000000:
-                    hashPartSet6.add(newHashPart)
-                elif count <= 590000000:
-                    hashPartSet7.add(newHashPart)
-                elif count <= 675000000:
-                    hashPartSet8.add(newHashPart)
-                elif count <= 760000000:
-                    hashPartSet9.add(newHashPart)
-                elif count <= 845000000:
-                    hashPartSet10.add(newHashPart)
-                elif count <= 930000000:
-                    hashPartSet11.add(newHashPart)
-                elif count <= 1010000000:
-                    hashPartSet12.add(newHashPart)
-                elif count <= 1090000000:
-                    hashPartSet13.add(newHashPart)
-                elif count <= 1170000000:
-                    hashPartSet14.add(newHashPart)
-                elif count <= 1250000000:
-                    hashPartSet15.add(newHashPart)
-                elif count <= 1330000000:
-                    hashPartSet16.add(newHashPart)
-                elif count <= 1410000000:
-                    hashPartSet17.add(newHashPart)
-                elif count <= 1490000000:
-                    hashPartSet18.add(newHashPart)
-                elif count <= 1570000000:
-                    hashPartSet19.add(newHashPart)
-                elif count <= 1650000000:
-                    hashPartSet20.add(newHashPart)
-                elif count <= 1730000000:
-                    hashPartSet21.add(newHashPart)
-                elif count <= 1810000000:
-                    hashPartSet22.add(newHashPart)
-                elif count <= 1890000000:
-                    hashPartSet23.add(newHashPart)
-                elif count <= 1970000000:
-                    hashPartSet24.add(newHashPart)
-                elif count <= 2050000000:
-                    hashPartSet25.add(newHashPart)
-                elif count <= 2050000000:
-                    hashPartSet26.add(newHashPart)
-                elif count <= 2050000000:
-                    hashPartSet27.add(newHashPart)
-                elif count <= 2130000000:
-                    hashPartSet28.add(newHashPart)
-                elif count <= 2210000000:
-                    hashPartSet29.add(newHashPart)
-                elif count <= 2290000000:
-                    hashPartSet30.add(newHashPart)
-                elif count <= 2370000000:
-                    hashPartSet31.add(newHashPart)
-                elif count <= 2450000000:
-                    hashPartSet32.add(newHashPart)
-                elif count <= 2530000000:
-                    hashPartSet33.add(newHashPart)
-                elif count <= 2610000000:
-                    hashPartSet34.add(newHashPart)
-                elif count <= 2690000000:
-                    hashPartSet35.add(newHashPart)
-                elif count <= 2770000000:
-                    hashPartSet36.add(newHashPart)
-                elif count <= 2850000000:
-                    hashPartSet37.add(newHashPart)
-                elif count <= 2930000000:
-                    hashPartSet38.add(newHashPart)
-                elif count <= 3010000000:
-                    hashPartSet39.add(newHashPart)
-                else:
-                    hashPartSet40.add(newHashPart)
-
-                count += 1
-                if count % 10000000 == 0:
-                    print(count)
+            while newHashPart not in strHashSet:
+                strHashSet.add(newHashPart)
+                if len(strHashSet) % 10000000 == 0 : print(len(strHashSet))
                 newHash = hashlib.sha256(newHashPart.encode('utf-8')).hexdigest()
                 newHashPart = newHash[0:hashPartLength]
 
             totalTime = round(time.time() - startTime, 12)
-            print('\n##### Fast method - Collision found process succeeded! #####')
+            print('\n##### STRING method - Collision found process succeeded! #####')
+            print('\nInput hashPart:', hashPart)
             print("Collision found after %s seconds" % (totalTime))
-            print(('Count of the cycles:', count))
-            print(('Collision hash:', newHashPart))
+            print('Count of the cycles:', len(strHashSet)+1)
+            print('Collision hash:', newHashPart)
 
-            hashPartSet.clear()
-            hashPartSet2.clear()
-            hashPartSet3.clear()
-            hashPartSet4.clear()
-            hashPartSet5.clear()
-            hashPartSet6.clear()
-            hashPartSet7.clear()
-            hashPartSet8.clear()
-            hashPartSet9.clear()
-            hashPartSet10.clear()
-            hashPartSet11.clear()
-            hashPartSet12.clear()
-            hashPartSet13.clear()
-            hashPartSet14.clear()
-            hashPartSet15.clear()
-            hashPartSet16.clear()
-            hashPartSet17.clear()
-            hashPartSet18.clear()
-            hashPartSet19.clear()
-            hashPartSet20.clear()
-            hashPartSet21.clear()
-            hashPartSet22.clear()
-            hashPartSet23.clear()
-            hashPartSet24.clear()
-            hashPartSet25.clear()
-            hashPartSet26.clear()
-            hashPartSet27.clear()
-            hashPartSet28.clear()
-            hashPartSet29.clear()
-            hashPartSet30.clear()
-            hashPartSet31.clear()
-            hashPartSet32.clear()
-            hashPartSet33.clear()
-            hashPartSet34.clear()
-            hashPartSet35.clear()
-            hashPartSet36.clear()
-            hashPartSet37.clear()
-            hashPartSet38.clear()
-            hashPartSet39.clear()
-            hashPartSet40.clear()
+            print('\nSet string structure used', round(sys.getsizeof(strHashSet)/1024/1024,3),'MB')
+            print('The most used structures: ')
+            objgraph.show_most_common_types(limit=3)
+            strHashSet.clear()
 
-            return {"inputHash": hashPart, "time": totalTime, "cycles": count, "collisionHash": newHashPart}
+            return {"inputHash": hashPart, "time": totalTime, "cycles": len(strHashSet)+1, "collisionHash": newHashPart}
         except Exception as e:
             print(str(e))
 
@@ -314,7 +144,6 @@ class Shacol(object):
                 hashPartLength = self.hashPartLength
             else:
                 hashPartLength = len(hashPart)
-            print('\nInput hashPart:', hashPart)
 
             hashPartLength = len(hashPart)
             intHashSet = {int()}
@@ -331,11 +160,15 @@ class Shacol(object):
 
             totalTime = round(time.time() - startTime, 12)
             print('\n##### INT method - Collision found process succeeded! #####')
+            print('\nInput hashPart:', hashPart)
             print("Collision found after %s seconds" % (totalTime))
             print('Count of the cycles:', len(intHashSet)+1)
             print('Collision hash:', newHash)
 
-            objgraph.show_most_common_types()
+            print('\nSet int structure used', round(sys.getsizeof(intHashSet)/1024/1024,3),'MB')
+            print('The most used structures: ')
+            objgraph.show_most_common_types(limit=3)
+            intHashSet.clear()
 
             """
             indexOfCollision = int()
@@ -477,11 +310,9 @@ def main():
         if (args.first):
             shacol.findCollisionFirst()
         else:
+            shacol.findCollisionStr()
             shacol.findCollisionInt()
 
-    #shacol.findCollisionFast()
-    #shacol.findCollisionInt()
-    #shacol.findCollisionFirst()
     #shacol.findCollisionWithDBset()
 
     stop = timeit.default_timer()
