@@ -306,11 +306,14 @@ class Shacol(object):
 
     def findCollisionInt(self, hashPart=None):
         """
-        Best performance function + storing in INT set
+        Performance function - storing INT in SET
         """
         try:
             if not hashPart:
                 hashPart = self.hashPart
+                hashPartLength = self.hashPartLength
+            else:
+                hashPartLength = len(hashPart)
             print('\nInput hashPart:', hashPart)
 
             hashPartLength = len(hashPart)
@@ -320,64 +323,14 @@ class Shacol(object):
             startTime = time.time()
             while newHashPart not in intHashSet:
                 intHashSet.add(newHashPart)
-                #if len(intHashSet) % 10000000 == 0 : print(len(intHashSet))
-                strHashPart = newHashPart.to_bytes((newHashPart.bit_length() + 7) // 8, 'big')
-                newHash = hashlib.sha256(strHashPart).hexdigest()
-                newHash = newHash[0:hashPartLength]
-                newHashPart = int(binascii.hexlify(bytes(newHash,'utf-8')),16)
-
-            totalTime = round(time.time() - startTime, 12)
-            print('\n##### INT1 method - Collision found process succeeded! #####')
-            print("Collision found after %s seconds" % (totalTime))
-            print('Count of the cycles:', len(intHashSet)+1)
-            print('Collision hash:', newHash)
-
-            objgraph.show_most_common_types()
-
-            """
-            indexOfCollision = int()
-            cycleCount = 0
-            for i in setArray:
-                indexOfCollision = list(i).index(newHashPart)
-                if indexOfCollision:
-                    indexOfCollision += cycle_count * setCount
-                    break
-                cycleCount += 1
-            print(('Index of collision hash:', indexOfCollision))
-            return {"inputHash": hashPart, "time": totalTime, "cycles": len(longHashSet)+1,
-                    "collisionHash": newHash, "indexOfCollisionHash": indexOfCollision}
-            """
-            return {"inputHash": hashPart, "time": totalTime, "cycles": len(intHashSet)+1, "collisionHash": newHash}
-
-        except Exception as e:
-            print(str(e))
-
-    def findCollisionInt2(self, hashPart=None):
-        """
-        Best performance function + storing in LOG set
-        """
-        try:
-            if not hashPart:
-                hashPart = self.hashPart
-            print('\nInput hashPart:', hashPart)
-
-            hashPartLength = len(hashPart)
-            intHashSet = {int()}
-            newHashPart = int(binascii.hexlify(bytes(hashPart,'utf-8')),16)
-
-            startTime = time.time()
-            while newHashPart not in intHashSet:
-                intHashSet.add(newHashPart)
-                #if len(intHashSet) % 10000000 == 0 : print(len(intHashSet))
-                #strHashPart = newHashPart.to_bytes((newHashPart.bit_length() + 7) // 8, 'big')
+                if len(intHashSet) % 10000000 == 0 : print(len(intHashSet))
                 strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
-                #strHashPart = intToBytes(newHashPart)
                 newHash = hashlib.sha256(strHashPart).hexdigest()
                 newHash = newHash[0:hashPartLength]
                 newHashPart = int(binascii.hexlify(bytes(newHash,'utf-8')),16)
 
             totalTime = round(time.time() - startTime, 12)
-            print('\n##### INT2 method - Collision found process succeeded! #####')
+            print('\n##### INT method - Collision found process succeeded! #####')
             print("Collision found after %s seconds" % (totalTime))
             print('Count of the cycles:', len(intHashSet)+1)
             print('Collision hash:', newHash)
@@ -514,17 +467,22 @@ def main():
     #print ("\nFinally")
     """
 
-    shacol.findCollisionFast()
-    shacol.findCollisionInt()
-    shacol.findCollisionInt2()
-
-    if (args.first):
+    if (args.hashGroup):
         for hashes in shacol.shaList:
-            shacol.findCollisionFirst(hashes)
+            if (args.first):
+                shacol.findCollisionFirst(hashes)
+            else:
+                shacol.findCollisionInt(hashes)
+    else:
+        if (args.first):
+            shacol.findCollisionFirst()
+        else:
+            shacol.findCollisionInt()
 
-    # shacol.findCollisionFirst(shacol.shaList[0])
-    # shacol.findCollisionSetArray()
-    # shacol.findCollisionWithDBset()
+    #shacol.findCollisionFast()
+    #shacol.findCollisionInt()
+    #shacol.findCollisionFirst()
+    #shacol.findCollisionWithDBset()
 
     stop = timeit.default_timer()
 
