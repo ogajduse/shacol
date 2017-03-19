@@ -15,7 +15,9 @@ import os
 import sys
 import time
 import timeit
+import random
 import objgraph
+import psutil
 # import queue
 import hashlib
 import argparse
@@ -188,6 +190,63 @@ class Shacol(object):
         except Exception as e:
             print(str(e))
 
+    def findBestHash(self):
+        try:
+            memOver = False
+            intHashSet = {int()}
+            hashPartLength = self.hashPartLength
+            charStr = 'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ+-*/!@#$%&?'
+            bestTime = sys.maxsize
+            random.seed()
+
+            # Move to special origin method and use dictionary to store results (find best time)
+
+            while True:
+                rndStr = ''
+                charLen = random.randint(1,30)
+                for number in range(charLen):
+                    rndStr += ''.join(random.sample(charStr,1))
+
+                firstHash = hashlib.sha256(rndStr.encode('utf-8')).hexdigest()
+                firstHashPart = firstHash[0:hashPartLength]
+                newHashPart = int(binascii.hexlify(bytes(firstHashPart,'utf-8')),16)
+
+                startTime = time.time()
+
+                while newHashPart not in intHashSet:
+                    intHashSet.add(newHashPart)
+                    freeResources = psutil.virtual_memory().available + psutil.swap_memory().free
+                    #print('\n' * 100)
+                    if len(intHashSet) % 10000000 == 0 : print('Count of cycles: ',len(intHashSet))
+                    #print('Free resources:', freeResources/1048576,'MB')
+
+                    if freeResources < 1073741824:
+                        print('!!! Memory capacity reached !!! Cycles:', len(intHashSet))
+                        break
+
+                    strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
+                    newHash = hashlib.sha256(strHashPart).hexdigest()
+                    newHash = newHash[0:hashPartLength]
+                    newHashPart = int(binascii.hexlify(bytes(newHash,'utf-8')),16)
+                totalTime = round(time.time() - startTime, 10)
+
+                if not memOver:
+                    print('\n##### Collision found process succeeded! #####')
+                    print('Input string:', rndStr)
+                    print('Input hash:', firstHashPart)
+                    print("Collision found after %s seconds" % (totalTime))
+                    if (totalTime < bestTime): bestTime = totalTime
+                    print('Count of the cycles:', len(intHashSet)+1)
+                    print('Collision hash:', newHash)
+                    print('Set int structure used', round(sys.getsizeof(intHashSet)/1048576,3),'MB')
+                    print('\nThe best time yet:', bestTime)
+                else:
+                    print('Generating new string input... ')
+                    memOver = False
+
+        except Exception as e:
+            print(str(e))
+
 
     def findCollisionFirst(self, hashPart=None):
         """
@@ -310,8 +369,9 @@ def main():
         if (args.first):
             shacol.findCollisionFirst()
         else:
-            shacol.findCollisionStr()
+            #shacol.findCollisionStr()
             shacol.findCollisionInt()
+            shacol.findBestHash()
 
     #shacol.findCollisionWithDBset()
 
