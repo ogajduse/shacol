@@ -191,6 +191,9 @@ class Shacol(object):
             print(str(e))
 
     def findBestHash(self):
+        """
+        Function provides the best possible input string with at least time consumption.
+        """
         try:
             memOver = False
             intHashSet = {int()}
@@ -216,9 +219,7 @@ class Shacol(object):
                 while newHashPart not in intHashSet:
                     intHashSet.add(newHashPart)
                     freeResources = psutil.virtual_memory().available + psutil.swap_memory().free
-                    #print('\n' * 100)
                     if len(intHashSet) % 10000000 == 0 : print('Count of cycles: ',len(intHashSet))
-                    #print('Free resources:', freeResources/1048576,'MB')
 
                     if freeResources < 1073741824:
                         print('!!! Memory capacity reached !!! Cycles:', len(intHashSet))
@@ -243,6 +244,81 @@ class Shacol(object):
                 else:
                     print('Generating new string input... ')
                     memOver = False
+
+        except Exception as e:
+            print(str(e))
+
+    def findExperimental(self, hashPart=None):
+        """
+        Experimental method based on generating bilion of hashes. After that
+        the memory is exceeded and it will continue without saving previous hashes.
+        """
+        try:
+            if not hashPart:
+                hashPart = self.hashPart
+                hashPartLength = self.hashPartLength
+            else:
+                hashPartLength = len(hashPart)
+
+            counter = 0
+            intHashSet = {int()}
+            hashPartLength = len(hashPart)
+            newHashPart = int(binascii.hexlify(bytes(hashPart,'utf-8')),16)
+            print('\nExperimental method started...')
+
+            startTime = time.time()
+            while True:
+                freeResources = psutil.virtual_memory().available + psutil.swap_memory().free
+                if freeResources < 1073741824:
+                    print('Memory capacity reached! Continue with hashing without storing...')
+                    break
+
+                previousLength = len(intHashSet)
+                intHashSet.add(newHashPart)
+                if len(intHashSet) == previousLength:
+                    break
+
+                strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
+                newHash = hashlib.sha256(strHashPart).hexdigest()
+                newHash = newHash[0:hashPartLength]
+                newHashPart = int(binascii.hexlify(bytes(newHash,'utf-8')),16)
+                if counter % 10000000 == 0 : print('Count of cycles: ',counter)
+                counter += 1
+
+            while newHashPart not in intHashSet:
+                strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
+                newHash = hashlib.sha256(strHashPart).hexdigest()
+                newHash = newHash[0:hashPartLength]
+                newHashPart = int(binascii.hexlify(bytes(newHash,'utf-8')),16)
+                counter += 1
+                if counter % 10000000 == 0 : print(counter)
+
+            totalTime = round(time.time() - startTime, 12)
+            print('\n##### EXPERIMENTAL method succeeded! #####')
+            print('\nInput hashPart:', hashPart)
+            print("Collision found after %s seconds" % (totalTime))
+            print('Count of the cycles:', len(intHashSet)+1)
+            print('Collision hash:', newHash)
+
+            print('\nSet int structure used', round(sys.getsizeof(intHashSet)/1024/1024,3),'MB')
+            print('The most used structures: ')
+            objgraph.show_most_common_types(limit=3)
+            intHashSet.clear()
+
+            """
+            indexOfCollision = int()
+            cycleCount = 0
+            for i in setArray:
+                indexOfCollision = list(i).index(newHashPart)
+                if indexOfCollision:
+                    indexOfCollision += cycle_count * setCount
+                    break
+                cycleCount += 1
+            print(('Index of collision hash:', indexOfCollision))
+            return {"inputHash": hashPart, "time": totalTime, "cycles": len(longHashSet)+1,
+                    "collisionHash": newHash, "indexOfCollisionHash": indexOfCollision}
+            """
+            return {"inputHash": hashPart, "time": totalTime, "cycles": counter, "collisionHash": newHash}
 
         except Exception as e:
             print(str(e))
@@ -371,7 +447,8 @@ def main():
         else:
             #shacol.findCollisionStr()
             shacol.findCollisionInt()
-            shacol.findBestHash()
+            #shacol.findBestHash()
+            shacol.findExperimental()
 
     #shacol.findCollisionWithDBset()
 
