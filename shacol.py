@@ -203,7 +203,6 @@ class Shacol(object):
             random.seed()
 
             # Move to special origin method and use dictionary to store results (find best time)
-
             while True:
                 rndStr = ''
                 charLen = random.randint(1,30)
@@ -215,7 +214,6 @@ class Shacol(object):
                 newHashPart = int(binascii.hexlify(bytes(firstHashPart,'utf-8')),16)
 
                 startTime = time.time()
-
                 while newHashPart not in intHashSet:
                     intHashSet.add(newHashPart)
                     freeResources = psutil.virtual_memory().available + psutil.swap_memory().free
@@ -446,9 +444,9 @@ def main():
             shacol.findCollisionFirst()
         else:
             #shacol.findCollisionStr()
-            shacol.findCollisionInt()
-            #shacol.findBestHash()
-            shacol.findExperimental()
+            #shacol.findCollisionInt()
+            shacol.findBestHash()
+            #shacol.findExperimental()
 
     #shacol.findCollisionWithDBset()
 
