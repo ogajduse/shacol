@@ -218,7 +218,6 @@ class Shacol(object):
                     if len(intHashSet) >= 2000000000:
                         print('\n--- Reached stated limit --- Cycles:', len(intHashSet))
                         memOver = True
-                        intHashSet.clear()
                         break
                         #print('Count of cycles: ',len(intHashSet))
                         #virtualMem = psutil.virtual_memory().available
@@ -250,7 +249,7 @@ class Shacol(object):
                 else:
                     print('Generating new string input... \n')
                     memOver = False
-
+                intHashSet.clear()
 
         except Exception as e:
             print(str(e))
