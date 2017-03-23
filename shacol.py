@@ -215,14 +215,18 @@ class Shacol(object):
 
                 startTime = time.time()
                 while newHashPart not in intHashSet:
+                    if len(intHashSet) % 10000000 == 0 :
+                        print('Count of cycles: ',len(intHashSet))
+                        virtualMem = psutil.virtual_memory().available
+                        swapMem = psutil.swap_memory().free
+                        freeResources = virtualMem + swapMem
+                        print('Free resources: ',freeResources/1024/1024,'MB')
+                        if virtualMem < 536870912 or swapMem < 536870912:
+                            print('\n!!! Memory capacity reached !!! Cycles:', len(intHashSet))
+                            memOver = True
+                            break
+
                     intHashSet.add(newHashPart)
-                    freeResources = psutil.virtual_memory().available + psutil.swap_memory().free
-                    if len(intHashSet) % 10000000 == 0 : print('Count of cycles: ',len(intHashSet))
-
-                    if freeResources < 1073741824:
-                        print('!!! Memory capacity reached !!! Cycles:', len(intHashSet))
-                        break
-
                     strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
                     newHash = hashlib.sha256(strHashPart).hexdigest()
                     newHash = newHash[0:hashPartLength]
@@ -240,8 +244,11 @@ class Shacol(object):
                     print('Set int structure used', round(sys.getsizeof(intHashSet)/1048576,3),'MB')
                     print('\nThe best time yet:', bestTime)
                 else:
-                    print('Generating new string input... ')
+                    print('Generating new string input... \n')
                     memOver = False
+
+                intHashSet.clear()
+
 
         except Exception as e:
             print(str(e))
@@ -266,10 +273,13 @@ class Shacol(object):
 
             startTime = time.time()
             while True:
-                freeResources = psutil.virtual_memory().available + psutil.swap_memory().free
-                if freeResources < 1073741824:
-                    print('Memory capacity reached! Continue with hashing without storing...')
-                    break
+                if counter % 10000000 == 0 :
+                    print('Count of cycles: ',counter)
+                    freeResources = psutil.virtual_memory().available + psutil.swap_memory().free
+                    print('Free resources: ',freeResources/1024/1024,'MB')
+                    if freeResources < 1073741824:
+                        print('!!! Memory capacity reached !!! Cycles:', counter)
+                        break
 
                 previousLength = len(intHashSet)
                 intHashSet.add(newHashPart)
@@ -280,8 +290,6 @@ class Shacol(object):
                 newHash = hashlib.sha256(strHashPart).hexdigest()
                 newHash = newHash[0:hashPartLength]
                 newHashPart = int(binascii.hexlify(bytes(newHash,'utf-8')),16)
-                if counter % 10000000 == 0 : print('Count of cycles: ',counter)
-                counter += 1
 
             while newHashPart not in intHashSet:
                 strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
