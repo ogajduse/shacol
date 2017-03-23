@@ -48,10 +48,10 @@ class Shacol(object):
                 if self.sha256:
                     if self.text:
                         for textInFile in dataFromFile:
-                            self.shaList.append(hashlib.sha256(textInFile.encode('utf-8').hexdigest()[0:self.hashPartLength])
-                    else:
-                        for hashInFile in dataFromFile:
-                            self.shaList.append(hashInFile[0:self.hashPartLength])
+                            self.shaList.append(hashlib.sha256(textInFile.encode('utf-8').hexdigest()[0:self.hashPartLength]))
+                        else:
+                            for hashInFile in dataFromFile:
+                                self.shaList.append(hashInFile[0:self.hashPartLength])
             else:
                 if sha256:
                     if self.text:
@@ -215,16 +215,20 @@ class Shacol(object):
 
                 startTime = time.time()
                 while newHashPart not in intHashSet:
-                    if len(intHashSet) % 10000000 == 0 :
-                        print('Count of cycles: ',len(intHashSet))
-                        virtualMem = psutil.virtual_memory().available
-                        swapMem = psutil.swap_memory().free
-                        freeResources = virtualMem + swapMem
-                        print('Free resources: ',freeResources/1024/1024,'MB')
-                        if virtualMem < 536870912 or swapMem < 536870912:
-                            print('\n!!! Memory capacity reached !!! Cycles:', len(intHashSet))
-                            memOver = True
-                            break
+                    if len(intHashSet) >= 2000000000:
+                        print('\n--- Reached stated limit --- Cycles:', len(intHashSet))
+                        memOver = True
+                        intHashSet.clear()
+                        break
+                        #print('Count of cycles: ',len(intHashSet))
+                        #virtualMem = psutil.virtual_memory().available
+                        #swapMem = psutil.swap_memory().free
+                        #freeResources = virtualMem + swapMem
+                        #print('Free resources: ',freeResources/1024/1024,'MB')
+                        #if virtualMem < 268435456:
+                            #print('\n!!! Memory capacity reached !!! Cycles:', len(intHashSet))
+                            #memOver = True
+                            #break
 
                     intHashSet.add(newHashPart)
                     strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
@@ -246,8 +250,6 @@ class Shacol(object):
                 else:
                     print('Generating new string input... \n')
                     memOver = False
-
-                intHashSet.clear()
 
 
         except Exception as e:
