@@ -196,16 +196,15 @@ class Shacol(object):
         """
         try:
             memOver = False
-            intHashSet = {int()}
             hashPartLength = self.hashPartLength
             charStr = 'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ+-*/!@#$%&?'
             bestTime = sys.maxsize
             random.seed()
 
-            # Move to special origin method and use dictionary to store results (find best time)
             while True:
                 rndStr = ''
-                charLen = random.randint(1,30)
+                intHashSet = {int()}
+                charLen = random.randint(1,64)
                 for number in range(charLen):
                     rndStr += ''.join(random.sample(charStr,1))
 
@@ -215,19 +214,18 @@ class Shacol(object):
 
                 startTime = time.time()
                 while newHashPart not in intHashSet:
-                    if len(intHashSet) >= 2000000000:
-                        print('\n--- Reached stated limit --- Cycles:', len(intHashSet))
+                    if len(intHashSet) >= 1000000000:
+                        print('\n--- Stated limit reached --- Set count:', len(intHashSet))
                         memOver = True
                         break
-                        #print('Count of cycles: ',len(intHashSet))
-                        #virtualMem = psutil.virtual_memory().available
-                        #swapMem = psutil.swap_memory().free
-                        #freeResources = virtualMem + swapMem
-                        #print('Free resources: ',freeResources/1024/1024,'MB')
-                        #if virtualMem < 268435456:
-                            #print('\n!!! Memory capacity reached !!! Cycles:', len(intHashSet))
-                            #memOver = True
-                            #break
+                    """ #Memory based control
+                    if len(intHashSet) : 10000000 == 0:
+                        virtualMem = psutil.virtual_memory().available
+                        if virtualMem < 134217728:
+                            print('\n!!! Memory capacity reached !!! Set count:', len(intHashSet))
+                            memOver = True
+                            break
+                    """
 
                     intHashSet.add(newHashPart)
                     strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
@@ -239,7 +237,8 @@ class Shacol(object):
                 if not memOver:
                     print('\n##### Collision found process succeeded! #####')
                     print('Input string:', rndStr)
-                    print('Input hash:', firstHashPart)
+                    print('Input hash:', firstHash)
+                    print('Input hash part:', firstHashPart)
                     print("Collision found after %s seconds" % (totalTime))
                     if (totalTime < bestTime): bestTime = totalTime
                     print('Count of the cycles:', len(intHashSet)+1)
@@ -247,9 +246,10 @@ class Shacol(object):
                     print('Set int structure used', round(sys.getsizeof(intHashSet)/1048576,3),'MB')
                     print('\nThe best time yet:', bestTime)
                 else:
-                    print('Generating new string input... \n')
+                    print('\nGenerating new string input... \n')
                     memOver = False
-                intHashSet.clear()
+
+                del intHashSet
 
         except Exception as e:
             print(str(e))
