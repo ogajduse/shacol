@@ -1,0 +1,38 @@
+{% extends 'website/base.html' %}
+{% block content %}
+<h2>Int method</h2>
+<table class="table table-bordered table-hover">
+  <thead>
+    <tr>
+      <th>Index</th>
+      <th>Input hash</th>
+      <th>Collision hash</th>
+      <th>Number of cycles</th>
+      <th>Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>John</td>
+      <td>Doe</td>
+      <td>john@example.com</td>
+      <td>Doe</td>
+      <td>john@example.com</td>
+    </tr>
+    <tr>
+      <td>Mary</td>
+      <td>Moe</td>
+      <td>mary@example.com</td>
+      <td>Doe</td>
+      <td>john@example.com</td>
+    </tr>
+    <tr>
+      <td>July</td>
+      <td>Dooley</td>
+      <td>july@example.com</td>
+      <td>Doe</td>
+      <td>john@example.com</td>
+    </tr>
+  </tbody>
+</table>
+{% endblock content %}
