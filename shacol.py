@@ -149,7 +149,7 @@ class Shacol(object):
 
             hashPartLength = len(hashPart)
             intHashSet = {int()}
-            status = 0
+            status = 1
             newHashPart = int(binascii.hexlify(bytes(hashPart,'utf-8')),16)
 
             startTime = time.time()
@@ -158,7 +158,7 @@ class Shacol(object):
                 status += 1
                 if status == 10000000:
                     print(len(intHashSet))
-                    status = 0
+                    status = 1
                 strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
                 newHash = hashlib.sha256(strHashPart).hexdigest()
                 newHash = newHash[0:hashPartLength]
