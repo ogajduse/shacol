@@ -151,7 +151,9 @@ class Shacol(object):
 
     def findCollisionInt(self, hashPart=None):
         """
-        Performance function - storing INT in SET
+        The most effective versions of storing hash - INT in SET
+
+        :param hashPart: the input hash loaded from a file
         """
         try:
             if not hashPart:
@@ -160,53 +162,42 @@ class Shacol(object):
             else:
                 hashPartLength = len(hashPart)
 
-            hashPartLength = len(hashPart)
-            intHashSet = {int()}
             status = 1
+            intHashSet = {int()}
             newHashPart = int(binascii.hexlify(bytes(hashPart,'utf-8')),16)
 
-            startTime = time.time()
+            start = timeit.default_timer()
+
             while newHashPart not in intHashSet:
                 intHashSet.add(newHashPart)
                 status += 1
                 if status == 10000000:
-                    print(len(intHashSet))
-                    status = 1
+                    print('\n' * 100)
+                    print('Set length:', len(intHashSet))
+                    print('Run time:', round((timeit.default_timer() - start)/60, 3),'minutes')
+                    status = 0
                 strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
                 newHash = hashlib.sha256(strHashPart).hexdigest()
                 newHash = newHash[0:hashPartLength]
                 newHashPart = int(binascii.hexlify(bytes(newHash,'utf-8')),16)
 
-            totalTime = round(time.time() - startTime, 12)
-            print('\n##### INT method - Collision found process succeeded! #####')
+            stop = timeit.default_timer()
+            totalTime = round(stop - start, 12)
+            cycles = len(intHashSet)+1
+
+            print('\n##### findCollisionInt - Collision found process succeeded! #####')
             print('\nInput hashPart:', hashPart)
             print("Collision found after %s seconds" % (totalTime))
             print('Count of the cycles:', len(intHashSet)+1)
             print('Collision hash:', newHash)
-
+            index = 0
+            for intHash in intHashSet:
+                index += 1
+                if intHash == newHashPart: print('Index of collision hash:', index)
             print('\nSet int structure used', round(sys.getsizeof(intHashSet)/1024/1024,3),'MB')
-            print('The most used structures: ')
-            objgraph.show_most_common_types(limit=3)
-
-            intHashList = list(intHashSet)
             del intHashSet
-            print('Index of collision hash:', intHashList.index(newHashPart))
 
-            """ ??? doesn't work, why ???
-            indexOfCollision = int()
-            cycleCount = 0
-            for i in intHashSet:
-                indexOfCollision = list(i).index(newHashPart)
-                if indexOfCollision:
-                    indexOfCollision += cycleCount * len(intHashSet)
-                    break
-                cycleCount += 1
-            print('Index of collision hash:', indexOfCollision)
-            return {"inputHash": hashPart, "time": totalTime, "cycles": len(intHashSet)+1,
-                    "collisionHash": newHash, "indexOfCollisionHash": indexOfCollision}
-            """
-
-            return {"inputHash": hashPart, "time": totalTime, "cycles": len(intHashList)+1, "collisionHash": newHash}
+            return {"inputHash": hashPart, "time": totalTime, "cycles": cycles, "collisionHash": newHash, "indexOfCollision": index}
 
         except Exception as e:
             print(str(e))
