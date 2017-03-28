@@ -45,14 +45,16 @@ class Shacol(object):
                 if self.sha256:
                     if self.text:
                         for textInFile in dataFromFile:
-                            self.shaList.append(hashlib.sha256(textInFile.encode('utf-8').hexdigest()[0:self.hashPartLength]))
+                            self.shaList.append(
+                                hashlib.sha256(textInFile.encode('utf-8').hexdigest()[0:self.hashPartLength]))
                         else:
                             for hashInFile in dataFromFile:
                                 self.shaList.append(hashInFile[0:self.hashPartLength])
             else:
                 if sha256:
                     if self.text:
-                        self.hashPart = hashlib.sha256(dataFromFile.read().encode('utf-8')).hexdigest()[0:self.hashPartLength]
+                        self.hashPart = hashlib.sha256(dataFromFile.read().encode('utf-8')).hexdigest()[
+                                        0:self.hashPartLength]
                     else:
                         self.hashPart = dataFromFile.readline()[0:self.hashPartLength]
         dataFromFile.close()
@@ -121,7 +123,7 @@ class Shacol(object):
                 if status == 10000000:
                     print('\n' * 100)
                     print('SET length:', len(strHashSet))
-                    print('Run time:', round((timeit.default_timer() - start)/60, 3),'minutes')
+                    print('Run time:', round((timeit.default_timer() - start) / 60, 3), 'minutes')
                     status = 0
                 newHash = hashlib.sha256(newHashPart.encode('utf-8')).hexdigest()
                 newHashPart = newHash[0:hashPartLength]
@@ -129,7 +131,7 @@ class Shacol(object):
             stop = timeit.default_timer()
 
             totalTime = round(stop - start, 12)
-            cycles = len(strHashSet)+1
+            cycles = len(strHashSet) + 1
 
             print('\n##### findCollisionStr - Collision found process succeeded! #####')
             print('\nInput hashPart:', hashPart)
@@ -140,14 +142,14 @@ class Shacol(object):
             for strHash in strHashSet:
                 index += 1
                 if strHash == newHashPart: print('Index of collision hash:', index)
-            print('\nSet string structure used', round(sys.getsizeof(strHashSet)/1024/1024,3),'MB')
+            print('\nSet string structure used', round(sys.getsizeof(strHashSet) / 1024 / 1024, 3), 'MB')
             del strHashSet
 
-            return {"inputHash": hashPart, "time": totalTime, "cycles": cycles, "collisionHash": newHashPart, "indexOfCollision": index}
+            return {"inputHash": hashPart, "time": totalTime, "cycles": cycles, "collisionHash": newHashPart,
+                    "indexOfCollision": index}
 
         except Exception as e:
             print(str(e))
-
 
     def findCollisionInt(self, hashPart=None):
         """
@@ -164,7 +166,7 @@ class Shacol(object):
 
             status = 1
             intHashSet = {int()}
-            newHashPart = int(binascii.hexlify(bytes(hashPart,'utf-8')),16)
+            newHashPart = int(binascii.hexlify(bytes(hashPart, 'utf-8')), 16)
 
             start = timeit.default_timer()
 
@@ -174,30 +176,31 @@ class Shacol(object):
                 if status == 10000000:
                     print('\n' * 100)
                     print('Set length:', len(intHashSet))
-                    print('Run time:', round((timeit.default_timer() - start)/60, 3),'minutes')
+                    print('Run time:', round((timeit.default_timer() - start) / 60, 3), 'minutes')
                     status = 0
                 strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
                 newHash = hashlib.sha256(strHashPart).hexdigest()
                 newHash = newHash[0:hashPartLength]
-                newHashPart = int(binascii.hexlify(bytes(newHash,'utf-8')),16)
+                newHashPart = int(binascii.hexlify(bytes(newHash, 'utf-8')), 16)
 
             stop = timeit.default_timer()
             totalTime = round(stop - start, 12)
-            cycles = len(intHashSet)+1
+            cycles = len(intHashSet) + 1
 
             print('\n##### findCollisionInt - Collision found process succeeded! #####')
             print('\nInput hashPart:', hashPart)
             print("Collision found after %s seconds" % (totalTime))
-            print('Count of the cycles:', len(intHashSet)+1)
+            print('Count of the cycles:', len(intHashSet) + 1)
             print('Collision hash:', newHash)
             index = 0
             for intHash in intHashSet:
                 index += 1
                 if intHash == newHashPart: print('Index of collision hash:', index)
-            print('\nSet int structure used', round(sys.getsizeof(intHashSet)/1024/1024,3),'MB')
+            print('\nSet int structure used', round(sys.getsizeof(intHashSet) / 1024 / 1024, 3), 'MB')
             del intHashSet
 
-            return {"inputHash": hashPart, "time": totalTime, "cycles": cycles, "collisionHash": newHash, "indexOfCollision": index}
+            return {"inputHash": hashPart, "time": totalTime, "cycles": cycles, "collisionHash": newHash,
+                    "indexOfCollision": index}
 
         except Exception as e:
             print(str(e))
@@ -217,14 +220,14 @@ class Shacol(object):
             while True:
                 rndStr = ''
                 intHashSet = {int()}
-                charLen = random.randint(1,64)
+                charLen = random.randint(1, 64)
                 for number in range(charLen):
-                    rndStr += ''.join(random.sample(charStr,1))
-                print('\nGenerate new string input: ',rndStr,'\n')
+                    rndStr += ''.join(random.sample(charStr, 1))
+                print('\nGenerate new string input: ', rndStr, '\n')
 
                 firstHash = hashlib.sha256(rndStr.encode('utf-8')).hexdigest()
                 firstHashPart = firstHash[0:hashPartLength]
-                newHashPart = int(binascii.hexlify(bytes(firstHashPart,'utf-8')),16)
+                newHashPart = int(binascii.hexlify(bytes(firstHashPart, 'utf-8')), 16)
 
                 print('Finding collision started')
                 start = timeit.default_timer()
@@ -245,11 +248,11 @@ class Shacol(object):
                     strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
                     newHash = hashlib.sha256(strHashPart).hexdigest()
                     newHash = newHash[0:hashPartLength]
-                    newHashPart = int(binascii.hexlify(bytes(newHash,'utf-8')),16)
+                    newHashPart = int(binascii.hexlify(bytes(newHash, 'utf-8')), 16)
 
                 stop = timeit.default_timer()
                 totalTime = round(stop - start, 10)
-                cycles = len(intHashSet)+1
+                cycles = len(intHashSet) + 1
 
                 if not memOver:
                     print('\n##### Collision found process succeeded! #####')
@@ -264,7 +267,7 @@ class Shacol(object):
                     for intHash in intHashSet:
                         index += 1
                         if intHash == newHashPart: print('Index of collision hash:', index)
-                    print('Set int structure used', round(sys.getsizeof(intHashSet)/1048576,3),'MB')
+                    print('Set int structure used', round(sys.getsizeof(intHashSet) / 1048576, 3), 'MB')
                     print('\nThe best time yet:', bestTime)
                 else:
                     memOver = False
@@ -290,7 +293,7 @@ class Shacol(object):
             counter = 0
             intHashSet = {int()}
             hashPartLength = len(hashPart)
-            newHashPart = int(binascii.hexlify(bytes(hashPart,'utf-8')),16)
+            newHashPart = int(binascii.hexlify(bytes(hashPart, 'utf-8')), 16)
             print('\nExperimental method started...')
 
             startTime = time.time()
@@ -307,14 +310,14 @@ class Shacol(object):
                 strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
                 newHash = hashlib.sha256(strHashPart).hexdigest()
                 newHash = newHash[0:hashPartLength]
-                newHashPart = int(binascii.hexlify(bytes(newHash,'utf-8')),16)
+                newHashPart = int(binascii.hexlify(bytes(newHash, 'utf-8')), 16)
             print('Hashing without store started...')
 
             while newHashPart not in intHashSet:
                 strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
                 newHash = hashlib.sha256(strHashPart).hexdigest()
                 newHash = newHash[0:hashPartLength]
-                newHashPart = int(binascii.hexlify(bytes(newHash,'utf-8')),16)
+                newHashPart = int(binascii.hexlify(bytes(newHash, 'utf-8')), 16)
                 counter += 1
                 status += 1
                 if status == 100000000:
@@ -325,10 +328,10 @@ class Shacol(object):
             print('\n##### EXPERIMENTAL method succeeded! #####')
             print('\nInput hashPart:', hashPart)
             print("Collision found after %s seconds" % (totalTime))
-            print('Count of the cycles:', len(intHashSet)+1)
+            print('Count of the cycles:', len(intHashSet) + 1)
             print('Collision hash:', newHash)
 
-            print('\nSet int structure used', round(sys.getsizeof(intHashSet)/1024/1024,3),'MB')
+            print('\nSet int structure used', round(sys.getsizeof(intHashSet) / 1024 / 1024, 3), 'MB')
             print('The most used structures: ')
             objgraph.show_most_common_types(limit=3)
             intHashSet.clear()
@@ -350,7 +353,6 @@ class Shacol(object):
 
         except Exception as e:
             print(str(e))
-
 
     def findCollisionFirst(self, hashPart=None):
         """
@@ -484,12 +486,12 @@ def main():
         if (args.first):
             shacol.findCollisionFirst()
         else:
-            #shacol.findCollisionStr()
+            # shacol.findCollisionStr()
             shacol.findCollisionInt()
-            #shacol.findBestHash()
-            #shacol.findExperimental()
+            # shacol.findBestHash()
+            # shacol.findExperimental()
 
-    #shacol.findCollisionWithDBset()
+    # shacol.findCollisionWithDBset()
 
     stop = timeit.default_timer()
 
