@@ -204,7 +204,8 @@ class Shacol(object):
 
     def findBestHash(self):
         """
-        Function provides the best possible input string with at least time consumption.
+        Function provides the best possible input string with the least time consumption.
+        Offers memory check in intervals.
         """
         try:
             memOver = False
@@ -217,16 +218,16 @@ class Shacol(object):
                 rndStr = ''
                 intHashSet = {int()}
                 charLen = random.randint(1,64)
-                print('\nGenerating string input... \n')
                 for number in range(charLen):
                     rndStr += ''.join(random.sample(charStr,1))
+                print('\nGenerate new string input: ',rndStr,'\n')
 
                 firstHash = hashlib.sha256(rndStr.encode('utf-8')).hexdigest()
                 firstHashPart = firstHash[0:hashPartLength]
                 newHashPart = int(binascii.hexlify(bytes(firstHashPart,'utf-8')),16)
 
                 print('Finding collision started')
-                startTime = time.time()
+                start = timeit.default_timer()
                 while newHashPart not in intHashSet:
                     if len(intHashSet) >= 1000000000:
                         print('\n--- Stated limit reached --- Set count:', len(intHashSet))
@@ -245,7 +246,10 @@ class Shacol(object):
                     newHash = hashlib.sha256(strHashPart).hexdigest()
                     newHash = newHash[0:hashPartLength]
                     newHashPart = int(binascii.hexlify(bytes(newHash,'utf-8')),16)
-                totalTime = round(time.time() - startTime, 10)
+
+                stop = timeit.default_timer()
+                totalTime = round(stop - start, 10)
+                cycles = len(intHashSet)+1
 
                 if not memOver:
                     print('\n##### Collision found process succeeded! #####')
@@ -254,8 +258,12 @@ class Shacol(object):
                     print('Input hash part:', firstHashPart)
                     print("Collision found after %s seconds" % (totalTime))
                     if (totalTime < bestTime): bestTime = totalTime
-                    print('Count of the cycles:', len(intHashSet)+1)
+                    print('Count of the cycles:', cycles)
                     print('Collision hash:', newHash)
+                    index = 0
+                    for intHash in intHashSet:
+                        index += 1
+                        if intHash == newHashPart: print('Index of collision hash:', index)
                     print('Set int structure used', round(sys.getsizeof(intHashSet)/1048576,3),'MB')
                     print('\nThe best time yet:', bestTime)
                 else:
