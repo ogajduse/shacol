@@ -317,7 +317,7 @@ class Shacol(object):
 
             stop = timeit.default_timer()
             totalTime = round(stop - start, 12)
-            print('\n##### EXPERIMENTAL method succeeded! #####')
+            print('\n##### findExperimental - found process succeeded! #####')
             print('\nInput hashPart:', hashPart)
             print("Collision found after %s seconds" % (totalTime))
             print('Count of the cycles:', len(intHashSet)+1)
@@ -361,7 +361,7 @@ class Shacol(object):
 
             stop = timeit.default_timer()
             totalTime = round(stop - start, 12)
-            print('\n##### findCollisionFirst method - Collision found process succeeded! #####')
+            print('\n##### findCollisionFirst - Collision found process succeeded! #####')
             print("Collision found after %s seconds" % (totalTime))
             print(('Count of the cycles:', count))
             print(('Collision hash:', newHashPart))
@@ -448,9 +448,9 @@ def main():
             shacol.findCollisionFirst()
         else:
             # shacol.findCollisionStr()
-            # shacol.findCollisionInt()
+             shacol.findCollisionInt()
             # shacol.findBestHash()
-             shacol.findExperimental()
+            # shacol.findExperimental()
 
     # shacol.findCollisionWithDBset()
 
