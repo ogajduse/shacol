@@ -3,7 +3,7 @@ from django.utils import timezone
 
 # Create your models here.
 class Collision(models.Model):
-    index = models.IntegerField()
+    hash_order = models.IntegerField()
     input_hash = models.CharField(max_length=30)
     total_time = models.CharField(max_length=30)
     cycles = models.IntegerField()
