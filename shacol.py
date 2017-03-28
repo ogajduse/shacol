@@ -1,7 +1,7 @@
 from __future__ import division
 from __future__ import print_function
 # !/usr/bin/env python
-# requirments - guppy, redis, psutil, objgraph
+# requirments - redis, psutil
 
 from future import standard_library
 
@@ -15,13 +15,11 @@ import os
 import sys
 import random
 import timeit
-import objgraph
 import psutil
 import hashlib
 import argparse
 import threading
 import linecache
-# from guppy import hpy
 from io import StringIO
 import redis
 import binascii
@@ -58,14 +56,6 @@ class Shacol(object):
                     else:
                         self.hashPart = dataFromFile.readline()[0:self.hashPartLength]
         dataFromFile.close()
-
-    """ Ready for threading - not be real with set (just with a slower database using
-        low RAM consumption)
-    if (len(sha256) % hashPartLength == 0): #seperation of hash to n-bits blocks
-        hashPart = [sha256[i:i+hashPartLength] for i in range(0, len(sha256), hashPartLength)]
-    else:
-        print 'Badly aliquot bit value! Use only the power of two... '
-    """
 
     def getInfo(self):
         printHashes = str()
@@ -332,23 +322,8 @@ class Shacol(object):
             print('Collision hash:', newHash)
 
             print('\nSet int structure used', round(sys.getsizeof(intHashSet) / 1024 / 1024, 3), 'MB')
-            print('The most used structures: ')
-            objgraph.show_most_common_types(limit=3)
             intHashSet.clear()
 
-            """
-            indexOfCollision = int()
-            cycleCount = 0
-            for i in setArray:
-                indexOfCollision = list(i).index(newHashPart)
-                if indexOfCollision:
-                    indexOfCollision += cycle_count * setCount
-                    break
-                cycleCount += 1
-            print(('Index of collision hash:', indexOfCollision))
-            return {"inputHash": hashPart, "time": totalTime, "cycles": len(longHashSet)+1,
-                    "collisionHash": newHash, "indexOfCollisionHash": indexOfCollision}
-            """
             return {"inputHash": hashPart, "time": totalTime, "cycles": counter, "collisionHash": newHash}
 
         except Exception as e:
@@ -455,27 +430,6 @@ def main():
     print("Do you want to proceed?")
     input('\nPress Enter to continue...')
 
-    start = timeit.default_timer()  # Default run time monitoring
-
-    """
-    #Queuing and threading
-    q = Queue.LifoQueue()
-    #put items to queue
-    for key in jobTrack:
-    	if jobTrack[key] != "Invalid":
-    		q.put(str(key))
-    	else:
-    		print (str(key) + " is not added to queue as its invalid")
-
-    #for i in range(100):
-    t1 = threading.Thread(target=findCollisionStatus) #,args=(q,))
-	t1.daemon = True
-    t1.start() #Start the thread
-
-    #q.join()
-    #print ("\nFinally")
-    """
-
     if (args.hashGroup):
         for hashes in shacol.shaList:
             if (args.first):
@@ -493,8 +447,6 @@ def main():
 
     # shacol.findCollisionWithDBset()
 
-    stop = timeit.default_timer()
-
 
 if __name__ == "__main__":
     try:
@@ -502,33 +454,3 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print('\nInterrupted... Terminating')
         sys.exit()
-
-
-def status():  # Count of cycles, array/database
-    countOfCycles = 0
-    runTime = ''
-    # h = hpy()
-
-    print('\n' * 100)
-    # shacol.findCollisionCheckSequence.count
-    print(('Runtime:', stop - start))
-    # print (h.heap())
-
-
-def findCollisionStatus(q):  # method working with threads, q means queqe
-    while not q.empty():
-        myCollision = threading.local()
-        myCollision.scanning = True
-        myCollision.dom = q.get
-        myCollision.pstart = pstart
-        myCollision.prepeat = prepeat
-        # str(myCollision.dom) --- now Processing
-        # str(threading.activeCount())
-
-        while (myCollision.scanning):
-            try:
-                status()
-            except Exception as e:
-                print(str(e))
-                pass
-        myData.scanning = False
