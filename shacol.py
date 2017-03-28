@@ -1,7 +1,7 @@
 from __future__ import division
 from __future__ import print_function
 # !/usr/bin/env python
-# requirments - guppy, redis
+# requirments - guppy, redis, psutil, objgraph
 
 from future import standard_library
 
@@ -13,17 +13,14 @@ from builtins import object
 from past.utils import old_div
 import os
 import sys
-import time
-import timeit
 import random
+import timeit
 import objgraph
 import psutil
-# import queue
 import hashlib
 import argparse
 import threading
 import linecache
-# from sets import Set
 # from guppy import hpy
 from io import StringIO
 import redis
@@ -101,7 +98,9 @@ class Shacol(object):
 
     def findCollisionStr(self, hashPart=None):
         """
-        Best performance function - storing STRING in SET
+        Function with the best performance - storing hashes in SET by STRING
+
+        :param hashPart: the input hash loaded from a file
         """
         try:
             if not hashPart:
@@ -110,31 +109,45 @@ class Shacol(object):
             else:
                 hashPartLength = len(hashPart)
 
-            newHashPart = hashPart
+            status = 1
             strHashSet = {str()}
+            newHashPart = hashPart
 
-            startTime = time.time()
+            start = timeit.default_timer()
+
             while newHashPart not in strHashSet:
                 strHashSet.add(newHashPart)
-                if len(strHashSet) % 10000000 == 0 : print(len(strHashSet))
+                status += 1
+                if status == 10000000:
+                    print('\n' * 100)
+                    print('SET length:', len(strHashSet))
+                    print('Run time:', round((timeit.default_timer() - start)/60, 3),'minutes')
+                    status = 0
                 newHash = hashlib.sha256(newHashPart.encode('utf-8')).hexdigest()
                 newHashPart = newHash[0:hashPartLength]
 
-            totalTime = round(time.time() - startTime, 12)
-            print('\n##### STRING method - Collision found process succeeded! #####')
+            stop = timeit.default_timer()
+
+            totalTime = round(stop - start, 12)
+            cycles = len(strHashSet)+1
+
+            print('\n##### findCollisionStr - Collision found process succeeded! #####')
             print('\nInput hashPart:', hashPart)
             print("Collision found after %s seconds" % (totalTime))
-            print('Count of the cycles:', len(strHashSet)+1)
+            print('Count of the cycles:', cycles)
             print('Collision hash:', newHashPart)
-
+            index = 0
+            for strHash in strHashSet:
+                index += 1
+                if strHash == newHashPart: print('Index of collision hash:', index)
             print('\nSet string structure used', round(sys.getsizeof(strHashSet)/1024/1024,3),'MB')
-            print('The most used structures: ')
-            objgraph.show_most_common_types(limit=3)
-            strHashSet.clear()
+            del strHashSet
 
-            return {"inputHash": hashPart, "time": totalTime, "cycles": len(strHashSet)+1, "collisionHash": newHashPart}
+            return {"inputHash": hashPart, "time": totalTime, "cycles": cycles, "collisionHash": newHashPart, "indexOfCollision": index}
+
         except Exception as e:
             print(str(e))
+
 
     def findCollisionInt(self, hashPart=None):
         """
@@ -473,8 +486,8 @@ def main():
             shacol.findCollisionFirst()
         else:
             #shacol.findCollisionStr()
-            #shacol.findCollisionInt()
-            shacol.findBestHash()
+            shacol.findCollisionInt()
+            #shacol.findBestHash()
             #shacol.findExperimental()
 
     #shacol.findCollisionWithDBset()
