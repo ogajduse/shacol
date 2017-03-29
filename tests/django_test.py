@@ -6,11 +6,10 @@ import shacol
 db_location = os.path.dirname(os.path.abspath(__file__))+"/../app/aplikace/db.sqlite3"
 git_repo = r = git.repo.Repo(os.path.dirname(os.path.abspath(__file__))+"/../")
 sha256 = True
-#BITS = 32
+BITS = 32
 inputFile = "hash.txt"
-hashGroup = True
 
-shacol = shacol.Shacol(sha256, 1, inputFile, hashGroup)
+shacol = shacol.Shacol(sha256, BITS, inputFile)
 db_conn = sqlite3.connect(db_location)
 print(db_conn)
 for i in range(4, 57, 4):
