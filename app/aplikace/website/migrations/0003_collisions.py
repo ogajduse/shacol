@@ -7,11 +7,12 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('website', '0002_auto_20170328_2308'),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Collision',
+            name='Collisions',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('hash_order', models.IntegerField()),

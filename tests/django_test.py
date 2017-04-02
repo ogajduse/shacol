@@ -23,14 +23,13 @@ for i in range(4, 57, 4):
     results["bits"] = i
 
 
-    print("INT METODA:::")
+    #print("INT METODA:::")
     #shacol.findCollisionInt()
     #shacol.findCollisionWithDBSet()
     db_conn.execute("INSERT INTO website_collision (hash_order, input_hash, total_time, cycles, coll_hash, test_method, bits, git_revision) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                     (results["index"], results["inputHash"], results["time"], results["cycles"], results["collisionHash"], "String method", results["bits"], git_repo.git.describe()))
     db_conn.commit()
     print("Pridano do databaze")
-    break
 
 db_conn.close()
 

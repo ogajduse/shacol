@@ -9,6 +9,6 @@ vysledky = dict()
 
 shacol = shacol.Shacol(sha256, BITS, inputFile, hashGroup)
 print shacol.shaList
-shacol.findCollisionFast(shacol.shaList[0])
-shacol.findCollisionFast(shacol.shaList[1])
-shacol.findCollisionFast(shacol.shaList[2])
+shacol.findCollisionStr(shacol.shaList[0])
+shacol.findCollisionStr(shacol.shaList[1])
+shacol.findCollisionStr(shacol.shaList[2])

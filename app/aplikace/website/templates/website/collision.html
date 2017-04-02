@@ -1,38 +1,32 @@
-{% extends 'website/base.html' %}
+<!--{% extends 'base.html' %}
 {% block content %}
 <h2>Int method</h2>
 <table class="table table-bordered table-hover">
   <thead>
     <tr>
-      <th>Index</th>
       <th>Input hash</th>
-      <th>Collision hash</th>
+      <th>Total time</th>
       <th>Number of cycles</th>
-      <th>Time</th>
+      <th>Collision hash</th>
+      <th>Hash order</th>
+      <th>Test method</th>
+      <th>Bits</th>
+      <th>Git revision</th>
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <td>John</td>
-      <td>Doe</td>
-      <td>john@example.com</td>
-      <td>Doe</td>
-      <td>john@example.com</td>
-    </tr>
-    <tr>
-      <td>Mary</td>
-      <td>Moe</td>
-      <td>mary@example.com</td>
-      <td>Doe</td>
-      <td>john@example.com</td>
-    </tr>
-    <tr>
-      <td>July</td>
-      <td>Dooley</td>
-      <td>july@example.com</td>
-      <td>Doe</td>
-      <td>john@example.com</td>
-    </tr>
+    {% for coll in collisions %}
+      <tr>
+        <td>{{ coll.input_hash }}</td>
+        <td>{{ coll.total_time }}</td>
+        <td>{{ coll.cycles }}</td>
+        <td>{{ coll.hash_order }}</td>
+        <td>{{ coll.test_method }}</td>
+        <td>{{ coll.bits }}</td>
+        <td>{{ coll.git_revision }}</td>
+      </tr>
+    {% endfor %}
   </tbody>
 </table>
 {% endblock content %}
+-->

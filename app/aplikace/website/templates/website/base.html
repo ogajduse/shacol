@@ -45,15 +45,52 @@
     </div>
       <div class="row">
             <div class="col-md-12 col-sm-12">
-              {% block content %}
-              {% endblock %}
+              <h2>Int method</h2>
+              <table class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th>Input hash</th>
+                    <th>Total time</th>
+                    <th>Number of cycles</th>
+                    <th>Collision hash</th>
+                    <th>Hash order</th>
+                    <th>Test method</th>
+                    <th>Bits</th>
+                    <th>Git revision</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for coll in collisions %}
+                    <tr>
+                      <td>{{ coll.input_hash }}</td>
+                      <td>{{ coll.total_time }}</td>
+                      <td>{{ coll.cycles }}</td>
+                      <td>{{ coll.coll_hash }}</td>
+                      <td>{{ coll.hash_order }}</td>
+                      <td>{{ coll.test_method }}</td>
+                      <td>{{ coll.bits }}</td>
+                      <td>{{ coll.git_revision }}</td>
+                    </tr>
+                  {% endfor %}
+                  <tr>
+                    <td>gfsfg</td>
+                    <td>gfsdfggfhhe</td>
+                    <td> gfsyttgf</td>
+                    <td>uyytr</td>
+                    <td>nghhghf</td>
+                    <td>lkujy</td>
+                    <td>vfggd</td>
+                    <td>vfggdgfgdgf</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
 
-          <div class="col-md-12 col-sm-12">
+          <!-- <div class="col-md-12 col-sm-12">
             <h1>Hello, world!</h1>
               Tento div zabírá polovinu divu row.Nullam fermentum ex a ante consequat aliquam. Phasellus ornare blandit lacus, vel consequat dolor mollis eget. Ut arcu mi, tempor et ligula ac, ornare egestas lorem. Suspendisse quis augue cursus, hendrerit dolor ut, facilisis dui. Vivamus luctus luctus lectus eget pulvinar. Integer rhoncus suscipit lectus, et finibus lacus semper nec. Nam gravida ultrices finibus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Aenean nec cursus felis, in lacinia urna. Suspendisse facilisis ipsum tempor diam placerat pulvinar. Pellentesque commodo hendrerit nibh a porttitor.
               <p ALIGN="CENTER"><b>ZDE BUDE GRAF!!!!!</b></p>
-              </div>
+            </div> -->
         </div>
           </div>
     </div>
@@ -67,5 +104,5 @@
 
 <script src="{% static 'theme/jquery/jquery.min.js' %}"></script>
 
-    <!-- Bootstrap Core JavaScript -->
-    <script src="{% static 'theme/bootstrap/js/bootstrap.min.js' %}"></script>
+<!-- Bootstrap Core JavaScript -->
+<script src="{% static 'theme/bootstrap/js/bootstrap.min.js' %}"></script>
