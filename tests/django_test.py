@@ -27,8 +27,8 @@ def main():
         #method = "Method with DB Set"
         #dbInsert(results, method, i)
 
-        results = shacolInstance.findCollisionIntBF()
-        method = "Int BF"
+        # results = shacolInstance.findCollisionIntBF()
+        # method = "Int BF"
         # dbInsert(results, method, i)
 
 
