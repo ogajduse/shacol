@@ -1,7 +1,7 @@
 from __future__ import division
 from __future__ import print_function
 # !/usr/bin/env python
-# requirments - redis, psutil
+# requirements - redis, python3-psutil, future
 
 from future import standard_library
 
@@ -18,8 +18,6 @@ import timeit
 import psutil
 import hashlib
 import argparse
-import threading
-import linecache
 from io import StringIO
 import redis
 import binascii
@@ -122,6 +120,7 @@ class Shacol(object):
             stop = timeit.default_timer()
 
             totalTime = round(stop - start, 12)
+            totalMemory = round(sys.getsizeof(strHashSet) / 1024 / 1024, 3)
             cycles = len(strHashSet) + 1
 
             print('\n##### findCollisionStr - Collision found process succeeded! #####')
@@ -132,12 +131,16 @@ class Shacol(object):
             index = 0
             for strHash in strHashSet:
                 index += 1
-                if strHash == newHashPart: print('Index of collision hash:', index)
+                if strHash == newHashPart:
+                    print('Index of collision hash:', index)
+                    break
+            print('Cycles between collision hashes:', cycles-index)
             print('\nSet string structure used', round(sys.getsizeof(strHashSet) / 1024 / 1024, 3), 'MB')
             del strHashSet
 
-            return {"inputHash": hashPart, "time": totalTime, "cycles": cycles, "collisionHash": newHashPart,
-                    "indexOfCollision": index}
+            return {"inputHash": hashPart, "time": (totalTime, 's'), "cycles": cycles, "collisionHash": newHashPart,
+                    "indexOfCollision": index, "cyclesBetCol": cycles-index,
+                    "dataStructConsum": (totalMemory, 'MB')}
 
         except Exception as e:
             print(str(e))
@@ -176,6 +179,7 @@ class Shacol(object):
 
             stop = timeit.default_timer()
             totalTime = round(stop - start, 12)
+            totalMemory = round(sys.getsizeof(intHashSet) / 1024 / 1024, 3)
             cycles = len(intHashSet) + 1
 
             print('\n##### findCollisionInt - Collision found process succeeded! #####')
@@ -186,12 +190,16 @@ class Shacol(object):
             index = 0
             for intHash in intHashSet:
                 index += 1
-                if intHash == newHashPart: print('Index of collision hash:', index)
+                if intHash == newHashPart:
+                    print('Index of collision hash:', index)
+                    break
+            print('Cycles between collision hashes:', cycles-index)
             print('\nSet int structure used', round(sys.getsizeof(intHashSet) / 1024 / 1024, 3), 'MB')
             del intHashSet
 
             return {"inputHash": hashPart, "time": totalTime, "cycles": cycles, "collisionHash": newHash,
-                    "indexOfCollision": index}
+                    "indexOfCollision": index, "cyclesBetCol": cycles-index,
+                    "dataStructConsum": (totalMemory,'MB')}
 
         except Exception as e:
             print(str(e))
@@ -243,6 +251,7 @@ class Shacol(object):
 
                 stop = timeit.default_timer()
                 totalTime = round(stop - start, 10)
+                totalMemory = round(sys.getsizeof(intHashSet) / 1048576, 3)
                 cycles = len(intHashSet) + 1
 
                 if not memOver:
@@ -257,8 +266,11 @@ class Shacol(object):
                     index = 0
                     for intHash in intHashSet:
                         index += 1
-                        if intHash == newHashPart: print('Index of collision hash:', index)
-                    print('Set int structure used', round(sys.getsizeof(intHashSet) / 1048576, 3), 'MB')
+                        if intHash == newHashPart:
+                            print('Index of collision hash:', index)
+                            break
+                    print('Cycles between collision hashes:', cycles-index)
+                    print('Set int structure used', totalMemory, 'MB')
                     print('\nThe best time yet:', bestTime)
                 else:
                     memOver = False
@@ -318,6 +330,8 @@ class Shacol(object):
 
             stop = timeit.default_timer()
             totalTime = round(stop - start, 12)
+            totalMemory = round(sys.getsizeof(intHashSet) / 1024 / 1024, 3)
+
             print('\n##### findExperimental - found process succeeded! #####')
             print('\nInput hashPart:', hashPart)
             print("Collision found after %s seconds" % (totalTime))
@@ -326,11 +340,16 @@ class Shacol(object):
             index = 0
             for intHash in intHashSet:
                 index += 1
-                if intHash == newHashPart: print('Index of collision hash:', index)
-            print('\nSet int structure used', round(sys.getsizeof(intHashSet) / 1024 / 1024, 3), 'MB')
+                if intHash == newHashPart:
+                    print('Index of collision hash:', index)
+                    break
+            print('Cycles between collision hashes:', cycles-index)
+            print('\nSet int structure used', totalMemory, 'MB')
             del intHashSet
 
-            return {"inputHash": hashPart, "time": totalTime, "cycles": counter, "collisionHash": newHash, "indexOfCollision:": index}
+            return {"inputHash": hashPart, "time": totalTime, "cycles": counter, "collisionHash": newHash,
+            "indexOfCollision:": index, "cyclesBetCol": cycles-index,
+            "dataStructConsum": (totalMemory, 'MB')}
 
         except Exception as e:
             print(str(e))
