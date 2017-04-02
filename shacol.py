@@ -38,24 +38,25 @@ class Shacol(object):
         self.shaList = []
         self.hashPart = str()
 
-        with open(self.inputFile, 'r', encoding='utf-8') as dataFromFile:
-            if self.hashGroup:
-                if self.sha256:
-                    if self.text:
-                        for textInFile in dataFromFile:
-                            self.shaList.append(
-                                hashlib.sha256(textInFile.encode('utf-8').hexdigest()[0:self.hashPartLength]))
+        if inputFile:
+            with open(self.inputFile, 'r', encoding='utf-8') as dataFromFile:
+                if self.hashGroup:
+                    if self.sha256:
+                        if self.text:
+                            for textInFile in dataFromFile:
+                                self.shaList.append(
+                                    hashlib.sha256(textInFile.encode('utf-8').hexdigest()[0:self.hashPartLength]))
                         else:
                             for hashInFile in dataFromFile:
                                 self.shaList.append(hashInFile[0:self.hashPartLength])
-            else:
-                if sha256:
-                    if self.text:
-                        self.hashPart = hashlib.sha256(dataFromFile.read().encode('utf-8')).hexdigest()[
-                                        0:self.hashPartLength]
-                    else:
-                        self.hashPart = dataFromFile.readline()[0:self.hashPartLength]
-        dataFromFile.close()
+                else:
+                    if sha256:
+                        if self.text:
+                            self.hashPart = hashlib.sha256(dataFromFile.read().encode('utf-8')).hexdigest()[
+                                            0:self.hashPartLength]
+                        else:
+                            self.hashPart = dataFromFile.readline()[0:self.hashPartLength]
+            dataFromFile.close()
 
     def getInfo(self):
         printHashes = str()
@@ -421,7 +422,7 @@ def main():
     parser.add_argument('-b', '--bits', action='store', dest='bits',
                         help='-b 32 (Number of hash bits to find collision)', required=True)
     parser.add_argument('-i', '--input', action='store', dest='inputFile',
-                        help='-i input.txt The input file with hashes', required=True)
+                        help='-i input.txt The input file with hashes', required=False)
     parser.add_argument('-hg', '--hashgroup', action='store_true', dest='hashGroup',
                         help='-h The input file has hashes per line', required=False)
     parser.add_argument('-t', '--text', action='store_true', dest='text',
@@ -437,20 +438,22 @@ def main():
     print("Do you want to proceed?")
     input('\nPress Enter to continue...')
 
-    if (args.hashGroup):
-        for hashes in shacol.shaList:
-            if (args.first):
-                shacol.findCollisionFirst(hashes)
-            else:
-                shacol.findCollisionInt(hashes)
-    else:
-        if (args.first):
-            shacol.findCollisionFirst()
+    if args.inputFile:
+        if (args.hashGroup):
+            for hashes in shacol.shaList:
+                if (args.first):
+                    shacol.findCollisionFirst(hashes)
+                else:
+                    shacol.findCollisionInt(hashes)
         else:
-            # shacol.findCollisionStr()
-             shacol.findCollisionInt()
-            # shacol.findBestHash()
-            # shacol.findExperimental()
+            if (args.first):
+                shacol.findCollisionFirst()
+            else:
+                # shacol.findCollisionStr()
+                shacol.findCollisionInt()
+                # shacol.findExperimental()
+    else:
+        shacol.findBestHash()
 
     # shacol.findCollisionWithDBset()
 
