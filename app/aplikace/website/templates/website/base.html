@@ -25,22 +25,24 @@
       <div class="col-md-12 col-sm-12">
         <center><h1>Shacol</h1></center>
       </div>
-      <div class="col-md-2 col-sm-2">
-      <form action="{% url 'method' %}" method="post">{% csrf_token %}
+      <div class="col-md-6 col-sm-6">
+      <form action="{% url 'filtering' %}" method="post">{% csrf_token %}
           <div class="form-group">
-            <label for="sel1">Type of method:</label>
-            <select class="form-control" id="sel1">
-              <option>String method</option>
-              <option>Int method</option>
-              <option>DB method</option>
-            </select>
+            <label>Type of method:</label>
+            <div class"radio"></div>{{query.method}}
+              <label class="radio-inline"><input type="radio" id="meth" name="method" value="str">String method</label>
+              <label class="radio-inline"><input type="radio" id="meth" name="method" value="int">Int method</label>
+              <label class="radio-inline"><input type="radio" id="meth" name="method" value="db">Method with DB set</label>
           </div>
+          <label for="sel1">Enter</label><br>
+          <button type="submit" class="btn btn-danger">OK</button>
+          </form>
         </div>
-        <div class="col-md-10 col-sm-10">
+        <!---<div class="col-md-6 col-sm-6">
           <label for="sel1">Enter</label><br>
           <button type="button" class="btn btn-danger">OK</button>
 
-        </div></form>
+        </div></form> -->
 
     </div>
       <div class="row">
@@ -96,3 +98,6 @@
 
 <!-- Bootstrap Core JavaScript -->
 <script src="{% static 'theme/bootstrap/js/bootstrap.min.js' %}"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
