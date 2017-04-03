@@ -1,15 +1,15 @@
 import sys, os, sqlite3, subprocess, git
-print(os.path.dirname(os.path.abspath(__file__))+"/../app/aplikace")
-sys.path.append(os.path.dirname(os.path.abspath(__file__))+"/../")
+root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(root_dir)
 
 import shacol
-db_location = os.path.dirname(os.path.abspath(__file__))+"/../app/aplikace/db.sqlite3"
-git_repo = r = git.repo.Repo(os.path.dirname(os.path.abspath(__file__))+"/../")
+db_location = root_dir + "/app/aplikace/db.sqlite3"
+git_repo = git.repo.Repo(root_dir)
 
 def main():
     sha256 = True
     BITS = 32
-    inputFile = "hash.txt"
+    inputFile = root_dir + "/hash.txt"
     shacolInstance = shacol.Shacol(sha256, BITS, inputFile)
 
     for i in range(4, 33, 4):
