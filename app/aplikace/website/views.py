@@ -7,6 +7,10 @@ def colls(request):
     collisions = Collision.objects.all()
     return render(request, 'website/base.html', {'collisions': collisions})
 
+def delete(request):
+    colls = Collision.objects.all()
+    colls.delete()
+    return redirect('/')
 
 def filtering(request):
     if 'method' in request.POST:
