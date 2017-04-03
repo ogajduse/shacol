@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
             name='Collision',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('hash_order', models.IntegerField()),
+                ('index', models.IntegerField()),
                 ('input_hash', models.CharField(max_length=30)),
                 ('total_time', models.CharField(max_length=30)),
                 ('cycles', models.IntegerField()),
