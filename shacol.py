@@ -137,10 +137,11 @@ class Shacol(object):
             print('Cycles between collision hashes:', cycles-index)
             print('\nSet string structure used', round(sys.getsizeof(strHashSet) / 1024 / 1024, 3), 'MB')
             del strHashSet
-
-            return {"inputHash": hashPart, "time": (totalTime, 's'), "cycles": cycles, "collisionHash": newHashPart,
+            
+            #time in sec, dataStructConsum in MB
+            return {"inputHash": hashPart, "time": totalTime, "cycles": cycles, "collisionHash": newHashPart,
                     "indexOfCollision": index, "cyclesBetCol": cycles-index,
-                    "dataStructConsum": (totalMemory, 'MB')}
+                    "dataStructConsum": totalMemory}
 
         except Exception as e:
             print(str(e))
@@ -197,9 +198,10 @@ class Shacol(object):
             print('\nSet int structure used', round(sys.getsizeof(intHashSet) / 1024 / 1024, 3), 'MB')
             del intHashSet
 
+            #totalMemory in MB
             return {"inputHash": hashPart, "time": totalTime, "cycles": cycles, "collisionHash": newHash,
                     "indexOfCollision": index, "cyclesBetCol": cycles-index,
-                    "dataStructConsum": (totalMemory,'MB')}
+                    "dataStructConsum": totalMemory}
 
         except Exception as e:
             print(str(e))
