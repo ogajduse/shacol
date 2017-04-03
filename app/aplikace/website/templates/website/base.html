@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Bootstrap 101 Template</title>
+    <title>Shacol graphical user interface</title>
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -23,18 +23,17 @@
     <div class="container">
     <div class="row">
       <div class="col-md-12 col-sm-12">
-        <center><h1>Shacol</h1></center>
+        <center><a href="{% url 'colls' %}"><h1>Shacol GUI</h1></a></center>
       </div>
       <div class="col-md-6 col-sm-6">
       <form action="{% url 'filtering' %}" method="post">{% csrf_token %}
           <div class="form-group">
             <label>Type of method:</label>
-            <div class"radio"></div>{{query.method}}
-              <label class="radio-inline"><input type="radio" id="meth" name="method" value="str">String method</label>
-              <label class="radio-inline"><input type="radio" id="meth" name="method" value="int">Int method</label>
-              <label class="radio-inline"><input type="radio" id="meth" name="method" value="db">Method with DB set</label>
+            <div class"radio"></div>
+              <label class="radio-inline"><input type="radio" name="method" value="str">String method</label>
+              <label class="radio-inline"><input type="radio" name="method" value="int">Int method</label>
+              <label class="radio-inline"><input type="radio" name="method" value="db">Method with DB set</label>
           </div>
-          <label for="sel1">Enter</label><br>
           <button type="submit" class="btn btn-danger">OK</button>
           </form>
         </div>
@@ -47,7 +46,7 @@
     </div>
       <div class="row">
             <div class="col-md-12 col-sm-12">
-              <h2>Int method</h2>
+              <h2>{{ query.method }}</h2>
               <table class="table table-bordered table-hover">
                 <thead>
                   <tr>
@@ -63,6 +62,18 @@
                 </thead>
                 <tbody>
                   {% for coll in collisions %}
+                    <tr>
+                      <td>{{ coll.input_hash }}</td>
+                      <td>{{ coll.total_time }}</td>
+                      <td>{{ coll.cycles }}</td>
+                      <td>{{ coll.coll_hash }}</td>
+                      <td>{{ coll.hash_order }}</td>
+                      <td>{{ coll.test_method }}</td>
+                      <td>{{ coll.bits }}</td>
+                      <td>{{ coll.git_revision }}</td>
+                    </tr>
+                  {% endfor %}
+                  {% for coll in colls %}
                     <tr>
                       <td>{{ coll.input_hash }}</td>
                       <td>{{ coll.total_time }}</td>
