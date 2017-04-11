@@ -21,6 +21,7 @@ import argparse
 from io import StringIO
 import redis
 import binascii
+import pybloomfilter
 
 
 class Shacol(object):
