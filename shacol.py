@@ -137,7 +137,7 @@ class Shacol(object):
             print('Cycles between collision hashes:', cycles-index)
             print('\nSet string structure used', round(sys.getsizeof(strHashSet) / 1024 / 1024, 3), 'MB')
             del strHashSet
-            
+
             #time in sec, dataStructConsum in MB
             return {"inputHash": hashPart, "time": totalTime, "cycles": cycles, "collisionHash": newHashPart,
                     "indexOfCollision": index, "cyclesBetCol": cycles-index,
@@ -282,6 +282,110 @@ class Shacol(object):
 
         except Exception as e:
             print(str(e))
+
+    def findBestHashBloom(self, maxSet=1000000000, memoryCheck=False):
+        """
+        Function provides the best possible input string.
+        Offers memory check in intervals.
+
+        Using bloom filter, after the success return collision value
+        BloomFilter(countOfSet, probability, tmpFile)
+        """
+        try:
+            globalStart = timeit.default_timer()
+            memOver = False
+            status = 1
+            countOfCycles = 0
+            hashPartLength = self.hashPartLength
+            charStr = 'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ+-*/!@#$%&?'
+            bestTime = sys.maxsize
+            random.seed()
+
+            while True:
+                rndStr = ''
+                intHashSet = {int()}
+                bloomFilter = pybloomfilter.BloomFilter(maxSet, 0.1)
+                charLen = random.randint(1, 64)
+                for number in range(charLen):
+                    rndStr += ''.join(random.sample(charStr, 1))
+                print('\nGenerate new string input: ', rndStr, '\n')
+
+                firstHash = hashlib.sha256(rndStr.encode('utf-8')).hexdigest()
+                firstHashPart = firstHash[0:hashPartLength]
+                newHashPart = int(binascii.hexlify(bytes(firstHashPart, 'utf-8')), 16)
+
+                print('Finding collision started')
+                start = timeit.default_timer()
+                if not memoryCheck:
+                    while newHashPart not in bloomFilter:
+                        if len(intHashSet) >= maxSet:
+                            print('\n--- Stated limit reached --- Set count:', len(intHashSet))
+                            memOver = True
+                            break
+                        intHashSet.add(newHashPart)
+                        bloomFilter.update(newHashPart)
+                        strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
+                        newHash = hashlib.sha256(strHashPart).hexdigest()
+                        newHash = newHash[0:hashPartLength]
+                        newHashPart = int(binascii.hexlify(bytes(newHash, 'utf-8')), 16)
+                else:
+                    while newHashPart not in bloomFilter:
+                        status += 1
+                        if status == 10000000:
+                            status = 0
+                            print('\n' * 100)
+                            print('Set length:', len(intHashSet))
+                            print("Count of tested randomness:", countOfCycles)
+                            print('Run time:', round((timeit.default_timer() - globalStart) / 60, 3), 'minutes')
+                            virtualMem = psutil.virtual_memory().available
+                            if virtualMem < 536870912:
+                                print('\n!!! Memory capacity reached !!! Set count:', len(intHashSet))
+                                memOver = True
+                                break
+
+                        intHashSet.add(newHashPart)
+                        bloomFilter.update(newHashPart)
+                        strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
+                        newHash = hashlib.sha256(strHashPart).hexdigest()
+                        newHash = newHash[0:hashPartLength]
+                        newHashPart = int(binascii.hexlify(bytes(newHash, 'utf-8')), 16)
+
+                stop = timeit.default_timer()
+                countOfCycles += 1
+
+                if not memOver:
+                    totalTime = round(stop - start, 10)
+                    totalMemory = round(sys.getsizeof(intHashSet) / 1048576, 3)
+                    cycles = len(intHashSet) + 1
+
+                    print('\n##### Collision found process succeeded! #####')
+                    print('Input string:', rndStr)
+                    print('Input hash:', firstHash)
+                    print('Input hash part:', firstHashPart)
+                    print("Collision found after %s seconds" % (totalTime))
+                    if (totalTime < bestTime): bestTime = totalTime
+                    print('Count of the cycles:', cycles)
+                    print('Collision hash:', newHash)
+                    index = 0
+                    for intHash in intHashSet:
+                        index += 1
+                        if intHash == newHashPart:
+                            print('Index of collision hash:', index)
+                            break
+                    print('Cycles between collision hashes:', cycles-index)
+                    print('Set int structure used', totalMemory, 'MB')
+                    return {"inputString": rndStr, "inputHash": firstHashPart, "time": totalTime, "cycles": counter, "collisionHash": newHash,
+                    "indexOfCollision:": index, "cyclesBetCol": cycles-index,
+                    "dataStructConsum": (totalMemory, 'MB')}
+                else:
+                    memOver = False
+
+                del intHashSet
+                print('SET was emptied successfully')
+
+        except Exception as e:
+            print(str(e))
+
 
     def findExperimental(self, hashPart=None):
         """
@@ -474,7 +578,7 @@ def main():
                 shacol.findCollisionInt()
                 # shacol.findExperimental()
     else:
-        shacol.findBestHash()
+        shacol.findBestHashBloom()
 
     # shacol.findCollisionWithDBset()
 
