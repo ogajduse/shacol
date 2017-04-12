@@ -388,7 +388,7 @@ class Shacol(object):
             print(str(e))
 
 
-    def findExperimental(self, hashPart=None):
+    def findExperimental(self, hashPart=None, maxSet=1000000000):
         """
         Experimental method based on generating bilion of hashes. After that
         the memory is exceeded and it will continue without saving previous hashes.
@@ -400,7 +400,7 @@ class Shacol(object):
             else:
                 hashPartLength = len(hashPart)
 
-            counter = 0
+            status = 1
             intHashSet = {int()}
             hashPartLength = len(hashPart)
             newHashPart = int(binascii.hexlify(bytes(hashPart, 'utf-8')), 16)
@@ -409,20 +409,33 @@ class Shacol(object):
             start = timeit.default_timer()
 
             while True:
+                status += 1
                 previousLength = len(intHashSet)
                 intHashSet.add(newHashPart)
+                
                 if len(intHashSet) == previousLength:
                     break
-                counter += 1
-                if counter == 1000000:
-                    print('!!! State limit reached !!! Cycles:', counter)
-                    break
-
+                if status == 1000000:
+                    status = 0
+                    print('\n' * 100)
+                    print('Set length:', len(intHashSet))
+                    print('Run time:', round((timeit.default_timer() - start) / 60, 3), 'minutes')
+                    if len(intHashSet) >= maxSet:
+                        print('\n--- Stated limit reached --- Set count:', len(intHashSet))
+                        break
+                    """
+                    virtualMem = psutil.virtual_memory().available
+                    if virtualMem < 536870912:
+                        print('\n!!! Memory capacity reached !!! Set count:', len(intHashSet))
+                        break
+                    """
                 strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
                 newHash = hashlib.sha256(strHashPart).hexdigest()
                 newHash = newHash[0:hashPartLength]
                 newHashPart = int(binascii.hexlify(bytes(newHash, 'utf-8')), 16)
             print('Hashing without store started...')
+
+            counter = len(intHashSet)
 
             while newHashPart not in intHashSet:
                 strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
@@ -432,8 +445,11 @@ class Shacol(object):
                 counter += 1
                 status += 1
                 if status == 100000000:
-                    print(counter)
                     status = 0
+                    print('\n' * 100)
+                    print('Set length:', len(intHashSet))
+                    print('Count of cycles:', len(intHashSet) + counter)
+                    print('Run time:', round((timeit.default_timer() - start) / 60, 3), 'minutes')
 
             stop = timeit.default_timer()
             totalTime = round(stop - start, 12)
@@ -442,7 +458,7 @@ class Shacol(object):
             print('\n##### findExperimental - found process succeeded! #####')
             print('\nInput hashPart:', hashPart)
             print("Collision found after %s seconds" % (totalTime))
-            print('Count of the cycles:', len(intHashSet)+1)
+            print('Count of the cycles:', counter)
             print('Collision hash:', newHash)
             index = 0
             for intHash in intHashSet:
@@ -450,12 +466,12 @@ class Shacol(object):
                 if intHash == newHashPart:
                     print('Index of collision hash:', index)
                     break
-            print('Cycles between collision hashes:', cycles-index)
+            print('Cycles between collision hashes:', counter-index)
             print('\nSet int structure used', totalMemory, 'MB')
             del intHashSet
 
             return {"inputHash": hashPart, "time": totalTime, "cycles": counter, "collisionHash": newHash,
-            "indexOfCollision:": index, "cyclesBetCol": cycles-index,
+            "indexOfCollision:": index, "cyclesBetCol": counter-index,
             "dataStructConsum": (totalMemory, 'MB')}
 
         except Exception as e:
@@ -576,8 +592,8 @@ def main():
                 shacol.findCollisionFirst()
             else:
                 # shacol.findCollisionStr()
-                shacol.findCollisionInt()
-                # shacol.findExperimental()
+                # shacol.findCollisionInt()
+                 shacol.findExperimental()
     else:
         shacol.findBestHashBloom()
 
