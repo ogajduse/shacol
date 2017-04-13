@@ -388,7 +388,7 @@ class Shacol(object):
             print(str(e))
 
 
-    def findExperimental(self, hashPart=None, maxSet=1000000000):
+    def findExperimental(self, hashPart=None, maxSet=100000000):
         """
         Experimental method based on generating bilion of hashes. After that
         the memory is exceeded and it will continue without saving previous hashes.
@@ -412,7 +412,7 @@ class Shacol(object):
                 status += 1
                 previousLength = len(intHashSet)
                 intHashSet.add(newHashPart)
-                
+
                 if len(intHashSet) == previousLength:
                     break
                 if status == 1000000:
@@ -435,7 +435,12 @@ class Shacol(object):
                 newHashPart = int(binascii.hexlify(bytes(newHash, 'utf-8')), 16)
             print('Hashing without store started...')
 
-            counter = len(intHashSet)
+            strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
+            newHash = hashlib.sha256(strHashPart).hexdigest()
+            newHash = newHash[0:hashPartLength]
+            newHashPart = int(binascii.hexlify(bytes(newHash, 'utf-8')), 16)
+
+            counter = len(intHashSet)+1
 
             while newHashPart not in intHashSet:
                 strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
