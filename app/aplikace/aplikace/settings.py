@@ -77,8 +77,12 @@ WSGI_APPLICATION = 'aplikace.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'shacol_django',
+        'USER': 'shacol_django_u',
+        'PASSWORD': 'Aim4Uusoom9ea8',
+        'HOST': '85.255.0.154',
+        'PORT': '3306',
     }
 }
 
