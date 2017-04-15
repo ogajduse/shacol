@@ -32,6 +32,7 @@ class Shacol(object):
         self.hashGroup = hashGroup
         self.text = text
         self.first = first
+        self.bestTime = sys.maxsize
 
         self.hashPartLength = old_div(int(self.bits), 4)
         self.shaList = []
@@ -297,9 +298,10 @@ class Shacol(object):
             memOver = False
             status = 1
             countOfCycles = 0
+            bloomFound = True
             hashPartLength = self.hashPartLength
             charStr = 'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ+-*/!@#$%&?'
-            bestTime = sys.maxsize
+            bestTime = self.bestTime
             random.seed()
 
             while True:
@@ -318,19 +320,33 @@ class Shacol(object):
                 print('Finding collision started')
                 start = timeit.default_timer()
                 if not memoryCheck:
-                    while newHashPart not in bloomFilter:
-                        if len(intHashSet) >= maxSet:
-                            print('\n--- Stated limit reached --- Set count:', len(intHashSet))
-                            memOver = True
-                            break
+                    while newHashPart.to_bytes((newHashPart.bit_length() + 7) // 8, 'big') not in bloomFilter:
+                        status += 1
+                        if status == 10000000:
+                            status = 0
+                            print('\n' * 100)
+                            print('Set length:', len(intHashSet))
+                            print("Count of tested randomness:", countOfCycles)
+                            print('Run time:', round((timeit.default_timer() - globalStart) / 60, 3), 'minutes')
+                            if len(intHashSet) >= maxSet:
+                                print('\n--- Stated limit reached --- Set count:', len(intHashSet))
+                                memOver = True
+                                break
+
+                        previousLength = len(intHashSet)
                         intHashSet.add(newHashPart)
-                        bloomFilter.update(newHashPart)
+                        if len(intHashSet) == previousLength:
+                            bloomFound = False
+                            break
+                        bloomFilter.update(newHashPart.to_bytes((newHashPart.bit_length() + 7) // 8, 'big'))
+
                         strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
                         newHash = hashlib.sha256(strHashPart).hexdigest()
                         newHash = newHash[0:hashPartLength]
                         newHashPart = int(binascii.hexlify(bytes(newHash, 'utf-8')), 16)
+
                 else:
-                    while newHashPart not in bloomFilter:
+                    while newHashPart.to_bytes((newHashPart.bit_length() + 7) // 8, 'big') not in bloomFilter:
                         status += 1
                         if status == 10000000:
                             status = 0
@@ -344,8 +360,13 @@ class Shacol(object):
                                 memOver = True
                                 break
 
+                        previousLength = len(intHashSet)
                         intHashSet.add(newHashPart)
-                        bloomFilter.update(newHashPart)
+                        if len(intHashSet) == previousLength:
+                            bloomFound = False
+                            break
+                        bloomFilter.update(newHashPart.to_bytes((newHashPart.bit_length() + 7) // 8, 'big'))
+
                         strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
                         newHash = hashlib.sha256(strHashPart).hexdigest()
                         newHash = newHash[0:hashPartLength]
@@ -364,7 +385,7 @@ class Shacol(object):
                     print('Input hash:', firstHash)
                     print('Input hash part:', firstHashPart)
                     print("Collision found after %s seconds" % (totalTime))
-                    if (totalTime < bestTime): bestTime = totalTime
+                    if (totalTime < self.bestTime): self.bestTime = totalTime
                     print('Count of the cycles:', cycles)
                     print('Collision hash:', newHash)
                     index = 0
@@ -375,7 +396,10 @@ class Shacol(object):
                             break
                     print('Cycles between collision hashes:', cycles-index)
                     print('Set int structure used', totalMemory, 'MB')
-                    return {"inputString": rndStr, "inputHash": firstHashPart, "time": totalTime, "cycles": counter, "collisionHash": newHash,
+                    print('Bloom filter succeeded?',bloomFound)
+                    print('\nThe best time yet:', self.bestTime,'s')
+
+                    return {"inputString": rndStr, "inputHash": firstHashPart, "time": totalTime, "cycles": cycles, "collisionHash": newHash,
                     "indexOfCollision:": index, "cyclesBetCol": cycles-index,
                     "dataStructConsum": (totalMemory, 'MB')}
                 else:
