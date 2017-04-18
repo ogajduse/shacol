@@ -1,9 +1,9 @@
-import sys, os, sqlite3, git
+import sys, os, sqlite3, git, pybloomfilter, mysql
 root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(root_dir)
 
 import shacol
-db_location = root_dir + "/app/aplikace/db.sqlite3"
+db_location = '85.255.0.154'
 git_repo = git.repo.Repo(root_dir)
 
 def main():
@@ -37,13 +37,19 @@ def main():
             #shacol.findCollisionWithDBSet()
 
 def dbInsert(results, method, bits):
-    db_conn = sqlite3.connect(db_location)
-    db_conn.execute("INSERT INTO website_collision (hash_order, input_hash, total_time, cycles, coll_hash, test_method, bits, git_revision) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                    (results["indexOfCollision"], results["inputHash"], results["time"], results["cycles"], results["collisionHash"], method, bits, git_repo.git.describe()))
-    db_conn.commit()
-    print("Pridano do databaze")
-    db_conn.close()
+    
+    db_conn = mysql.connector.connect(host = db_location, user='shacol_django_u', password='Aim4Uusoom9ea8', database='shacol_django')
+    cursor = db_conn.cursor()
+    add_collision = ("INSERT INTO website_collision"
+                "(hash_order, input_hash, total_time, cycles, coll_hash, test_method, bits, git_revision)"
+                "VALUES (%s, %s, %s, %d, %s, %s, %d, %s)")
+    data_collision = (results["indexOfCollision"], results["inputHash"], results["time"], results["cycles"], results["collisionHash"], method, bits, git_repo.git.describe())
+    
+    cursor.execute(add_collision, data_collision)
 
+    db_conn.commit()
+    cursor.close()
+    db_conn.close()
 
 if __name__ == "__main__":
     try:
