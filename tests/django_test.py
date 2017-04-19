@@ -38,14 +38,13 @@ def main():
             #shacol.findCollisionWithDBSet()
 
 def dbInsert(results, method, bits):
-    
     db_conn = mariadb.connect(host = db_location, user='shacol_django_u', password='Aim4Uusoom9ea8', database='shacol_django')
     cursor = db_conn.cursor()
     add_collision = ("INSERT INTO website_collision"
-                "(hash_order, input_hash, total_time, cycles, coll_hash, test_method, bits, git_revision)"
-                "VALUES (%s, %s, %s, %d, %s, %s, %d, %s)")
-    data_collision = (results["indexOfCollision"], results["inputHash"], results["time"], results["cycles"], results["collisionHash"], method, bits, git_repo.git.describe())
+                    "(hash_order, input_hash, total_time, cycles, coll_hash, test_method, bits, git_revision)"
+                    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)")
     
+    data_collision = (int(results["indexOfCollision"]), results["inputHash"], results["time"], int(results["cycles"]), results["collisionHash"], method, int(bits), git_repo.git.describe())
     cursor.execute(add_collision, data_collision)
 
     db_conn.commit()
