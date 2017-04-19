@@ -1,4 +1,5 @@
-import sys, os, sqlite3, git, pybloomfilter, mysql
+import sys, os, sqlite3, git, pybloomfilter
+import pymysql as mariadb
 root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(root_dir)
 
@@ -38,7 +39,7 @@ def main():
 
 def dbInsert(results, method, bits):
     
-    db_conn = mysql.connector.connect(host = db_location, user='shacol_django_u', password='Aim4Uusoom9ea8', database='shacol_django')
+    db_conn = mariadb.connect(host = db_location, user='shacol_django_u', password='Aim4Uusoom9ea8', database='shacol_django')
     cursor = db_conn.cursor()
     add_collision = ("INSERT INTO website_collision"
                 "(hash_order, input_hash, total_time, cycles, coll_hash, test_method, bits, git_revision)"
