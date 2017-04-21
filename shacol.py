@@ -26,15 +26,16 @@ from io import StringIO
 
 
 class Shacol(object):
-    def __init__(self, sha256, bits, inputFile, hashGroup=False, text=False, first=False):
-        self.sha256 = sha256
+    def __init__(self, bits, inputFile, hashGroup=False, text=False, first=False, bloom=False, memory=False):
         self.bits = int(bits)
         self.inputFile = inputFile
         self.hashGroup = hashGroup
         self.text = text
         self.first = first
-        self.bestTime = sys.maxsize
+        self.bloom = bloom
+        self.memory = memory
 
+        self.bestTime = sys.maxsize
         self.hashPartLength = old_div(int(self.bits), 4)
         self.shaList = []
         self.hashPart = str()
@@ -42,21 +43,19 @@ class Shacol(object):
         if inputFile:
             with open(self.inputFile, 'r', encoding='utf-8') as dataFromFile:
                 if self.hashGroup:
-                    if self.sha256:
-                        if self.text:
-                            for textInFile in dataFromFile:
-                                self.shaList.append(
-                                    hashlib.sha256(textInFile.encode('utf-8').hexdigest()[0:self.hashPartLength]))
-                        else:
-                            for hashInFile in dataFromFile:
-                                self.shaList.append(hashInFile[0:self.hashPartLength])
+                    if self.text:
+                        for textInFile in dataFromFile:
+                            self.shaList.append(
+                                hashlib.sha256(textInFile.encode('utf-8').hexdigest()[0:self.hashPartLength]))
+                    else:
+                        for hashInFile in dataFromFile:
+                            self.shaList.append(hashInFile[0:self.hashPartLength])
                 else:
-                    if sha256:
-                        if self.text:
-                            self.hashPart = hashlib.sha256(dataFromFile.read().encode('utf-8')).hexdigest()[
-                                            0:self.hashPartLength]
-                        else:
-                            self.hashPart = dataFromFile.readline()[0:self.hashPartLength]
+                    if self.text:
+                        self.hashPart = hashlib.sha256(dataFromFile.read().encode('utf-8')).hexdigest()[
+                                        0:self.hashPartLength]
+                    else:
+                        self.hashPart = dataFromFile.readline()[0:self.hashPartLength]
             dataFromFile.close()
 
     def getInfo(self):
@@ -610,7 +609,7 @@ def main():
     args = parser.parse_args()
 
     # Instance of the class Shacol
-    shacol = Shacol(args.sha256, args.bits, args.inputFile, args.hashGroup, args.text, args.first)
+    shacol = Shacol(args.bits, args.inputFile, args.hashGroup, args.text, args.first, args.bloom, args.memory)
     shacol.getInfo()
 
     print("Do you want to proceed?")
