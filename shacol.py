@@ -585,12 +585,10 @@ class Shacol(object):
 def main():
     # Input parameters
 
-    parser = argparse.ArgumentParser(usage='$prog [options] -sha2 -b 32 -i hash.txt',
+    parser = argparse.ArgumentParser(usage='$prog [options] -b 32 -i hash.txt',
                                      description='SHA collision finder', add_help=True,
                                      epilog='SHA collision finder. Written by Jan Stangler, Ondrej\
                                       Gajdusek, Sarka Chwastkova, VUT FEKT, ICT1 project, 2017')
-    parser.add_argument('-sha2', '--sha256', action='store_true', dest='sha256',
-                        help='-sha2 (hash algorithm)', required=True)
     parser.add_argument('-b', '--bits', action='store', dest='bits',
                         help='-b 32 (Number of hash bits to find collision)', required=True)
     parser.add_argument('-i', '--input', action='store', dest='inputFile',
@@ -601,6 +599,14 @@ def main():
                         help='-t The input file of random text', required=False)
     parser.add_argument('-f', '--first', action='store_true', dest='first',
                         help='-f Collision with the first one hash', required=False)
+    parser.add_argument('--bloom', action='store_true', dest='bloom',
+                        help='--bloom Bloom filter is used.', required=False)
+    parser.add_argument('-m', '--memory', action='store_true', dest='memory',
+                        help='-m Memory check during a process.', required=False)
+    parser.add_argument('-c', '--capacity', action='store', dest='capacity',
+                        help='-c Set a length of default storage - SET.', required=False)
+    parser.add_argument('-r', '--redis', action='store_true', dest='redis',
+                        help='-r Store hashes in redis database.', required=False)
     args = parser.parse_args()
 
     # Instance of the class Shacol
