@@ -1,27 +1,28 @@
+# !/usr/bin/env python
+# requirements - redis, python3-psutil, future, pybloomfiltermmap
+
 from __future__ import division
 from __future__ import print_function
-# !/usr/bin/env python
-# requirements - redis, python3-psutil, future
-
 from future import standard_library
-
 standard_library.install_aliases()
+
 from builtins import input
 from builtins import str
 from builtins import range
 from builtins import object
 from past.utils import old_div
+
 import os
 import sys
+import redis
 import random
 import timeit
 import psutil
 import hashlib
 import argparse
-from io import StringIO
-import redis
 import binascii
 import pybloomfilter
+from io import StringIO
 
 
 class Shacol(object):
@@ -587,7 +588,7 @@ def main():
     parser = argparse.ArgumentParser(usage='$prog [options] -sha2 -b 32 -i hash.txt',
                                      description='SHA collision finder', add_help=True,
                                      epilog='SHA collision finder. Written by Jan Stangler, Ondrej\
-                                      Gajdusek, Sarka Chwastova, VUT FEKT, ICT1 project, 2017')
+                                      Gajdusek, Sarka Chwastkova, VUT FEKT, ICT1 project, 2017')
     parser.add_argument('-sha2', '--sha256', action='store_true', dest='sha256',
                         help='-sha2 (hash algorithm)', required=True)
     parser.add_argument('-b', '--bits', action='store', dest='bits',
