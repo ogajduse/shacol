@@ -234,7 +234,7 @@ class Shacol(object):
                             print('\n--- Stated limit reached --- Set count:', len(intHashSet))
                             memOver = True
                             break
-                            
+
                     intHashSet.add(newHashPart)
                     strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
                     newHash = hashlib.sha256(strHashPart).hexdigest()
@@ -273,7 +273,7 @@ class Shacol(object):
         except Exception as e:
             print(str(e))
 
-    def findBestHashBloom(self, maxSet=1000000000, memoryCheck=False):
+    def findBestHashBloom(self, maxSet=100000000, memoryCheck=False):
         """
         Function provides the best possible input string.
         Offers memory check in intervals.
@@ -308,57 +308,63 @@ class Shacol(object):
                 print('Finding collision started')
                 start = timeit.default_timer()
                 if not memoryCheck:
-                    while newHashPart.to_bytes((newHashPart.bit_length() + 7) // 8, 'big') not in bloomFilter:
-                        status += 1
-                        if status == 10000000:
-                            status = 0
-                            print('\n' * 100)
-                            print('Set length:', len(intHashSet))
-                            print("Count of tested randomness:", countOfCycles)
-                            print('Run time:', round((timeit.default_timer() - globalStart) / 60, 3), 'minutes')
-                            if len(intHashSet) >= maxSet:
-                                print('\n--- Stated limit reached --- Set count:', len(intHashSet))
-                                memOver = True
+                    while True:
+                        if newHashPart.to_bytes((newHashPart.bit_length() + 7) // 8, 'big') not in bloomFilter:
+                            status += 1
+                            if status == 10000000:
+                                status = 0
+                                print('\n' * 100)
+                                print('Set length:', len(intHashSet))
+                                print("Count of tested randomness:", countOfCycles)
+                                print('Run time:', round((timeit.default_timer() - globalStart) / 60, 3), 'minutes')
+                                if len(intHashSet) >= maxSet:
+                                    print('\n--- Stated limit reached --- Set count:', len(intHashSet))
+                                    memOver = True
+                                    break
+
+                            previousLength = len(intHashSet)
+                            intHashSet.add(newHashPart)
+                            if len(intHashSet) == previousLength:
+                                bloomFound = False
                                 break
+                            bloomFilter.update(newHashPart.to_bytes((newHashPart.bit_length() + 7) // 8, 'big'))
 
-                        previousLength = len(intHashSet)
-                        intHashSet.add(newHashPart)
-                        if len(intHashSet) == previousLength:
-                            bloomFound = False
+                            strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
+                            newHash = hashlib.sha256(strHashPart).hexdigest()
+                            newHash = newHash[0:hashPartLength]
+                            newHashPart = int(binascii.hexlify(bytes(newHash, 'utf-8')), 16)
+                        else:
                             break
-                        bloomFilter.update(newHashPart.to_bytes((newHashPart.bit_length() + 7) // 8, 'big'))
-
-                        strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
-                        newHash = hashlib.sha256(strHashPart).hexdigest()
-                        newHash = newHash[0:hashPartLength]
-                        newHashPart = int(binascii.hexlify(bytes(newHash, 'utf-8')), 16)
 
                 else:
-                    while newHashPart.to_bytes((newHashPart.bit_length() + 7) // 8, 'big') not in bloomFilter:
-                        status += 1
-                        if status == 10000000:
-                            status = 0
-                            print('\n' * 100)
-                            print('Set length:', len(intHashSet))
-                            print("Count of tested randomness:", countOfCycles)
-                            print('Run time:', round((timeit.default_timer() - globalStart) / 60, 3), 'minutes')
-                            virtualMem = psutil.virtual_memory().available
-                            if virtualMem < 536870912:
-                                print('\n!!! Memory capacity reached !!! Set count:', len(intHashSet))
-                                memOver = True
+                    while True:
+                        if newHashPart.to_bytes((newHashPart.bit_length() + 7) // 8, 'big') not in bloomFilter:
+                            status += 1
+                            if status == 10000000:
+                                status = 0
+                                print('\n' * 100)
+                                print('Set length:', len(intHashSet))
+                                print("Count of tested randomness:", countOfCycles)
+                                print('Run time:', round((timeit.default_timer() - globalStart) / 60, 3), 'minutes')
+                                virtualMem = psutil.virtual_memory().available
+                                if virtualMem < 536870912:
+                                    print('\n!!! Memory capacity reached !!! Set count:', len(intHashSet))
+                                    memOver = True
+                                    break
+
+                            previousLength = len(intHashSet)
+                            intHashSet.add(newHashPart)
+                            if len(intHashSet) == previousLength:
+                                bloomFound = False
                                 break
+                            bloomFilter.update(newHashPart.to_bytes((newHashPart.bit_length() + 7) // 8, 'big'))
 
-                        previousLength = len(intHashSet)
-                        intHashSet.add(newHashPart)
-                        if len(intHashSet) == previousLength:
-                            bloomFound = False
+                            strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
+                            newHash = hashlib.sha256(strHashPart).hexdigest()
+                            newHash = newHash[0:hashPartLength]
+                            newHashPart = int(binascii.hexlify(bytes(newHash, 'utf-8')), 16)
+                        else:
                             break
-                        bloomFilter.update(newHashPart.to_bytes((newHashPart.bit_length() + 7) // 8, 'big'))
-
-                        strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
-                        newHash = hashlib.sha256(strHashPart).hexdigest()
-                        newHash = newHash[0:hashPartLength]
-                        newHashPart = int(binascii.hexlify(bytes(newHash, 'utf-8')), 16)
 
                 stop = timeit.default_timer()
                 countOfCycles += 1
