@@ -75,19 +75,7 @@ class Shacol(object):
     def changeBitLength(self, newBitLength):
         self.bits = newBitLength
         self.hashPartLength = old_div(self.bits, 4)
-
-    def hashToBits(self, hashPart):
-        bits = bin(int(binascii.hexlify(hashPart.encode('utf-8', 'surrogatepass')), 16))[2:]
-        return bits.zfill(8 * ((len(bits) + 7) // 8))
-
-    def hashFromBits(self, bitHash):
-        n = int(bitHash, 2)
-        return self.intToBytes(n).decode('utf-8', 'surrogatepass')
-
-    def intToBytes(self, i):
-        hex_string = '%x' % i
-        n = len(hex_string)
-        return binascii.unhexlify(hex_string.zfill(n + (n & 1)))
+        
 
     def findCollisionStr(self, hashPart=None):
         """
