@@ -75,7 +75,7 @@ class Shacol(object):
     def changeBitLength(self, newBitLength):
         self.bits = newBitLength
         self.hashPartLength = old_div(self.bits, 4)
-        
+
 
     def findCollisionStr(self, hashPart=None):
         """
@@ -196,7 +196,7 @@ class Shacol(object):
         except Exception as e:
             print(str(e))
 
-    def findBestHash(self):
+    def findBestHash(self, maxSet=100000000, memoryCheck=False):
         """
         Function provides the best possible input string with the least time consumption.
         Offers memory check in intervals.
@@ -223,18 +223,18 @@ class Shacol(object):
                 print('Finding collision started')
                 start = timeit.default_timer()
                 while newHashPart not in intHashSet:
-                    if len(intHashSet) >= 1000000000:
-                        print('\n--- Stated limit reached --- Set count:', len(intHashSet))
-                        memOver = True
-                        break
-                    """ #Memory based control
-                    if len(intHashSet) : 10000000 == 0:
+                    if memoryCheck:
                         virtualMem = psutil.virtual_memory().available
                         if virtualMem < 134217728:
                             print('\n!!! Memory capacity reached !!! Set count:', len(intHashSet))
                             memOver = True
                             break
-                    """
+                    else:
+                        if len(intHashSet) >= maxSet:
+                            print('\n--- Stated limit reached --- Set count:', len(intHashSet))
+                            memOver = True
+                            break
+                            
                     intHashSet.add(newHashPart)
                     strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
                     newHash = hashlib.sha256(strHashPart).hexdigest()
