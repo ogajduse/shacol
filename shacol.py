@@ -1,6 +1,5 @@
 # !/usr/bin/env python
 
-import os
 import sys
 import redis
 import random
@@ -10,7 +9,6 @@ import hashlib
 import argparse
 import binascii
 import pybloomfilter
-from io import StringIO
 
 
 class Shacol(object):
