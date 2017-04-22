@@ -1,17 +1,6 @@
 # !/usr/bin/env python
 # requirements - redis, python3-psutil, future, pybloomfiltermmap
 
-from __future__ import division
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-
-from builtins import input
-from builtins import str
-from builtins import range
-from builtins import object
-from past.utils import old_div
-
 import os
 import sys
 import redis
