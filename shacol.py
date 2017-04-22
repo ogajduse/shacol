@@ -25,7 +25,7 @@ class Shacol(object):
         self.memory = memory
 
         self.bestTime = sys.maxsize
-        self.hashPartLength = old_div(int(self.bits), 4)
+        self.hashPartLength = int(int(self.bits) / 4)
         self.shaList = []
         self.hashPart = str()
 
@@ -63,7 +63,7 @@ class Shacol(object):
 
     def changeBitLength(self, newBitLength):
         self.bits = newBitLength
-        self.hashPartLength = old_div(self.bits, 4)
+        self.hashPartLength = int(int(self.bits) / 4)
 
 
     def findCollisionStr(self, hashPart=None):
