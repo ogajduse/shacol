@@ -719,12 +719,10 @@ def main():
                         if args.redis:
                             shacol.findCollisionWithDBSet()
                         else:
-                            shacol.findCollisionIntensity()
-                            #shacol.findExperimental()
-
-                    # shacol.findCollisionStr()
-                    # shacol.findCollisionInt()
-                    # shacol.findExperimental()
+                            # shacol.findCollisionIntensity()
+                            shacol.findExperimental()
+                            # shacol.findCollisionStr()
+                            # shacol.findCollisionInt()
     else:
         if args.bloom:
             if args.memory:
