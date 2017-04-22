@@ -1,2 +1,6 @@
 mysqlclient
 redis
+psutil
+pybloomfiltermmap
+gitpython
+pymysql
