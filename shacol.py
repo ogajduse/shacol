@@ -1,5 +1,4 @@
 # !/usr/bin/env python
-# requirements - redis, python3-psutil, future, pybloomfiltermmap
 
 import os
 import sys
