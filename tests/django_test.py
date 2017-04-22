@@ -9,10 +9,9 @@ db_location = '85.255.0.154'
 git_repo = git.repo.Repo(root_dir)
 
 def main():
-    sha256 = True
     BITS = 32
     inputFile = root_dir + "/hash.txt"
-    shacolInstance = shacol.Shacol(sha256, BITS, inputFile)
+    shacolInstance = shacol.Shacol(BITS, inputFile)
 
     for i in range(4, 33, 4):
         shacolInstance.changeBitLength(i)
