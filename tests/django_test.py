@@ -1,4 +1,4 @@
-import sys, os, sqlite3, git, pybloomfilter
+import sys, os, git
 import pymysql as mariadb
 
 root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
