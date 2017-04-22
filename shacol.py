@@ -582,6 +582,82 @@ class Shacol(object):
         except Exception as e:
             print(str(e))
 
+    def findCollisionIntensity(self, hashPart=None):
+        """
+        The test method saving hashes in cycles.
+
+        :param hashPart: the input hash loaded from a file
+        """
+        try:
+            if not hashPart:
+                hashPart = self.hashPart
+                hashPartLength = self.hashPartLength
+            else:
+                hashPartLength = len(hashPart)
+
+            status = 0
+            count = 0
+            newHashPart = bytes(hashPart, 'utf-8')
+            bloomFilter = pybloomfilter.BloomFilter(10000000000, 0.01) #up to 10 bilions
+            start = timeit.default_timer()
+
+            while True:
+                if newHashPart not in bloomFilter:
+                    bloomFilter.update(newHashPart)
+                    count += 1
+                    status += 1
+                    if status == 10000000:
+                        print('\n' * 100)
+                        print('Count of cycles:', count)
+                        print('Run time:', round((timeit.default_timer() - start) / 60, 3), 'minutes')
+                        status = 0
+
+                    strHashPart = binascii.unhexlify(newHashPart)
+                    newHash = hashlib.sha256(strHashPart).hexdigest()
+                    newHash = newHash[0:hashPartLength]
+                    newHashPart = bytes(newHash, 'utf-8')
+                else:
+                    print("Potencional collision successfully passed!")
+                    print("Suspicious hash: ", newHash)
+                    break
+
+            print("Second part started... ")
+            collisionHash = newHashPart
+            index = count
+            newHashPart = bytes(hashPart, 'utf-8')
+            status = 0
+            count = 0
+
+            while newHashPart != collisionHash:
+                count += 1
+                status += 1
+                if status == 10000000:
+                    print('\n' * 100)
+                    print('Collision found! Searching for collision index...')
+                    print('Count of cycles:', count)
+                    print('Run time:', round((timeit.default_timer() - start) / 60, 3), 'minutes')
+                    status = 0
+                strHashPart = binascii.unhexlify(newHashPart)
+                newHash = hashlib.sha256(strHashPart).hexdigest()
+                newHash = newHash[0:hashPartLength]
+                newHashPart = bytes(newHash, 'utf-8')
+
+            stop = timeit.default_timer()
+            totalTime = round(stop - start, 12)
+
+            print('\n##### findCollisionIntensity - Collision found process succeeded! #####')
+            print('\nInput hashPart:', hashPart)
+            print("Collision found after %s seconds" % (totalTime))
+            print('Count of the cycles:', index-count)
+            print('Collision hash:', newHash)
+            print('Cycles between collision hashes:', cycles-index)
+
+            return {"inputHash": hashPart, "time": totalTime, "cycles": cycles, "collisionHash": newHash,
+                    "indexOfCollision": index, "cyclesBetCol": cycles-index}
+
+        except Exception as e:
+            print(str(e))
+
 
 def main():
     # Input parameters
