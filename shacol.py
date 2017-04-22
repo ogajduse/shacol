@@ -555,13 +555,19 @@ class Shacol(object):
                 hashPartLength = len(hashPart)
 
             count = 0
+            status = 0
 
             start = timeit.default_timer()
             while not r.sismember('hset', hashPart):
                 r.sadd('hset', hashPart)
                 count += 1
-                if count % 10000000 == 0:
-                    print(count)
+                status += 1
+                if status == 10000000:
+                    status = 0
+                    print('\n' * 100)
+                    print('Count of cycles:', count)
+                    print('Run time:', round((timeit.default_timer() - start) / 60, 3), 'minutes')
+
                 hashPart = hashlib.sha256(hashPart.encode('utf-8')).hexdigest()[0:hashPartLength]
 
             stop = timeit.default_timer()
