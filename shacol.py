@@ -694,23 +694,60 @@ def main():
     input('\nPress Enter to continue...')
 
     if args.inputFile:
-        if (args.hashGroup):
+        if args.hashGroup:
             for hashes in shacol.shaList:
-                if (args.first):
+                if args.first:
                     shacol.findCollisionFirst(hashes)
                 else:
                     shacol.findCollisionInt(hashes)
         else:
-            if (args.first):
+            if args.first:
                 shacol.findCollisionFirst()
             else:
-                # shacol.findCollisionStr()
-                # shacol.findCollisionInt()
-                 shacol.findExperimental()
-    else:
-        shacol.findBestHashBloom()
+                if args.memory:
+                    if args.capacity:
+                        shacol.findExperimental(maxSet=args.capacity,memoryCheck=True)
+                    else:
+                        if args.redis:
+                            shacol.findCollisionWithDBSet(memoryCheck=True)
+                        else:
+                            shacol.findExperimental(memoryCheck=True)
+                else:
+                    if args.capacity:
+                        shacol.findExperimental(maxSet=args.capacity)
+                    else:
+                        if args.redis:
+                            shacol.findCollisionWithDBSet()
+                        else:
+                            shacol.findCollisionIntensity()
+                            #shacol.findExperimental()
 
-    # shacol.findCollisionWithDBset()
+                    # shacol.findCollisionStr()
+                    # shacol.findCollisionInt()
+                    # shacol.findExperimental()
+    else:
+        if args.bloom:
+            if args.memory:
+                if args.capacity:
+                    shacol.findBestHashBloom(maxSet=args.capacity,memoryCheck=True)
+                else:
+                    shacol.findBestHashBloom(memoryCheck=True)
+            else:
+                if args.capacity:
+                    shacol.findBestHashBloom(maxSet=args.capacity)
+                else:
+                    shacol.findBestHashBloom()
+        else:
+            if args.memory:
+                if args.capacity:
+                    shacol.findBestHash(maxSet=args.capacity,memoryCheck=True)
+                else:
+                    shacol.findBestHash(memoryCheck=True)
+            else:
+                if args.capacity:
+                    shacol.findBestHash(maxSet=args.capacity)
+                else:
+                    shacol.findBestHash()
 
 
 if __name__ == "__main__":
