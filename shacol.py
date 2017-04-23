@@ -644,6 +644,94 @@ class Shacol(object):
         except Exception as e:
             print(str(e))
 
+    def findCollisionCuckoo(self, hashPart=None):
+        """
+        The test method using Cuckoo filter.
+
+        :param hashPart: the input hash loaded from a file
+        """
+        try:
+            if not hashPart:
+                hashPart = self.hashPart
+                hashPartLength = self.hashPartLength
+            else:
+                hashPartLength = len(hashPart)
+
+            status = 0
+            cuckooCount = 0
+            checkCount = 0
+
+            newHashPart = bytes(hashPart, 'utf-8')
+            cf = cuckoofilter.CuckooFilter(capacity=10000000, fingerprint_size=1)
+            print('Cuckoo initialized... ')
+            start = timeit.default_timer()
+
+            while True:
+                if not cf.contains(newHashPart):
+                    cf.insert(newHashPart)
+                    cuckooCount += 1
+                    status += 1
+                    if status == 10000000:
+                        print('\n' * 100)
+                        print('Count of cycles:', cuckooCount)
+                        print('Run time:', round((timeit.default_timer() - start), 3),'s')
+                        status = 0
+
+                    strHashPart = binascii.unhexlify(newHashPart)
+                    newHash = hashlib.sha256(strHashPart).hexdigest()
+                    newHash = newHash[0:hashPartLength]
+                    newHashPart = bytes(newHash, 'utf-8')
+                else:
+                    print("### Potencional collision successfully passed! ###")
+                    print("Suspicious hash: ", newHash)
+                    print('Count of cycles:', cuckooCount)
+                    print('Time:', round((timeit.default_timer() - start), 3),'s')
+
+                    collisionHash = newHashPart
+                    newHashPart = bytes(hashPart, 'utf-8')
+                    while newHashPart != collisionHash:
+                        checkCount += 1
+                        status += 1
+                        if status == 10000000:
+                            print('\n' * 100)
+                            print('Suspicious hash found! :) Searching for collision index...')
+                            print('Count of cycles:', checkCount)
+                            print('Run time:', round((timeit.default_timer() - start), 3),'s')
+                            status = 0
+                        strHashPart = binascii.unhexlify(newHashPart)
+                        newHash = hashlib.sha256(strHashPart).hexdigest()
+                        newHash = newHash[0:hashPartLength]
+                        newHashPart = bytes(newHash, 'utf-8')
+
+                    if checkCount != cuckooCount:
+                        break
+                    else:
+                        print('False positive hash detected :(')
+                        cf.insert(newHashPart)
+                        cuckooCount += 1
+                        status += 1
+                        strHashPart = binascii.unhexlify(newHashPart)
+                        newHash = hashlib.sha256(strHashPart).hexdigest()
+                        newHash = newHash[0:hashPartLength]
+                        newHashPart = bytes(newHash, 'utf-8')
+
+            stop = timeit.default_timer()
+            totalTime = round(stop - start, 12)
+
+            print('\n##### findCollisionCuckoo - Collision found process succeeded! \o/ #####')
+            print('\nInput hashPart:', hashPart)
+            print("Collision found after %s seconds" % (totalTime))
+            print('Count of the cycles:', cuckooCount)
+            print('Index of collision hash:', checkCount)
+            print('Cycles between collision hashes:', cuckooCount-checkCount)
+            print('Collision hash:', newHash)
+
+            return {"inputHash": hashPart, "time": totalTime, "cycles": cuckooCount, "collisionHash": newHash,
+                    "indexOfCollision": checkCount, "cyclesBetCol": cuckooCount-checkCount}
+
+        except Exception as e:
+            print(str(e))
+
 
 def main():
     # Input parameters
