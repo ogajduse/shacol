@@ -8,7 +8,11 @@ import psutil
 import hashlib
 import argparse
 import binascii
+
+import pybloof
+import cuckoofilter
 import pybloomfilter
+from cuckoopy import CuckooFilter
 
 
 class Shacol(object):
@@ -568,6 +572,85 @@ class Shacol(object):
         except Exception as e:
             print(str(e))
 
+    def findCollisionIntensity(self, hashPart=None):
+        """
+        The test method saving hashes in cycles.
+
+        :param hashPart: the input hash loaded from a file
+        """
+        try:
+            if not hashPart:
+                hashPart = self.hashPart
+                hashPartLength = self.hashPartLength
+            else:
+                hashPartLength = len(hashPart)
+
+            status = 0
+            count = 0
+            newHashPart = bytes(hashPart, 'utf-8')
+            #bloomFilter = pybloomfilter.BloomFilter(1000000000, 0.01) #up to 10 bilions
+            bloomFilter = pybloof.StringBloomFilter(size=100000000,hashes=9)
+            start = timeit.default_timer()
+
+            while newHashPart not in bloomFilter:
+                bloomFilter.add(newHashPart)
+                count += 1
+                status += 1
+                if status == 10000000:
+                    print('\n' * 100)
+                    print('Count of cycles:', count)
+                    print('Run time:', round((timeit.default_timer() - start) / 60, 3))
+                    status = 0
+
+                strHashPart = binascii.unhexlify(newHashPart)
+                newHash = hashlib.sha256(strHashPart).hexdigest()
+                newHash = newHash[0:hashPartLength]
+                newHashPart = bytes(newHash, 'utf-8')
+
+            print("Potencional collision successfully passed!")
+            print('Time:', round((timeit.default_timer() - start), 3))
+            print("Suspicious hash: ", newHash)
+            bloomFilter.clear()
+
+            print("Second part started... ")
+            collisionHash = newHashPart
+            index = count
+            newHashPart = bytes(hashPart, 'utf-8')
+            status = 0
+            count = 0
+
+            start2 = timeit.default_timer()
+            while newHashPart != collisionHash:
+                count += 1
+                status += 1
+                if status == 10000000:
+                    print('\n' * 100)
+                    print('Suspicious hash found! Searching for collision index...')
+                    print('Count of cycles:', count)
+                    print('Run time:', round((timeit.default_timer() - start), 3))
+                    status = 0
+                strHashPart = binascii.unhexlify(newHashPart)
+                newHash = hashlib.sha256(strHashPart).hexdigest()
+                newHash = newHash[0:hashPartLength]
+                newHashPart = bytes(newHash, 'utf-8')
+
+            print('Time consumption of collision check:', round((timeit.default_timer() - start2), 3))
+            stop = timeit.default_timer()
+            totalTime = round(stop - start, 12)
+
+            print('\n##### findCollisionIntensity - Collision found process succeeded! #####')
+            print('\nInput hashPart:', hashPart)
+            print("Collision found after %s seconds" % (totalTime))
+            print('Count of the cycles:', index)
+            print('Collision hash:', newHash)
+            print('Cycles between collision hashes:', index-count)
+
+            return {"inputHash": hashPart, "time": totalTime, "cycles": index, "collisionHash": newHash,
+                    "indexOfCollision": index, "cyclesBetCol": index-count}
+
+        except Exception as e:
+            print(str(e))
+
     def findCollisionBloom(self, hashPart=None):
         """
         The test method using performance Bloom filter.
@@ -869,93 +952,7 @@ def main():
     input('\nPress Enter to continue...')
 
     if args.inputFile:
-        if args.hashGroup:def findCollisionBloom2(self, hashPart=None):
-        """
-        The test method using Bloom filter based on mmap.
-
-        :param hashPart: the input hash loaded from a file
-        """
-        try:
-            if not hashPart:
-                hashPart = self.hashPart
-                hashPartLength = self.hashPartLength
-            else:
-                hashPartLength = len(hashPart)
-
-            status = 0
-            bloomCount = 0
-            checkCount = 0
-
-            newHashPart = bytes(hashPart, 'utf-8')
-            bloomFilter = pybloomfilter.BloomFilter(100000000, 0.01)#, '/tmp/words.bloom') #without last argument = in memory
-            start = timeit.default_timer()
-
-            while True:
-                if newHashPart not in bloomFilter:
-                    bloomFilter.update(newHashPart)
-                    bloomCount += 1
-                    status += 1
-                    if status == 10000000:
-                        print('\n' * 100)
-                        print('Count of cycles:', bloomCount)
-                        print('Run time:', round((timeit.default_timer() - start), 3),'s')
-                        status = 0
-
-                    strHashPart = binascii.unhexlify(newHashPart)
-                    newHash = hashlib.sha256(strHashPart).hexdigest()
-                    newHash = newHash[0:hashPartLength]
-                    newHashPart = bytes(newHash, 'utf-8')
-                else:
-                    print("### Potencional collision successfully passed! ###")
-                    print("Suspicious hash: ", newHash)
-                    print('Count of cycles:', bloomCount)
-                    print('Time:', round((timeit.default_timer() - start), 3),'s')
-
-                    checkCount = 0
-                    collisionHash = newHashPart
-                    newHashPart = bytes(hashPart, 'utf-8')
-                    while newHashPart != collisionHash:
-                        checkCount += 1
-                        status += 1
-                        if status == 10000000:
-                            print('\n' * 100)
-                            print('Suspicious hash found! :) Searching for collision index...')
-                            print('Count of cycles:', checkCount)
-                            print('Run time:', round((timeit.default_timer() - start), 3),'s')
-                            status = 0
-                        strHashPart = binascii.unhexlify(newHashPart)
-                        newHash = hashlib.sha256(strHashPart).hexdigest()
-                        newHash = newHash[0:hashPartLength]
-                        newHashPart = bytes(newHash, 'utf-8')
-
-                    if checkCount != bloomCount:
-                        break
-                    else:
-                        print('False positive hash detected :(')
-                        bloomFilter.add(newHashPart)
-                        bloomCount += 1
-                        status += 1
-                        strHashPart = binascii.unhexlify(newHashPart)
-                        newHash = hashlib.sha256(strHashPart).hexdigest()
-                        newHash = newHash[0:hashPartLength]
-                        newHashPart = bytes(newHash, 'utf-8')
-
-            stop = timeit.default_timer()
-            totalTime = round(stop - start, 12)
-
-            print('\n##### findCollisionBloom - Collision found process succeeded! \o/ #####')
-            print('\nInput hashPart:', hashPart)
-            print("Collision found after %s seconds" % (totalTime))
-            print('Count of the cycles:', bloomCount)
-            print('Index of collision hash:', checkCount)
-            print('Cycles between collision hashes:', bloomCount-checkCount)
-            print('Collision hash:', newHash)
-
-            return {"inputHash": hashPart, "time": totalTime, "cycles": bloomCount, "collisionHash": newHash,
-                    "indexOfCollision": checkCount, "cyclesBetCol": bloomCount-checkCount}
-
-        except Exception as e:
-            print(str(e))
+        if args.hashGroup:
             for hashes in shacol.shaList:
                 if args.first:
                     shacol.findCollisionFirst(hashes)
@@ -980,12 +977,12 @@ def main():
                         if args.redis:
                             shacol.findCollisionWithDBSet()
                         else:
-                            shacol.findCollisionBloom()
-                            # shacol.findCollisionBloom2()
-                            # shacol.findCollisionCuckoo()
-                            shacol.findExperimental()
-                            # shacol.findCollisionStr()
-                            shacol.findCollisionInt()
+                            #shacol.findCollisionBloom()
+                            shacol.findCollisionBloom2()
+                            #shacol.findCollisionCuckoo()
+                            #shacol.findExperimental()
+                            #shacol.findCollisionStr()
+                            #shacol.findCollisionInt()
     else:
         if args.bloom:
             if args.memory:
