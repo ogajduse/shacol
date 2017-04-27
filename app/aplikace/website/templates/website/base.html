@@ -23,7 +23,9 @@
     <div class="container">
     <div class="row">
       <div class="col-md-12 col-sm-12">
-        <center><a href="{% url 'colls' %}"><h1>Shacol GUI</h1></a></center>
+        <p></p>
+        <center><a href="{% url 'colls' %}"><img src="{% static 'logo.png' %}"></a></center>
+        <!-- <center><a href="{% url 'colls' %}"><h1>Shacol GUI</h1></a></center> -->
       </div>
       <div class="col-md-6 col-sm-6">
       <form action="{% url 'filtering' %}" method="post">{% csrf_token %}
@@ -37,67 +39,34 @@
           <button type="submit" class="btn btn-danger">OK</button>
           </form>
         </div>
-        <!---<div class="col-md-6 col-sm-6">
-          <label for="sel1">Enter</label><br>
-          <button type="button" class="btn btn-danger">OK</button>
-
-        </div></form> -->
 
     </div>
       <div class="row">
             <div class="col-md-12 col-sm-12">
               <h2>{{ query.method }}</h2>
-              <table class="table table-bordered table-hover">
-                <thead>
-                  <tr>
-                    <th>Input hash</th>
-                    <th>Total time</th>
-                    <th>Number of cycles</th>
-                    <th>Collision hash</th>
-                    <th>Hash order</th>
-                    <th>Test method</th>
-                    <th>Bits</th>
-                    <th>Git revision</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for coll in collisions %}
-                    <tr>
-                      <td>{{ coll.input_hash }}</td>
-                      <td>{{ coll.total_time }}</td>
-                      <td>{{ coll.cycles }}</td>
-                      <td>{{ coll.coll_hash }}</td>
-                      <td>{{ coll.hash_order }}</td>
-                      <td>{{ coll.test_method }}</td>
-                      <td>{{ coll.bits }}</td>
-                      <td>{{ coll.git_revision }}</td>
-                    </tr>
-                  {% endfor %}
-                  {% for coll in colls %}
-                    <tr>
-                      <td>{{ coll.input_hash }}</td>
-                      <td>{{ coll.total_time }}</td>
-                      <td>{{ coll.cycles }}</td>
-                      <td>{{ coll.coll_hash }}</td>
-                      <td>{{ coll.hash_order }}</td>
-                      <td>{{ coll.test_method }}</td>
-                      <td>{{ coll.bits }}</td>
-                      <td>{{ coll.git_revision }}</td>
-                    </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
+              {% block content %}
+              {% endblock %}
               <a class="page-scroll" href="{% url 'delete' %}"><i class="glyphicon glyphicon-trash"></i></a>
             </div>
-
-          <!-- <div class="col-md-12 col-sm-12">
-            <h1>Hello, world!</h1>
-              Tento div zabírá polovinu divu row.Nullam fermentum ex a ante consequat aliquam. Phasellus ornare blandit lacus, vel consequat dolor mollis eget. Ut arcu mi, tempor et ligula ac, ornare egestas lorem. Suspendisse quis augue cursus, hendrerit dolor ut, facilisis dui. Vivamus luctus luctus lectus eget pulvinar. Integer rhoncus suscipit lectus, et finibus lacus semper nec. Nam gravida ultrices finibus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Aenean nec cursus felis, in lacinia urna. Suspendisse facilisis ipsum tempor diam placerat pulvinar. Pellentesque commodo hendrerit nibh a porttitor.
-              <p ALIGN="CENTER"><b>ZDE BUDE GRAF!!!!!</b></p>
-            </div> -->
         </div>
           </div>
     </div>
+
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    TIC1
+                </div>
+                <div class="col-md-4">
+                 Gajdusek Ondrej, Stangler Jan, Chwastkova Sarka
+                </div>
+                <div class="col-md-4">
+                  FEKT VUT 2017
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
