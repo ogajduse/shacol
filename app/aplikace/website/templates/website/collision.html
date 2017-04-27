@@ -1,6 +1,5 @@
-<!--{% extends 'base.html' %}
+{% extends 'website/base.html' %}
 {% block content %}
-<h2>Int method</h2>
 <table class="table table-bordered table-hover">
   <thead>
     <tr>
@@ -20,6 +19,19 @@
         <td>{{ coll.input_hash }}</td>
         <td>{{ coll.total_time }}</td>
         <td>{{ coll.cycles }}</td>
+        <td>{{ coll.coll_hash }}</td>
+        <td>{{ coll.hash_order }}</td>
+        <td>{{ coll.test_method }}</td>
+        <td>{{ coll.bits }}</td>
+        <td>{{ coll.git_revision }}</td>
+      </tr>
+    {% endfor %}
+    {% for coll in colls %}
+      <tr>
+        <td>{{ coll.input_hash }}</td>
+        <td>{{ coll.total_time }}</td>
+        <td>{{ coll.cycles }}</td>
+        <td>{{ coll.coll_hash }}</td>
         <td>{{ coll.hash_order }}</td>
         <td>{{ coll.test_method }}</td>
         <td>{{ coll.bits }}</td>
@@ -29,4 +41,3 @@
   </tbody>
 </table>
 {% endblock content %}
--->
