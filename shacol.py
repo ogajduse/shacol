@@ -111,7 +111,7 @@ class Shacol(object):
             totalMemory = round(sys.getsizeof(strHashSet) / 1024 / 1024, 3)
             indexOfFirst = 0
             firstCollision = ''
-            indexOfLast = len(strHashSet)
+            indexOfLast = len(strHashSet)-1
             lastCollision = newHashPart
             newHashPart = hashPart
 
@@ -186,7 +186,7 @@ class Shacol(object):
             totalMemory = round(sys.getsizeof(intHashSet) / 1024 / 1024, 3)
             indexOfFirst = 0
             firstCollision = ''
-            indexOfLast = len(intHashSet)
+            indexOfLast = len(intHashSet)-1
             lastCollision = newHash
             newHashPart = hashPart
 
@@ -451,6 +451,9 @@ class Shacol(object):
                     newHash = newHash[0:hashPartLength]
                     newHashPart = bytes(newHash, 'utf-8')
                 else:
+                    if indexOfLast >= filterCapacity:
+                        print("!!! filterCapacity reached !!!")
+                        break
                     print("### Potencional collision successfully passed! ###")
                     print("Suspicious hash: ", newHash)
                     print('Count of cycles:', indexOfLast)
@@ -488,7 +491,7 @@ class Shacol(object):
             totalTime = round(stop - start, 12)
             totalMemory = round(sys.getsizeof(bloomFilter) / 1048576, 3)
 
-            if indexOfFirst != indexOfLast:
+            if indexOfFirst != indexOfLast and filterCapacity > indexOfLast:
                 print('\n\n##### findCollisionBloom - Collision found process succeeded! \o/ #####\n')
                 print("Collision found after %s seconds" % (totalTime),'\n')
                 if inputString:
@@ -603,8 +606,8 @@ def main():
     # Input parameters
 
     parser = argparse.ArgumentParser(usage='$prog [options] -b 32 -i hash.txt',
-                                     description='SHA collision finder', add_help=True,
-                                     epilog='SHA collision finder. Written by Jan Stangler, Ondrej\
+                                     description='SHA2 collision finder', add_help=True,
+                                     epilog='SHA2 collision finder. Written by Jan Stangler, Ondrej\
                                       Gajdusek, Sarka Chwastkova, VUT FEKT, ICT1 project, 2017')
     parser.add_argument('-b', '--bits', action='store', dest='bits',
                         help='-b 32 (Number of hash bits to find collision)', required=True)
@@ -633,6 +636,7 @@ def main():
     print("Do you want to proceed?")
     input('\nPress Enter to continue...')
 
+    #Inteligent tree of calling functions
     if args.inputFile:
         if args.hashGroup:
             for hashes in shacol.shaList:
@@ -645,46 +649,40 @@ def main():
                 shacol.findCollisionFirst()
             else:
                 if args.memory:
-                    if args.capacity:
-                        shacol.findExperimental(maxSet=args.capacity,memoryCheck=True)
-                    else:
-                        if args.redis:
-                            shacol.findCollisionWithDBSet(memoryCheck=True)
-                        else:
-                            shacol.findExperimental(memoryCheck=True)
+                    if args.redis:
+                        shacol.findCollisionWithDBSet(memoryCheck=True)
                 else:
                     if args.capacity:
-                        shacol.findExperimental(maxSet=args.capacity)
+                        shacol.findCollisionBloom(filterCapacity=int(args.capacity))
                     else:
                         if args.redis:
                             shacol.findCollisionWithDBSet()
                         else:
                             shacol.findCollisionBloom()
                             #shacol.findCollisionCuckoo()
-                            #shacol.findExperimental()
                             #shacol.findCollisionStr()
                             #shacol.findCollisionInt()
     else:
         if args.bloom:
             if args.memory:
                 if args.capacity:
-                    shacol.findBestHashBloom(maxSet=args.capacity,memoryCheck=True)
+                    shacol.findBestHashBloom(maxSet=int(args.capacity),memoryCheck=True)
                 else:
                     shacol.findBestHashBloom(memoryCheck=True)
             else:
                 if args.capacity:
-                    shacol.findBestHashBloom(maxSet=args.capacity)
+                    shacol.findBestHashBloom(maxSet=int(args.capacity))
                 else:
                     shacol.findBestHashBloom()
         else:
             if args.memory:
                 if args.capacity:
-                    shacol.findBestHash(maxSet=args.capacity,memoryCheck=True)
+                    shacol.findBestHash(maxSet=int(args.capacity),memoryCheck=True)
                 else:
                     shacol.findBestHash(memoryCheck=True)
             else:
                 if args.capacity:
-                    shacol.findBestHash(maxSet=args.capacity)
+                    shacol.findBestHash(maxSet=int(args.capacity))
                 else:
                     shacol.findBestHash()
 
