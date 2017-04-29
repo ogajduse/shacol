@@ -6,4 +6,5 @@ pymysql
 Cython
 pybloof
 python-cuckoo
+django
 django-graphos

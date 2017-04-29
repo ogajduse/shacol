@@ -2,6 +2,5 @@ mysql-devel
 mariadb
 python3-mysql
 python3-PyMySQL.noarch
-python3-django
 python3-devel
 mariadb-devel
