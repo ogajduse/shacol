@@ -4,7 +4,7 @@
 <script type="text/javascript">
     google.load("visualization", "1", {packages:["corechart"]});
 </script>
-<form action="{% url 'graphfilter' %}" method="post">{% csrf_token %}
+<form action="{% url 'graphs' %}" method="post">{% csrf_token %}
     <div class="form-group">
       <label>Type of graph:</label>
       <div class"radio"></div>
