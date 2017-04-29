@@ -3,7 +3,3 @@ mariadb
 python3-mysql
 python3-PyMySQL.noarch
 python3-django
-redis
-Cython
-pybloof
-python-cuckoo

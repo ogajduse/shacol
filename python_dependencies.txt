@@ -1,6 +1,8 @@
 mysqlclient
 redis
 psutil
-pybloomfiltermmap
 gitpython
 pymysql
+Cython
+pybloof
+python-cuckoo
