@@ -30,7 +30,7 @@ class Shacol(object):
         self.shaList = []
         self.hashPart = str()
 
-        if inputFile:
+        if '.txt' in str(inputFile):
             with open(self.inputFile, 'r', encoding='utf-8') as dataFromFile:
                 if self.hashGroup:
                     if self.text:
@@ -47,6 +47,11 @@ class Shacol(object):
                     else:
                         self.hashPart = dataFromFile.readline()[0:self.hashPartLength]
             dataFromFile.close()
+        elif inputFile:
+            self.hashPart = hashlib.sha256(inputFile.encode('utf-8')).hexdigest()[
+                                        0:self.hashPartLength]
+
+
 
     def getInfo(self):
         printHashes = str()
@@ -978,11 +983,11 @@ def main():
                             shacol.findCollisionWithDBSet()
                         else:
                             #shacol.findCollisionBloom()
-                            shacol.findCollisionBloom2()
+                            #shacol.findCollisionBloom2()
                             #shacol.findCollisionCuckoo()
                             #shacol.findExperimental()
                             #shacol.findCollisionStr()
-                            #shacol.findCollisionInt()
+                            shacol.findCollisionInt()
     else:
         if args.bloom:
             if args.memory:
