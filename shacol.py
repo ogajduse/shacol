@@ -377,7 +377,6 @@ class Shacol(object):
 
             stop = timeit.default_timer()
             totalTime = round(stop - start, 12)
-            totalMemory = round(sys.getsizeof(intHashSet) / 1048576, 3)
             indexOfFirst = 0
             firstCollision = ''
             indexOfLast = r.scard('hset')
@@ -401,11 +400,9 @@ class Shacol(object):
             print('Hash 1 before collision:', firstTemp)
             print('Hash 2 before collision:', lastTemp)
 
-            print('Set int structure used', totalMemory, 'MB')
-
             return {"inputString": inputString, "inputHash": hashPart, "time": totalTime,"indexOfFirst": indexOfFirst,
                 "indexOfLast": indexOfLast, "collisionHash": lastCollision, "cyclesBetCol": indexOfLast-indexOfFirst,
-                "firstTemp": firstTemp, "lastTemp": lastTemp, "dataStructConsum": totalMemory}
+                "firstTemp": firstTemp, "lastTemp": lastTemp, "dataStructConsum": 0}
 
 
         except Exception as e:
@@ -449,18 +446,8 @@ class Shacol(object):
                         print('Count of cycles:', indexOfLast)
                         print('Run time:', round((timeit.default_timer() - start), 3),'s')
                         status = 0
-                    strHashPart = binascii.unhexlify(newHashPart)
-                    print(strHashPart)
-                    lastTemp = strHashPart.encode('utf-8')
-                    """
-                    b'?;\x08\xec'
-                    'bytes' object has no attribute 'encode'
-                    + solve issue with input to hashlib
-
-                    """
-                    print('point ##################')
-                    newHash = hashlib.sha256(strHashPart).hexdigest()
-
+                    lastTemp = newHashPart.decode('utf-8')
+                    newHash = hashlib.sha256(newHashPart).hexdigest()
                     newHash = newHash[0:hashPartLength]
                     newHashPart = bytes(newHash, 'utf-8')
                 else:
@@ -481,9 +468,8 @@ class Shacol(object):
                             print('Count of cycles:', indexOfFirst)
                             print('Run time:', round((timeit.default_timer() - start), 3),'s')
                             status = 0
-                        strHashPart = binascii.unhexlify(newHashPart)
-                        firstTemp = strHashPart.encode('utf-8')
-                        newHash = hashlib.sha256(strHashPart).hexdigest()
+                        firstTemp = newHashPart.decode('utf-8')
+                        newHash = hashlib.sha256(newHashPart).hexdigest()
                         newHash = newHash[0:hashPartLength]
                         newHashPart = bytes(newHash, 'utf-8')
 
@@ -491,27 +477,29 @@ class Shacol(object):
                         break
                     else:
                         print('False positive hash detected :(')
-                        bloomFilter.add(newHashPart)
                         indexOfLast += 1
                         status += 1
-                        strHashPart = binascii.unhexlify(newHashPart)
-                        newHash = hashlib.sha256(strHashPart).hexdigest()
+                        bloomFilter.add(newHashPart)
+                        newHash = hashlib.sha256(newHashPart).hexdigest()
                         newHash = newHash[0:hashPartLength]
                         newHashPart = bytes(newHash, 'utf-8')
 
             stop = timeit.default_timer()
             totalTime = round(stop - start, 12)
+            totalMemory = round(sys.getsizeof(bloomFilter) / 1048576, 3)
 
             if indexOfFirst != indexOfLast:
-                print('\n##### findCollisionBloom - Collision found process succeeded! \o/ #####')
-                print('\nInput hashPart:', hashPart)
-                print("Collision found after %s seconds" % (totalTime))
-                print('Collision hash:', newHash)
-                print('Index of first collision:', indexOfFirst)
+                print('\n\n##### findCollisionBloom - Collision found process succeeded! \o/ #####\n')
+                print("Collision found after %s seconds" % (totalTime),'\n')
+                if inputString:
+                    print('Input string:', inputString)
+                print('Input hashPart:', hashPart)
+                print('\nCollision hash:', newHash)
+                print('Hash 1 leading to collision:', firstTemp)
+                print('Hash 2 leading to collision:', lastTemp)
+                print('\nIndex of first collision:', indexOfFirst)
                 print('Index of last collision:', indexOfLast)
                 print('Cycles between collision hashes:', indexOfLast-indexOfFirst)
-                print('Hash 1 before collision:', firstTemp)
-                print('Hash 2 before collision:', lastTemp)
                 print('\nBloom filter used', round(sys.getsizeof(bloomFilter) / 1024 / 1024, 3), 'MB')
 
                 return {"inputString": inputString, "inputHash": hashPart, "time": totalTime,"indexOfFirst": indexOfFirst,
