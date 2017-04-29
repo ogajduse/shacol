@@ -156,6 +156,11 @@ class Shacol(object):
             else:
                 hashPartLength = len(hashPart)
 
+            if '.txt' not in str(self.inputFile):
+                inputString = self.inputFile
+            else:
+                inputString = ''
+
             status = 1
             intHashSet = {int()}
             newHashPart = int(binascii.hexlify(bytes(hashPart, 'utf-8')), 16)
@@ -171,6 +176,7 @@ class Shacol(object):
                     print('Run time:', round((timeit.default_timer() - start) / 60, 3), 'minutes')
                     status = 0
                 strHashPart = binascii.unhexlify(hex(newHashPart)[2:])
+                lastTemp = strHashPart.decode('utf-8')
                 newHash = hashlib.sha256(strHashPart).hexdigest()
                 newHash = newHash[0:hashPartLength]
                 newHashPart = int(binascii.hexlify(bytes(newHash, 'utf-8')), 16)
@@ -178,28 +184,37 @@ class Shacol(object):
             stop = timeit.default_timer()
             totalTime = round(stop - start, 12)
             totalMemory = round(sys.getsizeof(intHashSet) / 1024 / 1024, 3)
-            cycles = len(intHashSet) + 1
+            indexOfFirst = 0
+            firstCollision = ''
+            indexOfLast = len(intHashSet)
+            lastCollision = newHash
+            newHashPart = hashPart
 
             print('\n\n##### findCollisionInt - Collision found process succeeded! #####\n')
-            if '.txt' not in str(self.inputFile):
-                print('Input string:', self.inputFile)
+            if inputString:
+                print('Input string:', inputString)
             print('Input hashPart:', hashPart)
             print("Collision found after %s seconds" % (totalTime))
-            print('Count of the cycles:', len(intHashSet) + 1)
-            print('Collision hash:', newHash)
-            index = 0
-            for intHash in intHashSet:
-                index += 1
-                if intHash == newHashPart:
-                    print('Index of collision hash:', index)
-                    break
-            print('Cycles between collision hashes:', cycles-index)
+            print('Collision hash:', lastCollision)
+
+            while newHashPart != lastCollision:
+                indexOfFirst += 1
+                firstTemp = newHashPart
+                newHash = hashlib.sha256(newHashPart.encode('utf-8')).hexdigest()
+                newHashPart = newHash[0:hashPartLength]
+
+            print('Index of first collision:', indexOfFirst)
+            print('Index of last collision:', indexOfLast)
+            print('Cycles between collision hashes:', indexOfLast-indexOfFirst)
+            print('Hash 1 before collision:', firstTemp)
+            print('Hash 2 before collision:', lastTemp)
+
             print('\nSet int structure used', round(sys.getsizeof(intHashSet) / 1024 / 1024, 3), 'MB')
             del intHashSet
 
-            return {"inputHash": hashPart, "time": totalTime, "cycles": cycles, "collisionHash": newHash,
-                    "indexOfCollision": index, "cyclesBetCol": cycles-index,
-                    "dataStructConsum": totalMemory}
+            return {"inputString": inputString, "inputHash": hashPart, "time": totalTime,"indexOfFirst": indexOfFirst,
+                "indexOfLast": indexOfLast, "collisionHash": lastCollision, "cyclesBetCol": indexOfLast-indexOfFirst,
+                "firstTemp": firstTemp, "lastTemp": lastTemp, "dataStructConsum": totalMemory}
 
         except Exception as e:
             print(str(e))
