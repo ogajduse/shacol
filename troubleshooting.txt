@@ -1,0 +1,6 @@
+python3-setuptools
+pip3 install -v setuptools
+dnf install python3-bitarray
+dnf install redhat-rpm-config
+dnf install gcc-c++
+pip3 install mmh3
