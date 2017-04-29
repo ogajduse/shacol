@@ -82,8 +82,13 @@ class Shacol(object):
             else:
                 hashPartLength = len(hashPart)
 
+            if '.txt' not in str(self.inputFile):
+                inputString = self.inputFile
+            else:
+                inputString = ''
+
             status = 1
-            strHashSet = {str()}
+            strHashSet = {str()} # length start with 1
             newHashPart = hashPart
 
             start = timeit.default_timer()
@@ -96,6 +101,7 @@ class Shacol(object):
                     print('SET length:', len(strHashSet))
                     print('Run time:', round((timeit.default_timer() - start) / 60, 3), 'minutes')
                     status = 0
+                lastTemp = newHashPart
                 newHash = hashlib.sha256(newHashPart.encode('utf-8')).hexdigest()
                 newHashPart = newHash[0:hashPartLength]
 
@@ -103,27 +109,36 @@ class Shacol(object):
 
             totalTime = round(stop - start, 12)
             totalMemory = round(sys.getsizeof(strHashSet) / 1024 / 1024, 3)
-            cycles = len(strHashSet) + 1
+            indexOfFirst = 0
+            firstCollision = ''
+            indexOfLast = len(strHashSet)
+            lastCollision = newHashPart
+            newHashPart = hashPart
 
-            print('\n##### findCollisionStr - Collision found process succeeded! #####')
-            print('\nInput hashPart:', hashPart)
+            print('\n\n##### findCollisionStr - Collision found process succeeded! #####\n')
+            if inputString:
+                print('Input string:', inputString)
+            print('Input hashPart:', hashPart)
             print("Collision found after %s seconds" % (totalTime))
-            print('Count of the cycles:', cycles)
-            print('Collision hash:', newHashPart)
-            index = 0
-            for strHash in strHashSet:
-                index += 1
-                if strHash == newHashPart:
-                    print('Index of collision hash:', index)
-                    break
-            print('Cycles between collision hashes:', cycles-index)
+            print('Collision hash:', lastCollision)
+
+            while newHashPart != lastCollision:
+                indexOfFirst += 1
+                firstTemp = newHashPart
+                newHash = hashlib.sha256(newHashPart.encode('utf-8')).hexdigest()
+                newHashPart = newHash[0:hashPartLength]
+
+            print('Index of first collision:', indexOfFirst)
+            print('Index of last collision:', indexOfLast)
+            print('Cycles between collision hashes:', indexOfLast-indexOfFirst)
+            print('Hash 1 before collision:', firstTemp)
+            print('Hash 2 before collision:', lastTemp)
             print('\nSet string structure used', round(sys.getsizeof(strHashSet) / 1024 / 1024, 3), 'MB')
             del strHashSet
 
-            #time in sec, dataStructConsum in MB
-            return {"inputHash": hashPart, "time": totalTime, "cycles": cycles, "collisionHash": newHashPart,
-                    "indexOfCollision": index, "cyclesBetCol": cycles-index,
-                    "dataStructConsum": totalMemory}
+            return {"inputString": inputString, "inputHash": hashPart, "time": totalTime,"indexOfFirst": indexOfFirst,
+                "indexOfLast": indexOfLast, "collisionHash": newHashPart, "cyclesBetCol": indexOfLast-indexOfFirst,
+                "firstTemp": firstTemp, "lastTemp": lastTemp, "dataStructConsum": totalMemory}
 
         except Exception as e:
             print(str(e))
@@ -165,8 +180,10 @@ class Shacol(object):
             totalMemory = round(sys.getsizeof(intHashSet) / 1024 / 1024, 3)
             cycles = len(intHashSet) + 1
 
-            print('\n##### findCollisionInt - Collision found process succeeded! #####')
-            print('\nInput hashPart:', hashPart)
+            print('\n\n##### findCollisionInt - Collision found process succeeded! #####\n')
+            if '.txt' not in str(self.inputFile):
+                print('Input string:', self.inputFile)
+            print('Input hashPart:', hashPart)
             print("Collision found after %s seconds" % (totalTime))
             print('Count of the cycles:', len(intHashSet) + 1)
             print('Collision hash:', newHash)
@@ -180,7 +197,6 @@ class Shacol(object):
             print('\nSet int structure used', round(sys.getsizeof(intHashSet) / 1024 / 1024, 3), 'MB')
             del intHashSet
 
-            #totalMemory in MB
             return {"inputHash": hashPart, "time": totalTime, "cycles": cycles, "collisionHash": newHash,
                     "indexOfCollision": index, "cyclesBetCol": cycles-index,
                     "dataStructConsum": totalMemory}
@@ -426,6 +442,7 @@ class Shacol(object):
             print('Index of collision hash:', checkCount)
             print('Cycles between collision hashes:', bloomCount-checkCount)
             print('Collision hash:', newHash)
+            print('\nBloom filter used', round(sys.getsizeof(bloomFilter) / 1024 / 1024, 3), 'MB')
 
             return {"inputHash": hashPart, "time": totalTime, "cycles": bloomCount, "collisionHash": newHash,
                     "indexOfCollision": checkCount, "cyclesBetCol": bloomCount-checkCount}
@@ -515,6 +532,8 @@ class Shacol(object):
             print('Cycles between collision hashes:', checkCount-cuckooCount)
             print('Collision hash:', newHash)
 
+            print('\nCuckoo filter used', round(sys.getsizeof(cf) / 1024 / 1024, 3), 'MB')
+
             return {"inputHash": hashPart, "time": totalTime, "cycles": cuckooCount, "collisionHash": newHash,
                     "indexOfCollision": checkCount, "cyclesBetCol": checkCount-cuckooCount}
 
@@ -582,11 +601,11 @@ def main():
                         if args.redis:
                             shacol.findCollisionWithDBSet()
                         else:
-                            shacol.findCollisionBloom()
-                            shacol.findCollisionCuckoo()
+                            #shacol.findCollisionBloom()
+                            #shacol.findCollisionCuckoo()
                             #shacol.findExperimental()
-                            #shacol.findCollisionStr()
-                            #shacol.findCollisionInt()
+                            shacol.findCollisionStr()
+                            shacol.findCollisionInt()
     else:
         if args.bloom:
             if args.memory:
