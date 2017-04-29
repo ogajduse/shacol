@@ -4,6 +4,19 @@
 <script type="text/javascript">
     google.load("visualization", "1", {packages:["corechart"]});
 </script>
-hello world!!!!!
+<form action="{% url 'graphfilter' %}" method="post">{% csrf_token %}
+    <div class="form-group">
+      <label>Type of graph:</label>
+      <div class"radio"></div>
+        <label class="radio-inline"><input type="radio" name="graphmethod" value="all">All</label>
+        <label class="radio-inline"><input type="radio" name="graphmethod" value="str">String method</label>
+        <label class="radio-inline"><input type="radio" name="graphmethod" value="int">Int method</label>
+        <label class="radio-inline"><input type="radio" name="graphmethod" value="db">Method with DB set</label>
+    </div>
+    <button type="submit" class="btn btn-danger">OK</button>
+    </form>
+<center>
+
 {{ chart.as_html }}
+</center>
 {% endblock content %}
