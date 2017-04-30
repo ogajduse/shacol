@@ -1,43 +1,70 @@
 import sys, os, git
 import pymysql as mariadb
+import climenu
 
 root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(root_dir)
-
 import shacol
 
 db_location = '85.255.0.154'
 git_repo = git.repo.Repo(root_dir)
 
 
-def main():
-    BITS = 32
-    inputFile = root_dir + "/hash.txt"
-    shacolInstance = shacol.Shacol(BITS, inputFile)
+@climenu.menu()
+def set_bit_range():
+    '''Select bit range'''
+    print("Select from these\n"
+          "4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, ")
+    climenu.settings.back_values.insert(1, climenu.get_user_input("Enter start bit length "))
+    climenu.settings.back_values.insert(2, climenu.get_user_input("Enter max bit length "))
 
-    for i in range(4, 49, 4):
+
+@climenu.menu()
+def select_methods():
+    '''Select methods'''
+    print("Methods availible:\n"
+          "1. String method\n"
+          "2. Int method\n"
+          "3. DB set method (Redis)\n")
+    user_input = int(input("Select method number: "))
+    if user_input == 1:
+        climenu.settings.back_values.insert(3, 1)
+    elif user_input == 2:
+        climenu.settings.back_values.insert(4, 1)
+    elif user_input == 3:
+        climenu.settings.back_values.insert(5, 1)
+    else:
+        pass
+
+
+def main():
+    for i in range(3, 6):
+        climenu.settings.back_values.insert(i, 0)
+    climenu.run()
+    menu_values = climenu.settings.back_values
+
+    inputFile = root_dir + "/hash.txt"
+    shacolInstance = shacol.Shacol(int(menu_values[2]), inputFile)
+    end_iter = int(menu_values[2]) + 1
+    for i in range(int(menu_values[1]), end_iter, 4):
         shacolInstance.changeBitLength(i)
         shacolInstance.getInfo()
-
-        # results = shacolInstance.findCollisionWithDBSet()
-        # method = "DB method"
-        # dbInsert(results, method, i)
-
-        results = shacolInstance.findCollisionStr()
-        method = "String method"
-        dbInsert(results, method, i)
-
-        results = shacolInstance.findCollisionInt()
-        method = "Int method"
-        dbInsert(results, method, i)
-
-        # results = shacolInstance.findCollisionWithDBSet()
-        # method = "Method with DB Set"
-        # dbInsert(results, method, i)
-
-        # results = shacolInstance.findCollisionIntBF()
-        # method = "Int BF"
-        # dbInsert(results, method, i)
+        if int(menu_values[3]) == 1:
+            results = shacolInstance.findCollisionStr()
+            method = "String method"
+            dbInsert(results, method, i)
+        if int(menu_values[4]) == 1:
+            results = shacolInstance.findCollisionInt()
+            method = "Int method"
+            dbInsert(results, method, i)
+        if int(menu_values[5]) == 1:
+            results = shacolInstance.findCollisionWithDBSet()
+            method = "Method with DB Set"
+            dbInsert(results, method, i)
+        if int(menu_values[6]) == 1:
+            results = shacolInstance.findCollisionIntBF()
+            method = "Int BF"
+            dbInsert(results, method, i)
 
 
 def dbInsert(results, method, bits):
@@ -64,9 +91,6 @@ if __name__ == "__main__":
         print('\nInterrupted... Terminating')
         sys.exit()
 
-# db_conn.close()
-
-
 """
 INDEX - print(results["index"])
 INPUT_HASH - print(results["inputHash"])
@@ -77,7 +101,3 @@ TEST_METHOD - "INT", "STR", "DB"
 BITS - print(results["bits"])
 GIT_REVISION - subprocess.check_output(["git", "describe"])
 """
-# db_conn = sqlite3.connect('db.sqlite3')
-# db_conn.execute("INSERT INTO WEBSITE_COLLISION (INDEX, INPUT_HASH, TOTAL_TIME, CYCLES, COLL_HASH, TEST_METHOD, BITS, GIT_REVISION) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (promenne!!!))
-# db_conn.commit()
-# db_conn.close()
