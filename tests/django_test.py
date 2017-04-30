@@ -13,9 +13,14 @@ def main():
     inputFile = root_dir + "/hash.txt"
     shacolInstance = shacol.Shacol(BITS, inputFile)
 
-    for i in range(4, 33, 4):
+    for i in range(4, 49, 4):
         shacolInstance.changeBitLength(i)
         shacolInstance.getInfo()
+
+        # results = shacolInstance.findCollisionWithDBSet()
+        # method = "DB method"
+        # dbInsert(results, method, i)
+
         results = shacolInstance.findCollisionStr()
         method = "String method"
         dbInsert(results, method, i)
@@ -31,11 +36,6 @@ def main():
         # results = shacolInstance.findCollisionIntBF()
         # method = "Int BF"
         # dbInsert(results, method, i)
-
-
-            #print("INT METODA:::")
-            #shacol.findCollisionInt()
-            #shacol.findCollisionWithDBSet()
 
 def dbInsert(results, method, bits):
     db_conn = mariadb.connect(host = db_location, user='shacol_django_u', password='Aim4Uusoom9ea8', database='shacol_django')
