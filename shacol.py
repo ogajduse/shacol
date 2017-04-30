@@ -655,7 +655,7 @@ def main():
     print("Do you want to proceed?")
     input('\nPress Enter to continue...')
 
-    #Inteligent tree of calling functions
+    #Inteligent tree of functions
     if args.inputFile:
         if args.hashGroup:
             for hashes in shacol.shaList:
@@ -671,21 +671,21 @@ def main():
                     if args.redis:
                         shacol.findCollisionWithDBSet(memoryCheck=True)
                 else:
-                    if args.capacity:
-                        if args.cuckoo:
+                    if args.cuckoo:
+                        if args.capacity:
                             shacol.findCollisionCuckoo(filterCapacity=int(args.capacity))
                         else:
-                            shacol.findCollisionBloom(filterCapacity=int(args.capacity))
-                    else:
-                        if args.redis:
-                            shacol.findCollisionWithDBSet()
-                        elif args.bloom:
-                            shacol.findCollisionBloom()
-                        elif args.cuckoo:
                             shacol.findCollisionCuckoo()
+                    elif args.bloom:
+                        if args.capacity:
+                            shacol.findCollisionBloom(filterCapacity=int(args.capacity))
                         else:
-                            #shacol.findCollisionStr()
-                            shacol.findCollisionInt()
+                            shacol.findCollisionBloom()
+                    elif args.redis:
+                        shacol.findCollisionWithDBSet()
+                    else:
+                        #shacol.findCollisionStr()
+                        shacol.findCollisionInt()
     else:
         if args.bloom:
             if args.memory:
