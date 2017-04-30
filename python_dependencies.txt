@@ -8,3 +8,4 @@ pybloof
 python-cuckoo
 django
 django-graphos
+climenu
