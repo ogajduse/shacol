@@ -360,6 +360,7 @@ class Shacol(object):
                 inputString = ''
 
             status = 0
+            newHashPart = hashPart
 
             start = timeit.default_timer()
             while not r.sismember('hset', newHashPart):
@@ -401,7 +402,6 @@ class Shacol(object):
             return {"inputString": inputString, "inputHash": hashPart, "time": totalTime,"indexOfFirst": indexOfFirst,
                 "indexOfLast": indexOfLast, "collisionHash": lastCollision, "cyclesBetCol": indexOfLast-indexOfFirst,
                 "firstTemp": firstTemp, "lastTemp": lastTemp, "dataStructConsum": 0}
-
 
         except Exception as e:
             print(str(e))
