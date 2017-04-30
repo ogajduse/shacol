@@ -5,8 +5,10 @@ root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(root_dir)
 
 import shacol
+
 db_location = '85.255.0.154'
 git_repo = git.repo.Repo(root_dir)
+
 
 def main():
     BITS = 32
@@ -29,27 +31,31 @@ def main():
         method = "Int method"
         dbInsert(results, method, i)
 
-        #results = shacolInstance.findCollisionWithDBSet()
-        #method = "Method with DB Set"
-        #dbInsert(results, method, i)
+        # results = shacolInstance.findCollisionWithDBSet()
+        # method = "Method with DB Set"
+        # dbInsert(results, method, i)
 
         # results = shacolInstance.findCollisionIntBF()
         # method = "Int BF"
         # dbInsert(results, method, i)
 
+
 def dbInsert(results, method, bits):
-    db_conn = mariadb.connect(host = db_location, user='shacol_django_u', password='Aim4Uusoom9ea8', database='shacol_django')
+    db_conn = mariadb.connect(host=db_location, user='shacol_django_u', password='Aim4Uusoom9ea8',
+                              database='shacol_django')
     cursor = db_conn.cursor()
     add_collision = ("INSERT INTO website_collision"
-                    "(hash_order, input_hash, total_time, cycles, coll_hash, total_memory, test_method, bits, git_revision)"
-                    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)")
+                     "(hash_order, input_hash, total_time, cycles, coll_hash, total_memory, test_method, bits, git_revision)"
+                     "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)")
 
-    data_collision = (int(results["indexOfLast"]), results["inputHash"], results["time"], int(results["cyclesBetCol"]), results["collisionHash"], results["dataStructConsum"], method, int(bits), git_repo.git.describe())
+    data_collision = (int(results["indexOfLast"]), results["inputHash"], results["time"], int(results["cyclesBetCol"]),
+                      results["collisionHash"], results["dataStructConsum"], method, int(bits), git_repo.git.describe())
     cursor.execute(add_collision, data_collision)
 
     db_conn.commit()
     cursor.close()
     db_conn.close()
+
 
 if __name__ == "__main__":
     try:
@@ -58,7 +64,7 @@ if __name__ == "__main__":
         print('\nInterrupted... Terminating')
         sys.exit()
 
-#db_conn.close()
+# db_conn.close()
 
 
 """
@@ -71,7 +77,7 @@ TEST_METHOD - "INT", "STR", "DB"
 BITS - print(results["bits"])
 GIT_REVISION - subprocess.check_output(["git", "describe"])
 """
-#db_conn = sqlite3.connect('db.sqlite3')
-#db_conn.execute("INSERT INTO WEBSITE_COLLISION (INDEX, INPUT_HASH, TOTAL_TIME, CYCLES, COLL_HASH, TEST_METHOD, BITS, GIT_REVISION) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (promenne!!!))
-#db_conn.commit()
-#db_conn.close()
+# db_conn = sqlite3.connect('db.sqlite3')
+# db_conn.execute("INSERT INTO WEBSITE_COLLISION (INDEX, INPUT_HASH, TOTAL_TIME, CYCLES, COLL_HASH, TEST_METHOD, BITS, GIT_REVISION) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (promenne!!!))
+# db_conn.commit()
+# db_conn.close()
