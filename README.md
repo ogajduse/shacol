@@ -9,9 +9,9 @@ Clone our repo:
     git clone git@sarkachwastkova.cz:/opt/git/tic1project.git
     cd tic1project
 
-Install required packages:
+###Install required packages:
 
-###Fedora:
+#### Fedora:
     
     dnf -y install $(cat dependencies.txt)
     
@@ -19,3 +19,8 @@ Python packages:
 
     pip3 install Cython
     pip3 install -r python_dependencies.txt
+    
+Start Redis server service:
+
+    systemctl start redis
+
