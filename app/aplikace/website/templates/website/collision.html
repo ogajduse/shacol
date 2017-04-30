@@ -1,20 +1,19 @@
 {% extends 'website/base.html' %}
 {% block content %}
 <div class="col-md-6 col-sm-6">
-    <form action="{% url 'filtering' %}" method="post">{% csrf_token %}
-        <div class="form-group">
-            <label>Type of method:</label>
-            <div class="radio">
-                <label class="radio-inline"><input type="radio" name="method" value="all">All</label>
-                <label class="radio-inline"><input type="radio" name="method" value="str">String method</label>
-                <label class="radio-inline"><input type="radio" name="method" value="int">Int method</label>
-                <label class="radio-inline"><input type="radio" name="method" value="db">Method with DB set</label>
-            </div>
-        </div>
-        <button type="submit" class="btn btn-danger">OK</button>
+<form action="{% url 'filtering' %}" method="post">{% csrf_token %}
+    <div class="form-group">
+      <label>Type of method:</label>
+      <div class="radio">
+        <label class="radio-inline"><input type="radio" name="method" value="all">All</label>
+        <label class="radio-inline"><input type="radio" name="method" value="str">String method</label>
+        <label class="radio-inline"><input type="radio" name="method" value="int">Int method</label>
+        <label class="radio-inline"><input type="radio" name="method" value="db">Method with DB set</label>
+    </div>
+  </div>
+    <button type="submit" class="btn btn-danger">OK</button>
     </form>
 </div>
-
 
 <div class="row">
     <div class="col-md-12 col-sm-12">
@@ -22,14 +21,15 @@
         <table class="table table-bordered table-hover">
             <thead>
             <tr>
-                <th>Input hash</th>
-                <th>Total time</th>
-                <th>Number of cycles</th>
-                <th>Collision hash</th>
-                <th>Hash order</th>
-                <th>Test method</th>
-                <th>Bits</th>
-                <th>Git revision</th>
+              <th>Input hash</th>
+              <th>Total time</th>
+              <th>Number of cycles</th>
+              <th>Collision hash</th>
+              <th>Hash order</th>
+              <th>Total memory</th>
+              <th>Test method</th>
+              <th>Bits</th>
+              <th>Git revision</th>
             </tr>
             </thead>
             <tbody>
@@ -40,6 +40,7 @@
                 <td>{{ coll.cycles }}</td>
                 <td>{{ coll.coll_hash }}</td>
                 <td>{{ coll.hash_order }}</td>
+                <td>{{ coll.total_memory }}</td>
                 <td>{{ coll.test_method }}</td>
                 <td>{{ coll.bits }}</td>
                 <td>{{ coll.git_revision }}</td>
