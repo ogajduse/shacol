@@ -8,8 +8,8 @@ from graphos.sources.model import ModelDataSource
 
 
 def colls(request):
-    collisions = Collision.objects.all()
-    return render(request, 'website/collision.html', {'collisions': collisions})
+    colls = Collision.objects.all()
+    return render(request, 'website/collision.html', {'colls': colls})
 
 
 def graphs(request):
@@ -28,12 +28,11 @@ def graphs(request):
             tmp.append(time)
         for bits, time in colls_db:
             tmp.append(time)
-
         data_tt.append(tmp)
 
     data_ho = [['Bits', 'Int method', 'String method', 'DB Set method']]
-    name_ho = "All - total bits/hashes"
-    for b in range(min_bits, max_bits, 4):
+    name_ho = "All - index of collison hash/total bits"
+    for b in range(min_bits, max_bits , 4):
         colls_int = Collision.objects.values_list("bits", "hash_order").filter(test_method__icontains="Int", bits=b)
         colls_str = Collision.objects.values_list("bits", "hash_order").filter(test_method__icontains="String", bits=b)
         colls_db = Collision.objects.values_list("bits", "hash_order").filter(test_method__icontains="db", bits=b)
@@ -43,12 +42,23 @@ def graphs(request):
             tmp.append(ho)
         for bits, ho in colls_db:
             tmp.append(ho)
-
         data_ho.append(tmp)
+
+    data_tm = [['Bits', 'Int method', 'String method']]
+    name_tm = "All - index of collison hash/total bits"
+    for b in range(min_bits, max_bits , 4):
+        colls_int = Collision.objects.values_list("bits", "total_memory").filter(test_method__icontains="Int", bits=b)
+        colls_str = Collision.objects.values_list("bits", "total_memory").filter(test_method__icontains="String", bits=b)
+        for bits, tm in colls_int:
+            tmp = [bits, tm]
+        for bits, tm in colls_str:
+            tmp.append(tm)
+        data_tm.append(tmp)
+
 
     if 'graphmethod' in request.POST:
         if request.POST['graphmethod'] == "str":
-            data_tt = [['Bits', 'Total time']]
+            data_tt = [['Bits', 'Total time [s]']]
             colls = Collision.objects.values_list("bits", "total_time").filter(test_method__icontains="String")
             name_tt = "String method - total time/bits"
             for bits, time in colls:
@@ -60,9 +70,15 @@ def graphs(request):
             for bits, hashes in colls_ho:
                 data_ho.append([bits, hashes])
 
+            data_tm = [['Bits', 'Total memory [MB]']]
+            colls_tm = Collision.objects.values_list("bits", "total_memory").filter(test_method__icontains="String")
+            name_tm = "String method - bits/total memory"
+            for bits, memory in colls_tm:
+                data_tm.append([bits, memory])
+
 
         elif request.POST['graphmethod'] == "int":
-            data_tt = [['Bits', 'Total time']]
+            data_tt = [['Bits', 'Total time [s]']]
             colls = Collision.objects.values_list("bits", "total_time").filter(test_method__icontains="Int")
             name_tt = "Int method - total time/bits"
             for bits, time in colls:
@@ -74,8 +90,14 @@ def graphs(request):
             for bits, hashes in colls_ho:
                 data_ho.append([bits, hashes])
 
-        elif request.POST['graphmethod'] == "DB":
-            data_tt = [['Bits', 'Total time']]
+            data_tm = [['Bits', 'Total memory [MB]']]
+            colls_tm = Collision.objects.values_list("bits", "total_memory").filter(test_method__icontains="Int")
+            name_tm = "Int method - bits/total memory"
+            for bits, memory in colls_tm:
+                data_tm.append([bits, memory])
+
+        elif request.POST['graphmethod'] == "db":
+            data_tt = [['Bits', 'Total time [s]']]
             colls = Collision.objects.values_list("bits", "total_time").filter(test_method__icontains="DB")
             name_tt = "DB Set method - total time/bits"
             for bits, time in colls:
@@ -95,8 +117,11 @@ def graphs(request):
 
     data_source_ho = SimpleDataSource(data=data_ho)
     chart_ho = LineChart(data_source_ho, options={'title': name_ho, 'xAxis': 'Time[s]', 'yAxis': 'Bits'})
-    return render(request, 'website/graphs.html', {'chart': chart_tt, 'chart2': chart_ho})
-    # return redirect('/')
+
+    data_source_tm = SimpleDataSource(data=data_tm)
+    chart_tm = LineChart(data_source_tm, options={'title': name_tm, 'xAxis': 'Time[s]', 'yAxis': 'Bits'})
+    return render(request, 'website/graphs.html', {'chart': chart_tt, 'chart2': chart_ho, 'chart3': chart_tm})
+    #return redirect('/')
 
 
 def delete(request):
