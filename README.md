@@ -17,4 +17,5 @@ Install required packages:
     
 Python packages:
 
+    pip3 install Cython
     pip3 install -r python_dependencies.txt
