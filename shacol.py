@@ -13,14 +13,12 @@ import cuckoofilter
 
 
 class Shacol(object):
-    def __init__(self, bits, inputFile, hashGroup=False, text=False, first=False, bloom=False, memory=False):
+    def __init__(self, bits, inputFile, hashGroup=False, text=False, first=False):
         self.bits = int(bits)
         self.inputFile = inputFile
         self.hashGroup = hashGroup
         self.text = text
         self.first = first
-        self.bloom = bloom
-        self.memory = memory
 
         self.bestTime = sys.maxsize
         self.hashPartLength = int(int(self.bits) / 4)
@@ -527,76 +525,95 @@ class Shacol(object):
             else:
                 hashPartLength = len(hashPart)
 
+            if '.txt' not in str(self.inputFile):
+                inputString = self.inputFile
+            else:
+                inputString = ''
+
             status = 0
-            cuckooCount = 0
-            checkCount = 0
+            indexOfFirst = 0
+            firstTemp = ''
+            indexOfLast = 0
+            lastTemp = ''
 
             newHashPart = bytes(hashPart, 'utf-8')
             cf = cuckoofilter.CuckooFilter(capacity=filterCapacity, fingerprint_size=1)
-            print('Cuckoo initialized... ')
             start = timeit.default_timer()
 
             while True:
-                if not cf.contains(newHashPart):
+                if newHashPart not in cf:
                     cf.insert(newHashPart)
-                    cuckooCount += 1
+                    indexOfLast += 1
                     status += 1
                     if status == 10000000:
                         print('\n' * 100)
-                        print('Count of cycles:', cuckooCount)
+                        print('Count of cycles:', indexOfLast)
                         print('Run time:', round((timeit.default_timer() - start), 3),'s')
                         status = 0
-
-                    strHashPart = binascii.unhexlify(newHashPart)
-                    newHash = hashlib.sha256(strHashPart).hexdigest()
+                    lastTemp = newHashPart.decode('utf-8')
+                    newHash = hashlib.sha256(newHashPart).hexdigest()
                     newHash = newHash[0:hashPartLength]
                     newHashPart = bytes(newHash, 'utf-8')
                 else:
+                    if indexOfLast >= filterCapacity:
+                        print("!!! filterCapacity reached !!!")
+                        break
                     print("### Potencional collision successfully passed! ###")
                     print("Suspicious hash: ", newHash)
-                    print('Count of cycles:', cuckooCount)
+                    print('Count of cycles:', indexOfLast)
                     print('Time:', round((timeit.default_timer() - start), 3),'s')
 
+                    indexOfFirst = 0
                     collisionHash = newHashPart
                     newHashPart = bytes(hashPart, 'utf-8')
                     while newHashPart != collisionHash:
-                        checkCount += 1
+                        indexOfFirst += 1
                         status += 1
                         if status == 10000000:
                             print('\n' * 100)
                             print('Suspicious hash found! :) Searching for collision index...')
-                            print('Count of cycles:', checkCount)
+                            print('Count of cycles:', indexOfFirst)
                             print('Run time:', round((timeit.default_timer() - start), 3),'s')
                             status = 0
-                        strHashPart = binascii.unhexlify(newHashPart)
-                        newHash = hashlib.sha256(strHashPart).hexdigest()
+                        firstTemp = newHashPart.decode('utf-8')
+                        newHash = hashlib.sha256(newHashPart).hexdigest()
                         newHash = newHash[0:hashPartLength]
                         newHashPart = bytes(newHash, 'utf-8')
 
-                    if checkCount != cuckooCount:
+                    if indexOfFirst != indexOfLast:
                         break
                     else:
                         print('False positive hash detected :(')
-                        cf.insert(newHashPart)
-                        cuckooCount += 1
+                        indexOfLast += 1
                         status += 1
-                        strHashPart = binascii.unhexlify(newHashPart)
-                        newHash = hashlib.sha256(strHashPart).hexdigest()
+                        cf.insert(newHashPart)
+                        newHash = hashlib.sha256(newHashPart).hexdigest()
                         newHash = newHash[0:hashPartLength]
                         newHashPart = bytes(newHash, 'utf-8')
 
             stop = timeit.default_timer()
             totalTime = round(stop - start, 12)
+            totalMemory = round(sys.getsizeof(cf) / 1048576, 3)
 
-            print('\n##### findCollisionCuckoo - Collision found process succeeded! \o/ #####')
-            print('\nInput hashPart:', hashPart)
-            print("Collision found after %s seconds" % (totalTime))
-            print('Count of the cycles:', cuckooCount)
-            print('Index of collision hash:', checkCount)
-            print('Cycles between collision hashes:', checkCount-cuckooCount)
-            print('Collision hash:', newHash)
+            if indexOfFirst != indexOfLast and filterCapacity > indexOfLast:
+                print('\n\n##### findCollisionCuckoo - Collision found process succeeded! \o/ #####\n')
+                print("Collision found after %s seconds" % (totalTime),'\n')
+                if inputString:
+                    print('Input string:', inputString)
+                print('Input hashPart:', hashPart)
+                print('\nCollision hash:', newHash)
+                print('Hash 1 leading to collision:', firstTemp)
+                print('Hash 2 leading to collision:', lastTemp)
+                print('\nIndex of first collision:', indexOfFirst)
+                print('Index of last collision:', indexOfLast)
+                print('Cycles between collision hashes:', indexOfLast-indexOfFirst)
+                print('\nCuckoo filter used', round(sys.getsizeof(cf) / 1024 / 1024, 3), 'MB')
 
-            print('\nCuckoo filter used', round(sys.getsizeof(cf) / 1024 / 1024, 3), 'MB')
+                return {"inputString": inputString, "inputHash": hashPart, "time": totalTime,"indexOfFirst": indexOfFirst,
+                    "indexOfLast": indexOfLast, "collisionHash": newHashPart, "cyclesBetCol": indexOfLast-indexOfFirst,
+                    "firstTemp": firstTemp, "lastTemp": lastTemp, "dataStructConsum": totalMemory}
+            else:
+                print('\n##### findCollisionCuckoo - Collision found process failed! /o\ #####')
 
         except Exception as e:
             print(str(e))
@@ -630,7 +647,7 @@ def main():
     args = parser.parse_args()
 
     # Instance of the class Shacol
-    shacol = Shacol(args.bits, args.inputFile, args.hashGroup, args.text, args.first, args.bloom, args.memory)
+    shacol = Shacol(args.bits, args.inputFile, args.hashGroup, args.text, args.first)
     shacol.getInfo()
 
     print("Do you want to proceed?")
@@ -658,8 +675,8 @@ def main():
                         if args.redis:
                             shacol.findCollisionWithDBSet()
                         else:
-                            shacol.findCollisionBloom()
-                            #shacol.findCollisionCuckoo()
+                            #shacol.findCollisionBloom()
+                            shacol.findCollisionCuckoo()
                             #shacol.findCollisionStr()
                             #shacol.findCollisionInt()
     else:
