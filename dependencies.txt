@@ -1,6 +1,6 @@
-mysql-devel
 mariadb
 python3-mysql
 python3-PyMySQL.noarch
 python3-devel
+python3-pip
 mariadb-devel
