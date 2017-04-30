@@ -625,7 +625,7 @@ def main():
     parser = argparse.ArgumentParser(usage='$prog [options] -b 32 -i hash.txt',
                                      description='SHA2 collision finder', add_help=True,
                                      epilog='SHA2 collision finder. Written by Jan Stangler, Ondrej\
-                                      Gajdusek, Sarka Chwastkova, VUT FEKT, ICT1 project, 2017')
+                                      Gajdusek, Sarka Chwastkova, VUT FEEC, ICT1 project, 2017')
     parser.add_argument('-b', '--bits', action='store', dest='bits',
                         help='-b 32 (Number of hash bits to find collision)', required=True)
     parser.add_argument('-i', '--input', action='store', dest='inputFile',
@@ -638,6 +638,8 @@ def main():
                         help='-f Collision with the first one hash', required=False)
     parser.add_argument('--bloom', action='store_true', dest='bloom',
                         help='--bloom Bloom filter is used.', required=False)
+    parser.add_argument('--cuckoo', action='store_true', dest='cuckoo',
+                        help='--cuckoo Cuckoo filter is used.', required=False)
     parser.add_argument('-m', '--memory', action='store_true', dest='memory',
                         help='-m Memory check during a process.', required=False)
     parser.add_argument('-c', '--capacity', action='store', dest='capacity',
@@ -670,15 +672,20 @@ def main():
                         shacol.findCollisionWithDBSet(memoryCheck=True)
                 else:
                     if args.capacity:
-                        shacol.findCollisionBloom(filterCapacity=int(args.capacity))
+                        if args.cuckoo:
+                            shacol.findCollisionCuckoo(filterCapacity=int(args.capacity))
+                        else:
+                            shacol.findCollisionBloom(filterCapacity=int(args.capacity))
                     else:
                         if args.redis:
                             shacol.findCollisionWithDBSet()
-                        else:
-                            #shacol.findCollisionBloom()
+                        elif args.bloom:
+                            shacol.findCollisionBloom()
+                        elif args.cuckoo:
                             shacol.findCollisionCuckoo()
+                        else:
                             #shacol.findCollisionStr()
-                            #shacol.findCollisionInt()
+                            shacol.findCollisionInt()
     else:
         if args.bloom:
             if args.memory:
