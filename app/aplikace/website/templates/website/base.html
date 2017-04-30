@@ -22,21 +22,18 @@
 <body>
 <div class="container">
     <div class="row">
-        <div class="col-md-12 col-sm-12">
-            <p></p>
-            <center><a href="{% url 'colls' %}"><img src="{% static 'logo.png' %}"></a></center>
-            <!-- <center><a href="{% url 'colls' %}"><h1>Shacol GUI</h1></a></center> -->
-        </div>
-        <div>
-            <center>
-                <a href="{% url 'colls' %}">
-                    <button type="button" class="btn btn-info">Results table</button>
-                </a>
-                <a href="{% url 'graphs' %}">
-                    <button type="button" class="btn btn-info">Graphs</button>
-                </a>
-            </center>
-        </div>
+      <div class="col-md-12 col-sm-12">
+        <p></p>
+        <center><a href="{% url 'colls' %}"><img src="{% static 'logo.png' %}"></a></center>
+        <p></p>
+        <!-- <center><a href="{% url 'colls' %}"><h1>Shacol GUI</h1></a></center> -->
+      </div>
+    </div>
+      <div class="row">
+        <center>
+          <a href="{% url 'colls' %}"><button type="button" class="btn btn-info">Results table</button></a>
+          <a href="{% url 'graphs' %}"><button type="button" class="btn btn-info">Graphs</button></a>
+        </center>
     </div>
     {% block content %}
     {% endblock %}
