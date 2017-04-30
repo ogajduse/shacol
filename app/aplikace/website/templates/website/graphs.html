@@ -3,27 +3,30 @@
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
     google.load("visualization", "1", {packages:["corechart"]});
+
 </script>
 <form action="{% url 'graphs' %}" method="post">{% csrf_token %}
     <div class="form-group">
-      <label>Type of graph:</label>
-      <div class"radio"></div>
-        <label class="radio-inline"><input type="radio" name="graphmethod" value="all">All</label>
-        <label class="radio-inline"><input type="radio" name="graphmethod" value="str">String method</label>
-        <label class="radio-inline"><input type="radio" name="graphmethod" value="int">Int method</label>
-        <label class="radio-inline"><input type="radio" name="graphmethod" value="db">Method with DB set</label>
+        <label>Type of graph:</label>
+        <div class
+        "radio">
+    </div>
+    <label class="radio-inline"><input type="radio" name="graphmethod" value="all">All</label>
+    <label class="radio-inline"><input type="radio" name="graphmethod" value="str">String method</label>
+    <label class="radio-inline"><input type="radio" name="graphmethod" value="int">Int method</label>
+    <label class="radio-inline"><input type="radio" name="graphmethod" value="db">Method with DB set</label>
     </div>
     <button type="submit" class="btn btn-danger">OK</button>
-    </form>
+</form>
 <center>
 
-{{ chart.as_html }}
-<p>
-{{ chart2.as_html }}
-</p>
-<p>
-{{ chart3.as_html }}
-</p>
+    {{ chart.as_html }}
+    <p>
+        {{ chart2.as_html }}
+    </p>
+    <p>
+        {{ chart3.as_html }}
+    </p>
 
 </center>
 {% endblock content %}
