@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
+
 class Collision(models.Model):
     hash_order = models.IntegerField()
     input_hash = models.CharField(max_length=60)

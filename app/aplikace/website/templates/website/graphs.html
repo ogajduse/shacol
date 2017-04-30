@@ -12,7 +12,7 @@
         <label class="radio-inline"><input type="radio" name="graphmethod" value="DB">Method with DB set</label>
     </div>
     <button type="submit" class="btn btn-danger">OK</button>
-    </form>
+</form>
 <!--<div class="col-md-8 col-sm-8">
 <div class="row">
       <form action="{% url 'graphs' %}" method="post">{% csrf_token %}
@@ -29,12 +29,13 @@
 </div>-->
 
 <div class="col-md-12">
-<div class="row">
-<center>
+    <div class="row">
+        <center>
 
-{{ chart.as_html }}
-<p>
-{{ chart2.as_html }}
-</center>
-</div></div>
+            {{ chart.as_html }}
+            <p>
+                {{ chart2.as_html }}
+        </center>
+    </div>
+</div>
 {% endblock content %}

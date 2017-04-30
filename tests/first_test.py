@@ -11,5 +11,7 @@ for i in range(10, 21):
     shacol.changeBitLength(i)
     shacol.getInfo()
     vysledky = shacol.findCollisionFast()
-    print "pro pocet bitu ", i, vysledky
-    print "#####################################################"
+    print
+    "pro pocet bitu ", i, vysledky
+    print
+    "#####################################################"

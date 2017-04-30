@@ -6,9 +6,11 @@ from graphos.renderers.gchart import LineChart
 from django.db.models import Max, Min
 from graphos.sources.model import ModelDataSource
 
+
 def colls(request):
     collisions = Collision.objects.all()
     return render(request, 'website/collision.html', {'collisions': collisions})
+
 
 def graphs(request):
     max_bits = (Collision.objects.all().aggregate(Max('bits'))['bits__max']) + 1
@@ -16,7 +18,7 @@ def graphs(request):
     data_tt = [['Bits', 'Int method', 'String method', 'DB Set method']]
     name_tt = "All methods - total time/bits"
 
-    for b in range(min_bits, max_bits , 4):
+    for b in range(min_bits, max_bits, 4):
         colls_int = Collision.objects.values_list("bits", "total_time").filter(test_method__icontains="Int", bits=b)
         colls_str = Collision.objects.values_list("bits", "total_time").filter(test_method__icontains="String", bits=b)
         colls_db = Collision.objects.values_list("bits", "total_time").filter(test_method__icontains="db", bits=b)
@@ -31,7 +33,7 @@ def graphs(request):
 
     data_ho = [['Bits', 'Int method', 'String method', 'DB Set method']]
     name_ho = "All - total bits/hashes"
-    for b in range(min_bits, max_bits , 4):
+    for b in range(min_bits, max_bits, 4):
         colls_int = Collision.objects.values_list("bits", "hash_order").filter(test_method__icontains="Int", bits=b)
         colls_str = Collision.objects.values_list("bits", "hash_order").filter(test_method__icontains="String", bits=b)
         colls_db = Collision.objects.values_list("bits", "hash_order").filter(test_method__icontains="db", bits=b)
@@ -53,7 +55,7 @@ def graphs(request):
                 data_tt.append([bits, time])
 
             data_ho = [['Bits', 'Hashes']]
-            colls_ho= Collision.objects.values_list("bits", "hash_order").filter(test_method__icontains="String")
+            colls_ho = Collision.objects.values_list("bits", "hash_order").filter(test_method__icontains="String")
             name_ho = "String method - index of collison hash/total bits"
             for bits, hashes in colls_ho:
                 data_ho.append([bits, hashes])
@@ -67,7 +69,7 @@ def graphs(request):
                 data_tt.append([bits, time])
 
             data_ho = [['Bits', 'Hashes']]
-            colls_ho= Collision.objects.values_list("bits", "hash_order").filter(test_method__icontains="Int")
+            colls_ho = Collision.objects.values_list("bits", "hash_order").filter(test_method__icontains="Int")
             name_ho = "Int method - index of collison hash/total bits"
             for bits, hashes in colls_ho:
                 data_ho.append([bits, hashes])
@@ -80,7 +82,7 @@ def graphs(request):
                 data_tt.append([bits, time])
 
             data_ho = [['Bits', 'Hashes']]
-            colls_ho= Collision.objects.values_list("bits", "hash_order").filter(test_method__icontains="db")
+            colls_ho = Collision.objects.values_list("bits", "hash_order").filter(test_method__icontains="db")
             name_ho = "DB Set method - index of collison hash/total bits"
             for bits, hashes in colls_ho:
                 data_ho.append([bits, hashes])
@@ -94,12 +96,14 @@ def graphs(request):
     data_source_ho = SimpleDataSource(data=data_ho)
     chart_ho = LineChart(data_source_ho, options={'title': name_ho, 'xAxis': 'Time[s]', 'yAxis': 'Bits'})
     return render(request, 'website/graphs.html', {'chart': chart_tt, 'chart2': chart_ho})
-    #return redirect('/')
+    # return redirect('/')
+
 
 def delete(request):
     colls = Collision.objects.all()
     colls.delete()
     return redirect('/')
+
 
 def filtering(request):
     if 'method' in request.POST:
@@ -116,4 +120,4 @@ def filtering(request):
         elif request.POST['method'] == "all":
             pass
 
-    return render(request, 'website/collision.html', {'colls':colls})
+    return render(request, 'website/collision.html', {'colls': colls})
