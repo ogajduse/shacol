@@ -1,39 +1,40 @@
 {% extends 'website/base.html' %}
 {% block content %}
 <div class="col-md-6 col-sm-6">
-<form action="{% url 'filtering' %}" method="post">{% csrf_token %}
-    <div class="form-group">
-      <label>Type of method:</label>
-      <div class"radio"></div>
-        <label class="radio-inline"><input type="radio" name="method" value="all">All</label>
-        <label class="radio-inline"><input type="radio" name="method" value="str">String method</label>
-        <label class="radio-inline"><input type="radio" name="method" value="int">Int method</label>
-        <label class="radio-inline"><input type="radio" name="method" value="db">Method with DB set</label>
-    </div>
-    <button type="submit" class="btn btn-danger">OK</button>
+    <form action="{% url 'filtering' %}" method="post">{% csrf_token %}
+        <div class="form-group">
+            <label>Type of method:</label>
+            <div class="radio">
+                <label class="radio-inline"><input type="radio" name="method" value="all">All</label>
+                <label class="radio-inline"><input type="radio" name="method" value="str">String method</label>
+                <label class="radio-inline"><input type="radio" name="method" value="int">Int method</label>
+                <label class="radio-inline"><input type="radio" name="method" value="db">Method with DB set</label>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-danger">OK</button>
     </form>
-  </div>
+</div>
 
 
 <div class="row">
-      <div class="col-md-12 col-sm-12">
+    <div class="col-md-12 col-sm-12">
         <h2>{{ query.method }}</h2>
         <table class="table table-bordered table-hover">
-          <thead>
+            <thead>
             <tr>
-              <th>Input hash</th>
-              <th>Total time</th>
-              <th>Number of cycles</th>
-              <th>Collision hash</th>
-              <th>Hash order</th>
-              <th>Test method</th>
-              <th>Bits</th>
-              <th>Git revision</th>
+                <th>Input hash</th>
+                <th>Total time</th>
+                <th>Number of cycles</th>
+                <th>Collision hash</th>
+                <th>Hash order</th>
+                <th>Test method</th>
+                <th>Bits</th>
+                <th>Git revision</th>
             </tr>
-          </thead>
-          <tbody>
+            </thead>
+            <tbody>
             {% for coll in collisions %}
-              <tr>
+            <tr>
                 <td>{{ coll.input_hash }}</td>
                 <td>{{ coll.total_time }}</td>
                 <td>{{ coll.cycles }}</td>
@@ -42,10 +43,10 @@
                 <td>{{ coll.test_method }}</td>
                 <td>{{ coll.bits }}</td>
                 <td>{{ coll.git_revision }}</td>
-              </tr>
+            </tr>
             {% endfor %}
             {% for coll in colls %}
-              <tr>
+            <tr>
                 <td>{{ coll.input_hash }}</td>
                 <td>{{ coll.total_time }}</td>
                 <td>{{ coll.cycles }}</td>
@@ -54,12 +55,12 @@
                 <td>{{ coll.test_method }}</td>
                 <td>{{ coll.bits }}</td>
                 <td>{{ coll.git_revision }}</td>
-              </tr>
+            </tr>
             {% endfor %}
-          </tbody>
+            </tbody>
         </table>
         <a class="page-scroll" href="{% url 'delete' %}"><i class="glyphicon glyphicon-trash"></i></a>
-      </div>
-  </div>
+    </div>
+</div>
 
 {% endblock content %}
