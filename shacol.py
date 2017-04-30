@@ -514,6 +514,121 @@ class Shacol(object):
         except Exception as e:
             print(str(e))
 
+    def findCollisionBloomStore(self, hashPart=None, filterCapacity=1000000000, storeCount=100000, hashCount=12):
+        """
+        The test method using performance Bloom filter.
+
+        :param hashPart: the input hash loaded from a file
+        """
+        try:
+            if not hashPart:
+                hashPart = self.hashPart
+                hashPartLength = self.hashPartLength
+            else:
+                hashPartLength = len(hashPart)
+
+            if '.txt' not in str(self.inputFile):
+                inputString = self.inputFile
+            else:
+                inputString = ''
+
+            status = 0
+            indexOfFirst = 0
+            firstTemp = ''
+            indexOfLast = 0
+            lastTemp = ''
+            byteIntHashDict = {bytes():int()} # structure using bytes (hash) + int (index)
+            storeLimit = False
+
+            newHashPart = bytes(hashPart, 'utf-8')
+            bloomFilter = pybloof.StringBloomFilter(size=filterCapacity,hashes=hashCount)
+            start = timeit.default_timer()
+
+            while True:
+                if newHashPart not in bloomFilter:
+                    bloomFilter.add(newHashPart)
+                    indexOfLast += 1
+                    status += 1
+                    if status == 10000000:
+                        print('\n' * 100)
+                        print('Count of cycles:', indexOfLast)
+                        print('Run time:', round((timeit.default_timer() - start), 3),'s')
+                        status = 0
+                    lastTemp = newHashPart.decode('utf-8')
+                    newHash = hashlib.sha256(newHashPart).hexdigest()
+                    newHash = newHash[0:hashPartLength]
+                    newHashPart = bytes(newHash, 'utf-8')
+                else:
+                    if indexOfLast >= filterCapacity:
+                        print("!!! filterCapacity reached !!!")
+                        storeLimit = True
+                    print("### Potencional collision successfully stored! ###")
+                    print("Suspicious hash: ", newHash)
+                    print('Count of cycles:', indexOfLast)
+                    print('Time:', round((timeit.default_timer() - start), 3),'s')
+
+                    if storeLimit:
+                        newHashPart = bytes(hashPart, 'utf-8')
+                        while not byteIntHashDict.get(newHashPart):
+                            indexOfFirst += 1
+                            status += 1
+                            if status == 10000000:
+                                print('\n' * 100)
+                                print('Checking suspicious hashes! :) Searching for collision index...')
+                                print('Reached count:', indexOfLast)
+                                print('Current count:', indexOfFirst)
+                                print('Run time:', round((timeit.default_timer() - start), 3),'s')
+                                status = 0
+                            firstTemp = newHashPart.decode('utf-8')
+                            newHash = hashlib.sha256(newHashPart).hexdigest()
+                            newHash = newHash[0:hashPartLength]
+                            newHashPart = bytes(newHash, 'utf-8')
+
+                        indexOfLast = byteIntHashDict.get(newHashPart)
+                        if indexOfFirst != indexOfLast:
+                            break
+                        else:
+                            print('Just false positives have been detected :(')
+                            indexOfFirst == indexOfLast
+                            break
+                    else:
+                        byteIntHashDict[newHashPart] = indexOfLast
+                        if len(byteIntHashDict) >= storeCount:
+                            storeLimit = True
+                        bloomFilter.add(newHashPart)
+                        indexOfLast += 1
+                        status += 1
+                        newHash = hashlib.sha256(newHashPart).hexdigest()
+                        newHash = newHash[0:hashPartLength]
+                        newHashPart = bytes(newHash, 'utf-8')
+
+            stop = timeit.default_timer()
+            totalTime = round(stop - start, 12)
+            totalMemory = round(sys.getsizeof(bloomFilter) / 1048576, 3)
+
+            if indexOfFirst != indexOfLast and filterCapacity > indexOfLast:
+                print('\n\n##### findCollisionBloomStore - Collision found process succeeded! \o/ #####\n')
+                print("Collision found after %s seconds" % (totalTime),'\n')
+                if inputString:
+                    print('Input string:', inputString)
+                print('Input hashPart:', hashPart)
+                print('\nCollision hash:', newHash)
+                print('Hash 1 leading to collision:', firstTemp)
+                print('Hash 2 leading to collision:', lastTemp)
+                print('\nIndex of first collision:', indexOfFirst)
+                print('Index of last collision:', indexOfLast)
+                print('Cycles between collision hashes:', indexOfLast-indexOfFirst)
+                print('\nBloom filter used', round(sys.getsizeof(bloomFilter) / 1024 / 1024, 3), 'MB')
+
+                return {"inputString": inputString, "inputHash": hashPart, "time": totalTime,"indexOfFirst": indexOfFirst,
+                    "indexOfLast": indexOfLast, "collisionHash": newHashPart, "cyclesBetCol": indexOfLast-indexOfFirst,
+                    "firstTemp": firstTemp, "lastTemp": lastTemp, "dataStructConsum": totalMemory}
+            else:
+                print('\n##### findCollisionBloom - Collision found process failed! /o\ #####')
+
+        except Exception as e:
+            print(str(e))
+
     def findCollisionCuckoo(self, hashPart=None, filterCapacity=10000000):
         """
         The test method using Cuckoo filter.
@@ -688,8 +803,9 @@ def main():
                     elif args.redis:
                         shacol.findCollisionWithDBSet()
                     else:
-                        # shacol.findCollisionStr()
-                        shacol.findCollisionInt()
+                        #shacol.findCollisionStr()
+                        #shacol.findCollisionInt()
+                        shacol.findCollisionBloomStore(filterCapacity=1000000000, storeCount=100000, hashCount=12)
     else:
         if args.bloom:
             if args.memory:
