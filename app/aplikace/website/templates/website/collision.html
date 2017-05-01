@@ -21,42 +21,45 @@
         <table class="table table-bordered table-hover">
             <thead>
             <tr>
-                <th>Input hash</th>
-                <th>Total time [s]</th>
-                <th>Number of cycles</th>
-                <th>Collision hash</th>
-                <th>Hash order</th>
-                <th>Total memory [MB]</th>
-                <th>Test method</th>
-                <th>Bits</th>
-                <th>Git revision</th>
+              <th>Bits</th>
+              <th>Input hash</th>
+              <th>Collision hash</th>
+              <th>First temp</th>
+              <th>Last temp</th>
+              <th>Total time [s]</th>
+              <th>Circle length</th> <!-- cycles -->
+              <th>Count of cycles</th> <!-- hash_order -->
+              <th>Test method</th>
+              <th>Git revision</th>
             </tr>
             </thead>
             <tbody>
             {% for coll in collisions %}
             <tr>
-                <td>{{ coll.input_hash }}</td>
-                <td>{{ coll.total_time }}</td>
-                <td>{{ coll.cycles }}</td>
-                <td>{{ coll.coll_hash }}</td>
-                <td>{{ coll.hash_order }}</td>
-                <td>{{ coll.total_memory }}</td>
-                <td>{{ coll.test_method }}</td>
-                <td>{{ coll.bits }}</td>
-                <td>{{ coll.git_revision }}</td>
+              <td>{{ coll.bits }}</td>
+              <td>{{ coll.input_hash }}</td>
+              <td>{{ coll.coll_hash }}</td>
+              <td>{{ coll.firstTemp }}</td>
+              <td>{{ coll.lastTemp }}</td>
+              <td>{{ coll.total_time }}</td>
+              <td>{{ coll.cycles }}</td>
+              <td>{{ coll.hash_order }}</td>
+              <td>{{ coll.test_method }}</td>
+              <td>{{ coll.git_revision }}</td>
             </tr>
             {% endfor %}
             {% for coll in colls %}
             <tr>
-                <td>{{ coll.input_hash }}</td>
-                <td>{{ coll.total_time }}</td>
-                <td>{{ coll.cycles }}</td>
-                <td>{{ coll.coll_hash }}</td>
-                <td>{{ coll.hash_order }}</td>
-                <td>{{ coll.total_memory }}</td>
-                <td>{{ coll.test_method }}</td>
-                <td>{{ coll.bits }}</td>
-                <td>{{ coll.git_revision }}</td>
+              <td>{{ coll.bits }}</td>
+              <td>{{ coll.input_hash }}</td>
+              <td>{{ coll.coll_hash }}</td>
+              <td>{{ coll.firstTemp }}</td>
+              <td>{{ coll.lastTemp }}</td>
+              <td>{{ coll.total_time }}</td>
+              <td>{{ coll.cycles }}</td>
+              <td>{{ coll.hash_order }}</td>
+              <td>{{ coll.test_method }}</td>
+              <td>{{ coll.git_revision }}</td>
             </tr>
             {% endfor %}
             </tbody>
