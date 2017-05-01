@@ -1,15 +1,16 @@
 # !/usr/bin/env python
 
-import sys
-import redis
-import random
-import timeit
-import psutil
-import hashlib
-import pybloof
 import argparse
 import binascii
+import hashlib
+import random
+import sys
+import timeit
+
 import cuckoofilter
+import psutil
+import pybloof
+import redis
 
 
 class Shacol(object):
