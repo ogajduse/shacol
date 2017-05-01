@@ -75,7 +75,7 @@ def dbInsert(results, method, bits):
                     "(hash_order, input_hash, total_time, cycles, coll_hash, firstTemp, lastTemp, total_memory, test_method, bits, git_revision)"
                     "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
 
-    data_collision = (int(results["indexOfLast"]), results["inputHash"], results["time"], int(results["cyclesBetCol"]), results["collisionHash"], results["firstTemp"], results["lastTemp"] results["dataStructConsum"], method, int(bits), git_repo.git.describe())
+    data_collision = (int(results["indexOfLast"]), results["inputHash"], results["time"], int(results["cyclesBetCol"]), results["collisionHash"], results["firstTemp"], results["lastTemp"], results["dataStructConsum"], method, int(bits), git_repo.git.describe())
     cursor.execute(add_collision, data_collision)
 
     db_conn.commit()
