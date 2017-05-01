@@ -9,12 +9,18 @@ import shacol
 db_location = '85.255.0.154'
 git_repo = git.repo.Repo(root_dir)
 
+@climenu.menu()
+def set_bit_length():
+    '''Select bit length'''
+    print("Select from these\n"
+          "4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, ...")
+    climenu.settings.back_values.insert(0, climenu.get_user_input("Enter input bit length "))
 
 @climenu.menu()
 def set_bit_range():
     '''Select bit range'''
     print("Select from these\n"
-          "4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, ")
+          "4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, ...")
     climenu.settings.back_values.insert(1, climenu.get_user_input("Enter start bit length "))
     climenu.settings.back_values.insert(2, climenu.get_user_input("Enter max bit length "))
 
@@ -44,7 +50,7 @@ def main():
     menu_values = climenu.settings.back_values
 
     inputFile = root_dir + "/hash.txt"
-    shacolInstance = shacol.Shacol(int(menu_values[2]), inputFile)
+    shacolInstance = shacol.Shacol(int(menu_values[0]), inputFile)
     end_iter = int(menu_values[2]) + 1
     for i in range(int(menu_values[1]), end_iter, 4):
         shacolInstance.changeBitLength(i)
