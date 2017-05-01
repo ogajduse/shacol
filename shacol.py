@@ -537,11 +537,11 @@ class Shacol(object):
             firstTemp = ''
             indexOfLast = 0
             lastTemp = ''
-            byteIntHashDict = {bytes():int()} # structure using bytes (hash) + int (index)
+            byteIntHashDict = {bytes(): int()}  # structure using bytes (hash) + int (index)
             storeLimit = False
 
             newHashPart = bytes(hashPart, 'utf-8')
-            bloomFilter = pybloof.StringBloomFilter(size=filterCapacity,hashes=hashCount)
+            bloomFilter = pybloof.StringBloomFilter(size=filterCapacity, hashes=hashCount)
             start = timeit.default_timer()
 
             while True:
@@ -552,7 +552,7 @@ class Shacol(object):
                     if status == 10000000:
                         print('\n' * 100)
                         print('Count of cycles:', indexOfLast)
-                        print('Run time:', round((timeit.default_timer() - start), 3),'s')
+                        print('Run time:', round((timeit.default_timer() - start), 3), 's')
                         status = 0
                     lastTemp = newHashPart.decode('utf-8')
                     newHash = hashlib.sha256(newHashPart).hexdigest()
@@ -565,7 +565,7 @@ class Shacol(object):
                     print("### Potencional collision successfully stored! ###")
                     print("Suspicious hash: ", newHash)
                     print('Count of cycles:', indexOfLast)
-                    print('Time:', round((timeit.default_timer() - start), 3),'s')
+                    print('Time:', round((timeit.default_timer() - start), 3), 's')
 
                     if storeLimit:
                         newHashPart = bytes(hashPart, 'utf-8')
@@ -577,7 +577,7 @@ class Shacol(object):
                                 print('Checking suspicious hashes! :) Searching for collision index...')
                                 print('Reached count:', indexOfLast)
                                 print('Current count:', indexOfFirst)
-                                print('Run time:', round((timeit.default_timer() - start), 3),'s')
+                                print('Run time:', round((timeit.default_timer() - start), 3), 's')
                                 status = 0
                             firstTemp = newHashPart.decode('utf-8')
                             newHash = hashlib.sha256(newHashPart).hexdigest()
@@ -608,7 +608,7 @@ class Shacol(object):
 
             if indexOfFirst != indexOfLast and filterCapacity > indexOfLast:
                 print('\n\n##### findCollisionBloomStore - Collision found process succeeded! \o/ #####\n')
-                print("Collision found after %s seconds" % (totalTime),'\n')
+                print("Collision found after %s seconds" % (totalTime), '\n')
                 if inputString:
                     print('Input string:', inputString)
                 print('Input hashPart:', hashPart)
@@ -617,12 +617,14 @@ class Shacol(object):
                 print('Hash 2 leading to collision:', lastTemp)
                 print('\nIndex of first collision:', indexOfFirst)
                 print('Index of last collision:', indexOfLast)
-                print('Cycles between collision hashes:', indexOfLast-indexOfFirst)
+                print('Cycles between collision hashes:', indexOfLast - indexOfFirst)
                 print('\nBloom filter used', round(sys.getsizeof(bloomFilter) / 1024 / 1024, 3), 'MB')
 
-                return {"inputString": inputString, "inputHash": hashPart, "time": totalTime,"indexOfFirst": indexOfFirst,
-                    "indexOfLast": indexOfLast, "collisionHash": newHashPart, "cyclesBetCol": indexOfLast-indexOfFirst,
-                    "firstTemp": firstTemp, "lastTemp": lastTemp, "dataStructConsum": totalMemory}
+                return {"inputString": inputString, "inputHash": hashPart, "time": totalTime,
+                        "indexOfFirst": indexOfFirst,
+                        "indexOfLast": indexOfLast, "collisionHash": newHashPart,
+                        "cyclesBetCol": indexOfLast - indexOfFirst,
+                        "firstTemp": firstTemp, "lastTemp": lastTemp, "dataStructConsum": totalMemory}
             else:
                 print('\n##### findCollisionBloom - Collision found process failed! /o\ #####')
 
@@ -803,8 +805,8 @@ def main():
                     elif args.redis:
                         shacol.findCollisionWithDBSet()
                     else:
-                        #shacol.findCollisionStr()
-                        #shacol.findCollisionInt()
+                        # shacol.findCollisionStr()
+                        # shacol.findCollisionInt()
                         shacol.findCollisionBloomStore(filterCapacity=1000000000, storeCount=100000, hashCount=12)
     else:
         if args.bloom:
