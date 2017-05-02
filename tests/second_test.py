@@ -1,49 +1,47 @@
-bits = Collision.objects.values_list("bits").distinct()
-data = [['Bits']]
-name_tt = "String method - total time/bits"
-name_ho = "String method - count of cycles/total bits"
-#data_tt = []
-#data_ho = []
-""""
-colls_ho= Collision.objects.values_list("bits", "hash_order").filter(test_method__icontains="String")
-"""
-# generate values (bits) for the first column
-for b in bits:
-    data.append([b[0]])
+import sys, os, git
+import pymysql as mariadb
+root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(root_dir)
+import shacol
 
-input_hashes = Collision.objects.values_list("input_hash").filter(test_method__icontains="String").distinct()
-for ih in input_hashes:
-    data[0].append(ih[0])
+db_location = '85.255.0.154'
+git_repo = git.repo.Repo(root_dir)
 
-data_tt = copy.deepcopy(data)
-data_ho = copy.deepcopy(data)
+def dbInsert(results, method, bits):
+    db_conn = mariadb.connect(host=db_location, user='shacol_django_u', password='Aim4Uusoom9ea8',
+                              database='shacol_django')
+    cursor = db_conn.cursor()
+    add_collision = ("INSERT INTO website_collision"
+                    "(hash_order, input_hash, total_time, cycles, coll_hash, firstTemp, lastTemp, total_memory, test_method, bits, git_revision)"
+                    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
 
-datadict = dict()
-for i in range(1, len(data)):
-    datadict[data[i][0]] = i
+    data_collision = (int(results["indexOfLast"]), results["inputHash"], results["time"], int(results["cyclesBetCol"]), results["collisionHash"], results["firstTemp"], results["lastTemp"], results["dataStructConsum"], method, int(bits), git_repo.git.describe())
+    cursor.execute(add_collision, data_collision)
 
-for inp_hsh in range(1, len(data[0]), 1):
-    selected_in_hash = data[0][inp_hsh]
-    print("selected_in_hash: " + str(selected_in_hash))
-    bitlist = list()
-    bitlist_select = Collision.objects.values_list("bits").filter(test_method__icontains="Str", input_hash=selected_in_hash)
-    for i in bitlist_select:
-        bitlist.append(i[0])
-    print("printing bitlist")
-    print(bitlist)
-    for bits in bitlist:
-        print("actual bits: " + str(bits))
-        print("POINT1 data_tt before insert " + str(data))
-        time = Collision.objects.values_list("bits", "total_time").filter(test_method__icontains="Str", input_hash=selected_in_hash, bits=bits)
-        print(time.values)
-        cycles = Collision.objects.values_list("bits", "cycles").filter(test_method__icontains="Str", input_hash=selected_in_hash, bits=bits)
-        print(cycles.values)
-        print("first arg time: " + str(datadict.get(time[0][0])))
-        print("first arg cycles: " + str(datadict.get(cycles[0][0])))
-        print("data_tt before insert " + str(data_tt))
-        data_tt[datadict.get(time[0][0])].insert(inp_hsh, time[0][1])
-        print("data_tt after insert " + str(data_tt))
-        print("data_ho before insert " + str(data_ho))
-        data_ho[datadict.get(cycles[0][0])].insert(inp_hsh, cycles[0][1])
-        print("data_ho after insert " + str(data_ho))
+    db_conn.commit()
+    cursor.close()
+    db_conn.close()
 
+    def main():
+        inputValue = root_dir + "/hash.txt"
+        shacolInstance = shacol.Shacol(56, inputValue, hashGroup=True)
+
+        for i in range(4, 57, 4):
+            shacolInstance.changeBitLength(i)
+            shacolInstance.getInfo()
+            for input_hash in shacolInstance.shaList:
+                results = shacolInstance.findCollisionStr()
+                method = "String method"
+                dbInsert(results, method, i)
+    
+                results = shacolInstance.findCollisionInt()
+                method = "Int method"
+                dbInsert(results, method, i)
+        print("inserting data DONE")
+
+    if __name__ == "__main__":
+        try:
+            main()
+        except KeyboardInterrupt:
+            print('\nInterrupted... Terminating')
+            sys.exit()
