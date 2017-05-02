@@ -117,6 +117,7 @@ class Shacol(object):
             status = 1
             strHashSet = {str()}  # length start with 1
             newHashPart = hashPart
+            lastTemp = ''
 
             start = timeit.default_timer()
 
@@ -139,7 +140,7 @@ class Shacol(object):
 
             # Initialization of new values to find first index of collision
             indexOfFirst = 0
-            firstCollision = ''
+            firstTemp = ''
             indexOfLast = len(strHashSet) - 1
             lastCollision = newHashPart
             newHashPart = hashPart
@@ -197,6 +198,7 @@ class Shacol(object):
                 inputString = ''
 
             status = 1
+            lastTemp = ''
             intHashSet = {int()}
             newHashPart = int(binascii.hexlify(bytes(hashPart, 'utf-8')), 16)
 
@@ -220,7 +222,7 @@ class Shacol(object):
             totalTime = round(stop - start, 12)
             totalMemory = round(sys.getsizeof(intHashSet) / 1024 / 1024, 3)
             indexOfFirst = 0
-            firstCollision = ''
+            firstTemp = ''
             indexOfLast = len(intHashSet) - 1
             lastCollision = newHash
             newHashPart = hashPart
@@ -428,7 +430,7 @@ class Shacol(object):
             stop = timeit.default_timer()
             totalTime = round(stop - start, 12)
             indexOfFirst = 0
-            firstCollision = ''
+            firstTemp = ''
             indexOfLast = r.scard('hset')
             lastCollision = newHashPart
             newHashPart = hashPart
