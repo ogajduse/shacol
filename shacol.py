@@ -124,7 +124,7 @@ class Shacol(object):
                 strHashSet.add(newHashPart)
                 status += 1
                 if status == 10000000: # Prints a status of process in sequence 10 000 000 hashes by default
-                    print('\n' * 100)
+                    print('\n' * 3)
                     print('SET length:', len(strHashSet))
                     print('Run time:', round((timeit.default_timer() - start) / 60, 3), 'minutes')
                     status = 0
@@ -206,7 +206,7 @@ class Shacol(object):
                 intHashSet.add(newHashPart)
                 status += 1
                 if status == 10000000:
-                    print('\n' * 100)
+                    print('\n' * 3)
                     print('Set length:', len(intHashSet))
                     print('Run time:', round((timeit.default_timer() - start) / 60, 3), 'minutes')
                     status = 0
