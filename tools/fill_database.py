@@ -53,7 +53,7 @@ def main():
     climenu.run()
     menu_values = climenu.settings.back_values
 
-    if menu_values[99] != None:
+    if menu_values[99] != 0:
         inputValue = menu_values[99]
     else:
         inputValue = root_dir + "/hash.txt"
@@ -78,6 +78,7 @@ def main():
             results = shacolInstance.findCollisionIntBF()
             method = "Int BF"
             dbInsert(results, method, i)
+    print("inserting data DONE")
 
 
 def dbInsert(results, method, bits):
