@@ -42,6 +42,16 @@ def select_methods():
     else:
         pass
 
+@climenu.menu()
+def select_input():
+    '''Select input string'''
+    print("Insert string, that would be hashed as input for Shacol: ")
+    userinput = climenu.get_user_input("Insert string, that would be hashed as input for Shacol: ")
+    if userinput != "":
+        climenu.settings.back_values.insert(99, userinput)
+        print("input OK")
+    else:
+        print("input failed, nothing happened")
 
 def main():
     for i in range(3, 6):
@@ -49,8 +59,11 @@ def main():
     climenu.run()
     menu_values = climenu.settings.back_values
 
-    inputFile = root_dir + "/hash.txt"
-    shacolInstance = shacol.Shacol(int(menu_values[0]), inputFile)
+    if menu_values[99] != None:
+        inputValue = menu_values[99]
+    else:
+        inputValue = root_dir + "/hash.txt"
+    shacolInstance = shacol.Shacol(int(menu_values[0]), inputValue)
     end_iter = int(menu_values[2]) + 1
     for i in range(int(menu_values[1]), end_iter, 4):
         shacolInstance.changeBitLength(i)
