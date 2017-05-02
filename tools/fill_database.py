@@ -11,20 +11,25 @@ git_repo = git.repo.Repo(root_dir)
 
 @climenu.menu()
 def set_bit_length():
-    '''Select bit length'''
+    '''Select bit length and input string'''
     print("Select from these\n"
           "4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, ...")
-    climenu.settings.back_values.insert(0, climenu.get_user_input("Enter input bit length "))
+    climenu.settings.back_values[0] = climenu.get_user_input("Enter input bit length ")
+    user_input = climenu.get_user_input("Insert string, that would be hashed as input for Shacol (leave it blank, if you want to use default input): ")
+    if user_input != "":
+        climenu.settings.back_values[99] = user_input
+        print("input OK")
+    else:
+        print("input failed, nothing happened")
+
 
 @climenu.menu()
 def set_bit_range():
     '''Select bit range'''
     print("Select from these\n"
           "4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, ...")
-    climenu.settings.back_values.insert(1, climenu.get_user_input("Enter start bit length "))
-    climenu.settings.back_values.insert(2, climenu.get_user_input("Enter max bit length "))
-
-
+    climenu.settings.back_values[1] = climenu.get_user_input("Enter start bit length ")
+    climenu.settings.back_values[2] = climenu.get_user_input("Enter max bit length ")
 @climenu.menu()
 def select_methods():
     '''Select methods'''
@@ -34,28 +39,17 @@ def select_methods():
           "3. DB set method (Redis)\n")
     user_input = int(input("Select method number: "))
     if user_input == 1:
-        climenu.settings.back_values.insert(3, 1)
+        climenu.settings.back_values[3] = 1
     elif user_input == 2:
-        climenu.settings.back_values.insert(4, 1)
+        climenu.settings.back_values[4] = 1
     elif user_input == 3:
-        climenu.settings.back_values.insert(5, 1)
+        climenu.settings.back_values[5] = 1
     else:
-        pass
-
-@climenu.menu()
-def select_input():
-    '''Select input string'''
-    print("Insert string, that would be hashed as input for Shacol: ")
-    userinput = climenu.get_user_input("Insert string, that would be hashed as input for Shacol: ")
-    if userinput != "":
-        climenu.settings.back_values.insert(99, userinput)
-        print("input OK")
-    else:
-        print("input failed, nothing happened")
+        print("wrong input, nothing happened")
 
 def main():
-    for i in range(3, 6):
-        climenu.settings.back_values.insert(i, 0)
+    for i in range(0, 100):
+        climenu.settings.back_values.insert(i, None)
     climenu.run()
     menu_values = climenu.settings.back_values
 
