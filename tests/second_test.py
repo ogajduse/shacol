@@ -34,7 +34,7 @@ def main():
     inputValue = root_dir + "/hash.txt"
     shacolInstance = shacol.Shacol(56, inputValue, hashGroup=True)
 
-    for i in range(4, 57, 4):
+    for i in range(8, 57, 4):
         shacolInstance.changeBitLength(i)
         shacolInstance.getInfo()
         for input_hash in shacolInstance.shaList:
