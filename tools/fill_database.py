@@ -49,7 +49,7 @@ def select_methods():
 
 def main():
     for i in range(0, 100):
-        climenu.settings.back_values.insert(i, None)
+        climenu.settings.back_values.insert(i, 0)
     climenu.run()
     menu_values = climenu.settings.back_values
 
