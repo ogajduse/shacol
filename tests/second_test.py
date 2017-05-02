@@ -38,11 +38,11 @@ def main():
         shacolInstance.changeBitLength(i)
         shacolInstance.getInfo()
         for input_hash in shacolInstance.shaList:
-            results = shacolInstance.findCollisionStr(hashPart=input_hash)
+            results = shacolInstance.findCollisionStr(hashPart=input_hash[0:shacolInstance.hashPartLength])
             method = "String method"
             dbInsert(results, method, i)
 
-            results = shacolInstance.findCollisionInt(hashPart=input_hash)
+            results = shacolInstance.findCollisionInt(hashPart=input_hash[0:shacolInstance.hashPartLength])
             method = "Int method"
             dbInsert(results, method, i)
     print("inserting data DONE")
