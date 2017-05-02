@@ -22,26 +22,26 @@ def dbInsert(results, method, bits):
     cursor.close()
     db_conn.close()
 
-    def main():
-        inputValue = root_dir + "/hash.txt"
-        shacolInstance = shacol.Shacol(56, inputValue, hashGroup=True)
+def main():
+    inputValue = root_dir + "/hash.txt"
+    shacolInstance = shacol.Shacol(56, inputValue, hashGroup=True)
 
-        for i in range(4, 57, 4):
-            shacolInstance.changeBitLength(i)
-            shacolInstance.getInfo()
-            for input_hash in shacolInstance.shaList:
-                results = shacolInstance.findCollisionStr()
-                method = "String method"
-                dbInsert(results, method, i)
-    
-                results = shacolInstance.findCollisionInt()
-                method = "Int method"
-                dbInsert(results, method, i)
-        print("inserting data DONE")
+    for i in range(4, 57, 4):
+        shacolInstance.changeBitLength(i)
+        shacolInstance.getInfo()
+        for input_hash in shacolInstance.shaList:
+            results = shacolInstance.findCollisionStr()
+            method = "String method"
+            dbInsert(results, method, i)
 
-    if __name__ == "__main__":
-        try:
-            main()
-        except KeyboardInterrupt:
-            print('\nInterrupted... Terminating')
-            sys.exit()
+            results = shacolInstance.findCollisionInt()
+            method = "Int method"
+            dbInsert(results, method, i)
+    print("inserting data DONE")
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print('\nInterrupted... Terminating')
+        sys.exit()
