@@ -1,7 +1,7 @@
-import git
 import os
 import sys
 
+import git
 import pymysql as mariadb
 
 root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -35,14 +35,15 @@ def main():
     shacolInstance = shacol.Shacol(56, inputValue, hashGroup=True)
 
     for i in range(8, 57, 4):
-        shacolInstance.changeBitLength(i)
-        shacolInstance.getInfo()
         for input_hash in shacolInstance.shaList:
-            results = shacolInstance.findCollisionStr(hashPart=input_hash[0:shacolInstance.hashPartLength])
+            shacolInstance.hashPart = input_hash
+            shacolInstance.changeBitLength(i)
+            shacolInstance.getInfo()
+            results = shacolInstance.findCollisionStr()
             method = "String method"
             dbInsert(results, method, i)
 
-            results = shacolInstance.findCollisionInt(hashPart=input_hash[0:shacolInstance.hashPartLength])
+            results = shacolInstance.findCollisionInt()
             method = "Int method"
             dbInsert(results, method, i)
     print("inserting data DONE")
