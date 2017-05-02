@@ -18,11 +18,11 @@ class Shacol(object):
         """
         The constructor function that provides all unnecessary inputs.
 
-        :param bits:
-        :param inputFile:
-        :param hashGroup:
-        :param text:
-        :param first:
+        :param bits: bit length to investigate
+        :param inputFile: directory or input string
+        :param hashGroup: true/false value defines input file with hashes per lines
+        :param text: true/false value defines input in string format
+        :param first: true/false value decribes the use of first hash collision function
 
         """
 
@@ -58,6 +58,7 @@ class Shacol(object):
             self.hashPart = hashlib.sha256(inputFile.encode('utf-8')).hexdigest()[
                             0:self.hashPartLength]
 
+
     def getInfo(self):
         """
         Print the basic information about process at the beggining of activity.
@@ -77,6 +78,7 @@ class Shacol(object):
                                  if not self.hashGroup else 'hashes are ',
                                  self.hashPart if not self.hashGroup else printHashes))
 
+
     def changeBitLength(self, newBitLength):
         """
         The function that cuts full length hash into chosen length.
@@ -88,11 +90,14 @@ class Shacol(object):
         self.bits = newBitLength
         self.hashPartLength = int(int(self.bits) / 4)
 
+
     def findCollisionStr(self, hashPart=None):
         """
         Function with the best performance - storing hashes in SET by STRING
 
         :param hashPart: the input hash loaded from a file
+        :return: inputString, inputHash, totalTime, indexOfFirst, indexOfLast,
+        newHashPart, indexOfLast-indexOfFirst, firstTemp, lastTemp, totalMemory
 
         """
 
@@ -168,12 +173,17 @@ class Shacol(object):
         except Exception as e:
             print(str(e))
 
+
     def findCollisionInt(self, hashPart=None):
         """
         The most effective versions of storing hash - INT in SET
 
         :param hashPart: the input hash loaded from a file
+        :return: inputString, inputHash, totalTime, indexOfFirst, indexOfLast,
+        newHashPart, indexOfLast-indexOfFirst, firstTemp, lastTemp, totalMemory
+
         """
+
         try:
             if not hashPart:
                 hashPart = self.hashPart
@@ -319,12 +329,17 @@ class Shacol(object):
         except Exception as e:
             print(str(e))
 
+
     def findCollisionFirst(self, hashPart=None):
         """
         Function to be thread by individually calling - looking for a collision with first hashPart
 
         :param hashPart: the input hash loaded from a file
+        :return: inputString, inputHash, totalTime, indexOfFirst, indexOfLast,
+        newHashPart, indexOfLast-indexOfFirst, firstTemp, lastTemp, totalMemory
+
         """
+
         try:
             if not hashPart:
                 hashPart = self.hashPart
@@ -368,12 +383,17 @@ class Shacol(object):
         except Exception as e:
             print(str(e))
 
+
     def findCollisionWithDBSet(self, hashPart=None):
         """
         Function is looking for a collision with hashPart
 
         :param hashPart: the input hash loaded from a file
+        :return: inputString, inputHash, totalTime, indexOfFirst, indexOfLast,
+        newHashPart, indexOfLast-indexOfFirst, firstTemp, lastTemp, totalMemory
+
         """
+
         try:
             pool = redis.ConnectionPool(host='localhost', port=6379, db=0)
             r = redis.Redis(connection_pool=pool)
@@ -438,12 +458,15 @@ class Shacol(object):
         except Exception as e:
             print(str(e))
 
+
     def findCollisionBloom(self, hashPart=None, filterCapacity=1000000000):
         """
         The test method using performance Bloom filter.
 
         :param hashPart: the input hash loaded from a file
         :filterCapacity: the capacity of Bloom filter
+        :return: inputString, inputHash, totalTime, indexOfFirst, indexOfLast,
+        newHashPart, indexOfLast-indexOfFirst, firstTemp, lastTemp, totalMemory
 
         """
         try:
@@ -548,6 +571,7 @@ class Shacol(object):
         except Exception as e:
             print(str(e))
 
+
     def findCollisionBloomStore(self, hashPart=None, filterCapacity=1000000000, storeCount=100000, hashCount=12):
         """
         The test method using performance Bloom filter.
@@ -556,6 +580,8 @@ class Shacol(object):
         :param filterCapacity: the capacity of Bloom filter
         :param storeCount: the count of set with stored suspicious hashes
         :param hashCount: number of hash cycles
+        :return: inputString, inputHash, totalTime, indexOfFirst, indexOfLast,
+        newHashPart, indexOfLast-indexOfFirst, firstTemp, lastTemp, totalMemory
 
         """
         try:
@@ -671,10 +697,12 @@ class Shacol(object):
 
     def findCollisionCuckoo(self, hashPart=None, filterCapacity=10000000):
         """
-        The test method using Cuckoo filter.
+        Using Cuckoo filter, large
 
         :param hashPart: the input hash loaded from a file
         :param filterCapacity: the capacity of Bloom filter
+        :return: inputString, inputHash, totalTime, indexOfFirst, indexOfLast,
+        newHashPart, indexOfLast-indexOfFirst, firstTemp, lastTemp, totalMemory
 
         """
         try:
