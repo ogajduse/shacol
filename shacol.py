@@ -15,6 +15,17 @@ import redis
 
 class Shacol(object):
     def __init__(self, bits, inputFile, hashGroup=False, text=False, first=False):
+        """
+        The constructor function that provides all unnecessary inputs.
+
+        :param bits:
+        :param inputFile:
+        :param hashGroup:
+        :param text:
+        :param first:
+
+        """
+
         self.bits = int(bits)
         self.inputFile = inputFile
         self.hashGroup = hashGroup
@@ -48,6 +59,11 @@ class Shacol(object):
                             0:self.hashPartLength]
 
     def getInfo(self):
+        """
+        Print the basic information about process at the beggining of activity.
+
+        """
+
         printHashes = str()
         for i in self.shaList:
             printHashes += i + '\t'
@@ -62,6 +78,13 @@ class Shacol(object):
                                  self.hashPart if not self.hashGroup else printHashes))
 
     def changeBitLength(self, newBitLength):
+        """
+        The function that cuts full length hash into chosen length.
+
+        :param newBitLength: chosen bit length
+
+        """
+
         self.bits = newBitLength
         self.hashPartLength = int(int(self.bits) / 4)
 
@@ -70,8 +93,11 @@ class Shacol(object):
         Function with the best performance - storing hashes in SET by STRING
 
         :param hashPart: the input hash loaded from a file
+
         """
+
         try:
+            # Checking the constructor parameters that can be used
             if not hashPart:
                 hashPart = self.hashPart
                 hashPartLength = self.hashPartLength
@@ -92,19 +118,21 @@ class Shacol(object):
             while newHashPart not in strHashSet:
                 strHashSet.add(newHashPart)
                 status += 1
-                if status == 10000000:
+                if status == 10000000: # Prints a status of process in sequence 10 000 000 hashes by default
                     print('\n' * 100)
                     print('SET length:', len(strHashSet))
                     print('Run time:', round((timeit.default_timer() - start) / 60, 3), 'minutes')
                     status = 0
-                lastTemp = newHashPart
-                newHash = hashlib.sha256(newHashPart.encode('utf-8')).hexdigest()
-                newHashPart = newHash[0:hashPartLength]
+                lastTemp = newHashPart # Saves temporarily the parental hash
+                newHash = hashlib.sha256(newHashPart.encode('utf-8')).hexdigest() # Calculate a new hash from last hashed part
+                newHashPart = newHash[0:hashPartLength] # Cuts a new hash to specific length
 
             stop = timeit.default_timer()
 
-            totalTime = round(stop - start, 12)
-            totalMemory = round(sys.getsizeof(strHashSet) / 1024 / 1024, 3)
+            totalTime = round(stop - start, 12) # Calculates summary of time consumption
+            totalMemory = round(sys.getsizeof(strHashSet) / 1024 / 1024, 3) # Calculates the size of used memory
+
+            # Initialization of new values to find first index of collision
             indexOfFirst = 0
             firstCollision = ''
             indexOfLast = len(strHashSet) - 1
@@ -118,7 +146,7 @@ class Shacol(object):
             print("Collision found after %s seconds" % (totalTime))
             print('Collision hash:', lastCollision)
 
-            while newHashPart != lastCollision:
+            while newHashPart != lastCollision: # Cycle for finding the index of first collision
                 indexOfFirst += 1
                 firstTemp = newHashPart
                 newHash = hashlib.sha256(newHashPart.encode('utf-8')).hexdigest()
@@ -221,6 +249,9 @@ class Shacol(object):
         """
         Function provides the best possible input string with the least time consumption.
         Offers memory check in intervals.
+
+        :param maxSet: the maximal count of set with stored hashes
+        :param memoryCheck: check free memory in sequence
 
         """
         try:
@@ -412,6 +443,8 @@ class Shacol(object):
         The test method using performance Bloom filter.
 
         :param hashPart: the input hash loaded from a file
+        :filterCapacity: the capacity of Bloom filter
+
         """
         try:
             if not hashPart:
@@ -520,6 +553,10 @@ class Shacol(object):
         The test method using performance Bloom filter.
 
         :param hashPart: the input hash loaded from a file
+        :param filterCapacity: the capacity of Bloom filter
+        :param storeCount: the count of set with stored suspicious hashes
+        :param hashCount: number of hash cycles
+
         """
         try:
             if not hashPart:
@@ -637,6 +674,8 @@ class Shacol(object):
         The test method using Cuckoo filter.
 
         :param hashPart: the input hash loaded from a file
+        :param filterCapacity: the capacity of Bloom filter
+
         """
         try:
             if not hashPart:
@@ -742,7 +781,7 @@ class Shacol(object):
 
 
 def main():
-    # Input parameters
+    # Optional arguments
 
     parser = argparse.ArgumentParser(usage='$prog [options] -b 32 -i hash.txt',
                                      description='SHA2 collision finder', add_help=True,
@@ -777,7 +816,7 @@ def main():
     print("Do you want to proceed?")
     input('\nPress Enter to continue...')
 
-    # Inteligent tree of functions
+    # Inteligent tree of function calling
     if args.inputFile:
         if args.hashGroup:
             for hashes in shacol.shaList:
@@ -805,7 +844,7 @@ def main():
                             shacol.findCollisionBloom()
                     elif args.redis:
                         shacol.findCollisionWithDBSet()
-                    else:
+                    else: # Default action without any additional arguments except input file (python3 shacol.py -b 32 -h hash.txt)
                         # shacol.findCollisionStr()
                         # shacol.findCollisionInt()
                         shacol.findCollisionBloomStore(filterCapacity=1000000000, storeCount=100000, hashCount=12)
@@ -830,7 +869,7 @@ def main():
             else:
                 if args.capacity:
                     shacol.findBestHash(maxSet=int(args.capacity))
-                else:
+                else: # Default action without any additional arguments (python3 shacol.py -b 32)
                     shacol.findBestHash()
 
 
