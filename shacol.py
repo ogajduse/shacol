@@ -14,7 +14,8 @@ import redis
 
 
 class Shacol(object):
-    def __init__(self, bits, inputFile, hashGroup=False, text=False, first=False):
+    def __init__(self, bits, inputFile, hashGroup=False,
+                 text=False, first=False):
         """
         The constructor function that provides all unnecessary inputs.
 
@@ -42,23 +43,23 @@ class Shacol(object):
                 if self.hashGroup:
                     if self.text:
                         for textInFile in dataFromFile:
-                            self.shaList.append(
-                                hashlib.sha256(textInFile.encode('utf-8').hexdigest()[0:self.hashPartLength]))
+                            self.shaList.append(hashlib.sha256(textInFile.encode(
+                                'utf-8').hexdigest()[0:self.hashPartLength]))
                     else:
                         for hashInFile in dataFromFile:
                             self.shaList.append(
                                 hashInFile[0:self.hashPartLength])
                 else:
                     if self.text:
-                        self.hashPart = hashlib.sha256(dataFromFile.read().encode('utf-8')).hexdigest()[
-                            0:self.hashPartLength]
+                        self.hashPart = hashlib.sha256(dataFromFile.read().encode(
+                            'utf-8')).hexdigest()[0:self.hashPartLength]
                     else:
                         self.hashPart = dataFromFile.readline()[
                             0:self.hashPartLength]
             dataFromFile.close()
         elif inputFile:
-            self.hashPart = hashlib.sha256(inputFile.encode('utf-8')).hexdigest()[
-                0:self.hashPartLength]
+            self.hashPart = hashlib.sha256(inputFile.encode(
+                'utf-8')).hexdigest()[0:self.hashPartLength]
 
     def getInfo(self):
         """
@@ -70,14 +71,16 @@ class Shacol(object):
         for i in self.shaList:
             printHashes += i + '\t'
         # print absolute path to input file
-        print('\nYou are trying to find a collision with %s hash for %db with SHA-2.\n' %
-              ('first' if self.first else 'arbitary', self.bits) +
-              'Using %s as input file with %s.' %
-              (self.inputFile,
-               'one hash inside' if not self.hashGroup else 'with one hash per line inside.') +
-              '\nInput %s %s' % ('hash is  '
-                                 if not self.hashGroup else 'hashes are ',
-                                 self.hashPart if not self.hashGroup else printHashes))
+        print(
+            '\nYou are trying to find a collision with %s hash for %db with SHA-2.\n' %
+            ('first' if self.first else 'arbitary',
+             self.bits) +
+            'Using %s as input file with %s.' %
+            (self.inputFile,
+             'one hash inside' if not self.hashGroup else 'with one hash per line inside.') +
+            '\nInput %s %s' %
+            ('hash is  ' if not self.hashGroup else 'hashes are ',
+             self.hashPart if not self.hashGroup else printHashes))
 
     def changeBitLength(self, newBitLength):
         """
@@ -175,10 +178,18 @@ class Shacol(object):
                 sys.getsizeof(strHashSet) / 1024 / 1024, 3), 'MB')
             del strHashSet
 
-            return {"inputString": inputString, "inputHash": hashPart, "time": totalTime, "indexOfFirst": indexOfFirst,
-                    "indexOfLast": indexOfLast, "collisionHash": newHashPart,
-                    "cyclesBetCol": indexOfLast - indexOfFirst,
-                    "firstTemp": firstTemp, "lastTemp": lastTemp, "dataStructConsum": totalMemory}
+            return {
+                "inputString": inputString,
+                "inputHash": hashPart,
+                "time": totalTime,
+                "indexOfFirst": indexOfFirst,
+                "indexOfLast": indexOfLast,
+                "collisionHash": newHashPart,
+                "cyclesBetCol": indexOfLast -
+                indexOfFirst,
+                "firstTemp": firstTemp,
+                "lastTemp": lastTemp,
+                "dataStructConsum": totalMemory}
 
         except Exception as e:
             print(str(e))
@@ -263,10 +274,18 @@ class Shacol(object):
                 sys.getsizeof(intHashSet) / 1024 / 1024, 3), 'MB')
             del intHashSet
 
-            return {"inputString": inputString, "inputHash": hashPart, "time": totalTime, "indexOfFirst": indexOfFirst,
-                    "indexOfLast": indexOfLast, "collisionHash": lastCollision,
-                    "cyclesBetCol": indexOfLast - indexOfFirst,
-                    "firstTemp": firstTemp, "lastTemp": lastTemp, "dataStructConsum": totalMemory}
+            return {
+                "inputString": inputString,
+                "inputHash": hashPart,
+                "time": totalTime,
+                "indexOfFirst": indexOfFirst,
+                "indexOfLast": indexOfLast,
+                "collisionHash": lastCollision,
+                "cyclesBetCol": indexOfLast -
+                indexOfFirst,
+                "firstTemp": firstTemp,
+                "lastTemp": lastTemp,
+                "dataStructConsum": totalMemory}
 
         except Exception as e:
             print(str(e))
@@ -398,9 +417,17 @@ class Shacol(object):
             print('Collision hash:', newHashPart)
             print('Hash before collision:', lastTemp)
 
-            return {"inputString": inputString, "inputHash": hashPart, "time": totalTime, "indexOfFirst": 0,
-                    "indexOfLast": indexOfLast, "collisionHash": newHashPart, "cyclesBetCol": 0,
-                    "firstTemp": '', "lastTemp": lastTemp, "dataStructConsum": 0}
+            return {
+                "inputString": inputString,
+                "inputHash": hashPart,
+                "time": totalTime,
+                "indexOfFirst": 0,
+                "indexOfLast": indexOfLast,
+                "collisionHash": newHashPart,
+                "cyclesBetCol": 0,
+                "firstTemp": '',
+                "lastTemp": lastTemp,
+                "dataStructConsum": 0}
 
         except Exception as e:
             print(str(e))
@@ -475,10 +502,18 @@ class Shacol(object):
             print('Hash 1 before collision:', firstTemp)
             print('Hash 2 before collision:', lastTemp)
 
-            return {"inputString": inputString, "inputHash": hashPart, "time": totalTime, "indexOfFirst": indexOfFirst,
-                    "indexOfLast": indexOfLast, "collisionHash": lastCollision,
-                    "cyclesBetCol": indexOfLast - indexOfFirst,
-                    "firstTemp": firstTemp, "lastTemp": lastTemp, "dataStructConsum": 0}
+            return {
+                "inputString": inputString,
+                "inputHash": hashPart,
+                "time": totalTime,
+                "indexOfFirst": indexOfFirst,
+                "indexOfLast": indexOfLast,
+                "collisionHash": lastCollision,
+                "cyclesBetCol": indexOfLast -
+                indexOfFirst,
+                "firstTemp": firstTemp,
+                "lastTemp": lastTemp,
+                "dataStructConsum": 0}
 
         except Exception as e:
             print(str(e))
@@ -591,11 +626,18 @@ class Shacol(object):
                 print('\nBloom filter used', round(
                     sys.getsizeof(bloomFilter) / 1024 / 1024, 3), 'MB')
 
-                return {"inputString": inputString, "inputHash": hashPart, "time": totalTime,
-                        "indexOfFirst": indexOfFirst,
-                        "indexOfLast": indexOfLast, "collisionHash": newHashPart,
-                        "cyclesBetCol": indexOfLast - indexOfFirst,
-                        "firstTemp": firstTemp, "lastTemp": lastTemp, "dataStructConsum": totalMemory}
+                return {
+                    "inputString": inputString,
+                    "inputHash": hashPart,
+                    "time": totalTime,
+                    "indexOfFirst": indexOfFirst,
+                    "indexOfLast": indexOfLast,
+                    "collisionHash": newHashPart,
+                    "cyclesBetCol": indexOfLast -
+                    indexOfFirst,
+                    "firstTemp": firstTemp,
+                    "lastTemp": lastTemp,
+                    "dataStructConsum": totalMemory}
             else:
                 print(
                     '\n##### findCollisionBloom - Collision found process failed! /o\ #####')
@@ -603,7 +645,8 @@ class Shacol(object):
         except Exception as e:
             print(str(e))
 
-    def findCollisionBloomStore(self, hashPart=None, filterCapacity=1000000000, storeCount=100000, hashCount=12):
+    def findCollisionBloomStore(
+            self, hashPart=None, filterCapacity=1000000000, storeCount=100000, hashCount=12):
         """
         The test method using performance Bloom filter.
 
@@ -723,11 +766,18 @@ class Shacol(object):
                 print('\nBloom filter used', round(
                     sys.getsizeof(bloomFilter) / 1024 / 1024, 3), 'MB')
 
-                return {"inputString": inputString, "inputHash": hashPart, "time": totalTime,
-                        "indexOfFirst": indexOfFirst,
-                        "indexOfLast": indexOfLast, "collisionHash": newHashPart,
-                        "cyclesBetCol": indexOfLast - indexOfFirst,
-                        "firstTemp": firstTemp, "lastTemp": lastTemp, "dataStructConsum": totalMemory}
+                return {
+                    "inputString": inputString,
+                    "inputHash": hashPart,
+                    "time": totalTime,
+                    "indexOfFirst": indexOfFirst,
+                    "indexOfLast": indexOfLast,
+                    "collisionHash": newHashPart,
+                    "cyclesBetCol": indexOfLast -
+                    indexOfFirst,
+                    "firstTemp": firstTemp,
+                    "lastTemp": lastTemp,
+                    "dataStructConsum": totalMemory}
             else:
                 print(
                     '\n##### findCollisionBloom - Collision found process failed! /o\ #####')
@@ -843,11 +893,18 @@ class Shacol(object):
                 print('\nCuckoo filter used', round(
                     sys.getsizeof(cf) / 1024 / 1024, 3), 'MB')
 
-                return {"inputString": inputString, "inputHash": hashPart, "time": totalTime,
-                        "indexOfFirst": indexOfFirst,
-                        "indexOfLast": indexOfLast, "collisionHash": newHashPart,
-                        "cyclesBetCol": indexOfLast - indexOfFirst,
-                        "firstTemp": firstTemp, "lastTemp": lastTemp, "dataStructConsum": totalMemory}
+                return {
+                    "inputString": inputString,
+                    "inputHash": hashPart,
+                    "time": totalTime,
+                    "indexOfFirst": indexOfFirst,
+                    "indexOfLast": indexOfLast,
+                    "collisionHash": newHashPart,
+                    "cyclesBetCol": indexOfLast -
+                    indexOfFirst,
+                    "firstTemp": firstTemp,
+                    "lastTemp": lastTemp,
+                    "dataStructConsum": totalMemory}
             else:
                 print(
                     '\n##### findCollisionCuckoo - Collision found process failed! /o\ #####')
